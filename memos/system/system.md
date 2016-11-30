@@ -33,4 +33,23 @@
 	- small endian
 	  78 56 34 12
 	
+### numbers, boolean and bitwise
 
+	- boolean operation yield 1 or 0, using !, && and ||
+	- bitwise operation yield numbers, using ~(not), ^(not or), &(and), |(or)
+	- left shift: a << 3 always means a * 2^3, append 0s on the least side
+	- right shift: a >> 3 always means a / 2^3, append 0s at the highest side logically and 1s arithmeticly
+	- multi and division is costly, always changed to add, shift, and sub.	
+
+### signed and unsigned
+
+	- 1111(u) means 2^3 + 2^2 + 2^1 + 2^0 = 15
+	- 1111(t) means -2^3 + 2^2 + 2^1 + 2^0 = -1
+	- 1000(u) means 8 while 1000(s) means -8
+
+	overflow
+	- 1000(u) + 1000(u) = [10000] => [0000] so 8 + 8 = 0
+	- 1000(s) + 1000(s) = [10000] => [0000] so -8 + -8 = 0
+	
+	two's complement
+	- 1100 == 11100 == 111100 ...... signed matters!
