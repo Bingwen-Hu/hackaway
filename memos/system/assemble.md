@@ -20,3 +20,18 @@
     - %al   8-bit  byte
 
 
+### operand specifiers
+
+    - Type        Form            Operand-value         Name
+    - *********************************************************************
+    - Immediate   $Imm             Imm                   Immediate
+    - Register    r                R[r]                  Register
+    - Memory      Imm              M[Imm]                Absolute
+    - Memory      (r)              M[R[r]]               Indirect
+    - Memory      Imm(r)           M[Imm+R[r]]           Base+displacement
+    - Memory      (rb, ri)         M[R[rb]+R[ri]]        Indexed
+    - Memory      Imm(rb, ri)      M[Imm+R[rb]+R[ri]]    Indexed
+    - Memory      (, ri, s)        M[R[ri]*s]            Scaled Indexed
+    - Memory      Imm(, ri, s)     M[Imm+R[ri]*s]        Scaled Indexed
+    - Memory      (rb, ri, s)      M[R[rb]+R[ri]*s]      Scaled Indexed
+    - Memory      Imm(rb, ri, s)   M[Imm+R[rb]+R[ri]*s]  Scaled Indexed
