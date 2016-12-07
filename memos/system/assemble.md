@@ -23,7 +23,7 @@
 
 ### operand specifiers
 
-     Type        Form            Operand-value         Name
+     Type        Form             Operand-value         Name
      *********************************************************************
      Immediate   $Imm             Imm                   Immediate
      Register    r                R[r]                  Register
@@ -39,7 +39,7 @@
 
 ### instructions
 
-    Instruction        Effect                         Description
+    Instruction        Effect                     Description
     *********************************************************************
     pushq S            R[%rsp] <- R[%rsp]-8;      Push quad word
                        M[R[%rsp]] <- S
