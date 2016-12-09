@@ -25,8 +25,8 @@
 
       Slots with :INSTANCE allocation:
         NAME      = NORTH-MAPLE
-	PROPERTY  = WIND
-	LEADER    = ANDIAN
+        PROPERTY  = WIND
+        LEADER    = ANDIAN
 
 ### the Inspect command (entry a new REPL for inspect)
 
