@@ -53,3 +53,9 @@
 	
 	two's complement
 	- 1100 == 11100 == 111100 ...... signed matters!
+
+### digital system components
+
+        - combinational logic: compute functions on the bits
+	- memory elements: store bits
+	- clock signals: regulate the updating of the memory elements
