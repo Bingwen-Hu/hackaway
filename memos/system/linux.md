@@ -44,3 +44,21 @@
     fd = mkstemp(template);
     //some code ...
     unlink(template); 
+
+### Program
+
+    environments:
+
+    extern char etext, edata, end; // in C 
+    etext   the boundary address of text-segment
+    edata   the boundary address of init-data-segment
+    end     the boundary address of uninit-data-segment, so as the beginning
+    	    address of heap
+    
+    extern char **environ; // in C
+    environ     contains environment variable in the format home=/home/mory
+    		every key=value pair is a string (end with NULL)
+    relative functions:
+    getenv, putenv, setenv, unsetenv /* not standard */ clearenv
+    
+    
