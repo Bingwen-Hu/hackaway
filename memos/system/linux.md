@@ -61,3 +61,15 @@
     getenv, putenv, setenv, unsetenv /* not standard */ clearenv
     
     
+### Memory
+
+    base function:
+    brk        set the program break to the location specified by the param.
+    sbrk       increase the number of heap according to the param
+    malloc family:
+    malloc     accept a size_t and return the pointer of the block
+    calloc     accept size_t and num to alocate a series of blocks
+    memalign   align the memory block
+    alloca     allocate memory on stack, should not be call with free useful
+    when calling setjmps.
+    free       free the memory allocate by the malloc family except alloca
