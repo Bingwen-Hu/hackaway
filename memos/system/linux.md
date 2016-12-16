@@ -29,7 +29,7 @@
     ==
     ==> flags & O_SYNC to see whether the flags bit is set!
     
-### some notes
+### Some notes
 
     fcntl is a very fancy function! it can be used to:
     - retrieve access mode of the file using F_GETFL
@@ -71,5 +71,50 @@
     calloc     accept size_t and num to alocate a series of blocks
     memalign   align the memory block
     alloca     allocate memory on stack, should not be call with free useful
-    when calling setjmps.
+               when calling setjmps.
     free       free the memory allocate by the malloc family except alloca
+
+### Users and Groups
+
+    the password file : /etc/passwd
+    relative functions: getpwnam, getpwuid
+    struct passwd:
+    username: pw_name
+    password: pw_passwd
+    user ID : pw_uid
+    Group ID: pw_gid
+    Comments: pw_gecos
+    home Dir: pw_dir
+    login Sh: pw_shell
+    Note: return value: pwd==NULL & errno==0 ==> Not found
+
+    the group file : /etc/group
+    relative functions: getgrnam, getgrgid
+    struct group:
+    grp name: gr_name
+    password: gr_passwd
+    group ID: gr_gid
+    membeLst: gr_mem
+
+    the shadow file : /etc/shadow
+    relative functions: getspnam
+    struct spwd:
+    username: sp_namp
+    encrypwd: sp_pwdp
+    lastchg : sp_lstchg
+    mindays : sp_min
+    maxdays : sp_max
+    warndays: sp_warn
+    inactive: sp_inact
+    expired : sp_expire
+    reserved: sp_flag
+
+    other functions:
+    crypt: encrypted password
+    getpass: ask user to input password
+    getpwent/getgrent/getspent: beginning iterate the specified file
+    setpwent/setgrent/setspent: set the pointer to the beginning
+    endpwent/endgrent/endspent: close the iteration
+    
+    
+    
