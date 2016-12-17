@@ -135,3 +135,11 @@
     setuid/setgid/seteuid/setugid/setreuid/setregid
     linux-specific-functions: setresuid/setresgid/setfsuid/setfsgid
     
+### System limits
+
+    there are system limits exist, obviously.
+    you can always use sysconf, pathconf or fpathconf to get the limits at
+    runtime
+    the argument to sysconf look like this: _SC_ARG_MAX, _SC_XXX_MIN
+    the argument to pathconf or fpathconf : _PC_NAME_MAX, _PC_PATH_MAX,
+    _PC_PIPE_BUF only three?
