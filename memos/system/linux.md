@@ -116,5 +116,22 @@
     setpwent/setgrent/setspent: set the pointer to the beginning
     endpwent/endgrent/endspent: close the iteration
     
+### Process credentials
+
+    real-user-ID indicates to whom the file/program belongs to
+    effective-UID determines the permission when program runs
+    saved-user-ID initially same as effective-UID
+
+    NOTE: saved-user-ID is designed for use with set-user-id programs
+    a example program is provide in /hackaway/memos/C/proc-cred.c
+    to see the result. first compile it normally and the result is identical
+    then run the following commands you can see the change.
+    linux:~> sudo gcc proc-cred.c -o proc-cred // make owner root
+    linux:~> sudo chmod u+s proc-cred // set-user-ID
     
+    file-system-id is always the same as EUID except calling specific sys-call
+    functions:
+    getuid/geteuid/getgid/getegid
+    setuid/setgid/seteuid/setugid/setreuid/setregid
+    linux-specific-functions: setresuid/setresgid/setfsuid/setfsgid
     
