@@ -143,3 +143,34 @@
     the argument to sysconf look like this: _SC_ARG_MAX, _SC_XXX_MIN
     the argument to pathconf or fpathconf : _PC_NAME_MAX, _PC_PATH_MAX,
     _PC_PIPE_BUF only three?
+
+### File I/O buffer
+
+    setvbuf(FILE *stream, char *buf, int mode, size_t size)
+    mode:
+    _IONBF: stderr
+    _IOLBF: terminate
+    _IOFBF: disk I/O
+
+    setbuf(FILE *stream, char *buf) just as
+    setvbuf(fp, buf, (buf != NULL) ? _IOFBF : _IONBF, BUFSIZ)
+
+    setbuffer(FILE *stream, char *buf, size_t size) just as
+    setvbuf(fp, buf, (buf != NULL) ? _IOFBF : _IONBF, size)
+
+    stdio and kernel buffer are different!
+    fflush: force stdio buffer flush
+    fsync, fdatasync, sync: force kernel buffer flush
+
+    the I/O procedure:
+    User data => stdio library calls => stdio buffer => I/O system calls
+    => kernel buffer cache => kernel-init write => disk
+    
+    Direct I/O
+    Direct I/O normally cost!
+    direct I/O is intended only for applications with specialized I/O
+    requirements such as database systems that perform their own caching I/O optimizations
+    
+    
+    
+   
