@@ -1,12 +1,14 @@
-### definiton
+### definition
 Heap is a complete binary tree, that is, all levels of the tree, except
 possibly the last one are fully filled, and, if the last level of the tree is
 not complete, the nodes of that level are filled from left to right.
 Heap have two property (I found it confusing)
 
--+length: length of the array
--+heapsize: number of elements in the heap
--+we have: 0 <= heapsize <= length
+-length: length of the array
+
+-heapsize: number of elements in the heap
+
+-we have: 0 <= heapsize <= length
 
 
 ### basic function
@@ -32,10 +34,12 @@ height: the number of line from the node to the leave, we call it is the
 height of the node. So, the height of the heap is the height of the root
 
 ### some notes:
--+Given height h, the elements n is in range of [power(2, h), power(2, h+1)-1]
--+The height of a n-elements heap is floor(log2(n))
--+When indicate the heap in an array, the index of the leaves are n/2+1, n/2+2
-.. n
+
+-Given height h, the elements n is in range of [power(2, h), power(2, h+1)-1]
+
+-The height of a n-elements heap is floor(log2(n))
+
+-Given a n-heap in array the index of the leaves are n/2+1, n/2+1, .. n
 
 ### useful functions
 
