@@ -8,14 +8,22 @@ val immutable = "Mory"
 mutable = mutable.drop(3)
 immutable = immutable.drop(3) // error!
 
+// the value of a variable can be change but not the type!
+var imInt: Int = 4
+imInt = 10
+imInt = "wrong!"
 
 // every thing has a value
-
 val happy = false
 val x = if (happy) "I am happy" else "so sad" // x = "so sad"
 
+// type convertion
+val imInt: Int = 4
+val imDouble: Double = imInt
+val imInt2: Int = imDouble.toInt
+
 // ==================== Function ====================
-// every parameter must have a type but the return type is not necessary 
+// every parameter must have a type but the return type is not necessary
 // unless the function is recursive
 def abs(x: Double) = if (x >= 0) x else -x
 def fac(n: Int) = {
@@ -52,7 +60,6 @@ for (i <- 0 to 1; c <- "hello") yield (c + i).toChar
 // Note that UNTIL does not contain the last index, TO does
 for (i <- 1 until 10 if i * i < 10) yield i
 
-
 // C-style while
 var n = 10
 var r = 0
@@ -69,4 +76,38 @@ val b = ArrayBuffer[Int]() // () means init value (1) is ok!
 b += 2
 b += 3
 nb = b.toArray // so get an Array
+
+// ==================== Class hierarchy ====================
+// Any
+// ├── AnyRef
+// │   ├── Classes       |
+// │   ├── Collections   |── Null ──── Nothing (All)
+// │   └── String        |
+// └── AnyVal
+//     ├── Boolean
+//     ├── Char
+//     └── Numeric-Type
+//
+// Nothing is the type of return
+// Null is the type of an empty String
+
+
+// ==================== Pattern Match ====================
+val y = 1
+val x = 2
+
+val right = x > y match {
+  case true => x
+  case false => y
+}
+
+// the name sa can be anything valid -- Just represent the status!!
+val status = "ok"
+val message = status match {
+  case sa if sa != null => println(s"Received '$sa'")
+  case other => println("what a error")
+}
+
+// ==================== String interpolation ====================
+
 
