@@ -90,4 +90,100 @@
 
 
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; OK. What happen if we want to test more than one function?
 
+;; for example
+(defun test-* ()
+  (check
+   (= (* 2 2) 4)
+   (= (* 3 5) 15)))
+
+;; It's easy, right? Just a function!
+(defun test-arithmetic ()
+  (test-*)
+  (test-+))
+
+;; when there are lots of tests, it will be very difficult to figure out
+;; which test in which function fail
+;; if the test can report its function name, it will be helpful
+
+;; Problem 6: update report function to provide the function name of test
+;; STEP 6: we need a dynamic variable
+(defvar *test-name* nil)
+
+;; update the print function
+(defun report-result (result form)
+  (format t "~:[FAIL~;pass~] ... ~a: ~a~%" result *test-name* form)
+  result)
+
+;; test function should modify *test-name*
+(defun test-+ ()
+  (let ((*test-name* 'test-+))
+    (check
+      (= (+ 1 2) 3)
+      (= (+ 1 2 3) 6)
+      (= (+ 1 -4) -2))))
+
+(defun test-* ()
+  (let ((*test-name* 'test-*))
+    (check
+      (= (* 2 2) 4)
+      (= (* 3 5) 15))))
+;; run the test-arithmetic we get this 
+;; pass ... TEST-*: (= (* 2 2) 4)
+;; pass ... TEST-*: (= (* 3 5) 15)
+;; pass ... TEST-+: (= (+ 1 2) 3)
+;; pass ... TEST-+: (= (+ 1 2 3) 6)
+;; FAIL ... TEST-+: (= (+ 1 -4) -2)    
+
+;; it seem good. But it is painful to write a lot of boilplate code!
+;; We have to modify every test-function!
+;; All the repetition is bad!
+;; where there is a repetition, there an abstraction is needed!
+
+;; what we try to catch is a DEFUN and some boilplate, let's write a macro!
+(defmacro deftest (name parameters &body body)
+  `(defun ,name ,parameters
+     (let ((*test-name* ',name))
+       ,@body)))
+
+;; using deftest to rewrite test function --- abstraction over function!
+(deftest test-+ ()
+  (check
+      (= (+ 1 2) 3)
+      (= (+ 1 2 3) 6)
+      (= (+ 1 -4) -2)))
+
+(deftest test-* ()
+  (check
+    (= (* 2 2) 4)
+    (= (* 3 5) 15)))
+
+;; can we do better?
+;; when our test function is a part of some big project, it is far from enough
+;; to know which test fail but which function contains the test!
+;; Problem 7: we need a test layer
+;; STEP 7: save every function name in the dynamic variable
+
+;; override!
+(defmacro deftest (name parameters &body body)
+  `(defun ,name ,parameters
+     (let ((*test-name* (append *test-name* (list ',name))))
+       ,@body)))
+
+;; using the Deftest to override the test-arithmetic
+(deftest test-arithmetic ()
+  (combine-results
+    (test-*)
+    (test-+)))
+
+;; now we get:
+
+;; CL-USER> (test-arithmetic)
+;; pass ... (TEST-ARITHMETIC TEST-*): (= (* 2 2) 4)
+;; pass ... (TEST-ARITHMETIC TEST-*): (= (* 3 5) 15)
+;; pass ... (TEST-ARITHMETIC TEST-+): (= (+ 1 2) 3)
+;; pass ... (TEST-ARITHMETIC TEST-+): (= (+ 1 2 3) 6)
+;; FAIL ... (TEST-ARITHMETIC TEST-+): (= (+ 1 -4) -2)
+
+;; Perfect!
