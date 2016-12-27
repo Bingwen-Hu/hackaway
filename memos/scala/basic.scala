@@ -109,5 +109,20 @@ val message = status match {
 }
 
 // ==================== String interpolation ====================
+// in fact we have seen it last segment
+
+val approx = 355/113f
+println("Pi, using 355/113, is about " + approx + ".")
+
+// using string interpolation
+// using braces when necessary 
+println(s"Pi, using 355/113 is about $approx")
+
+val fruit = "apple"
+println(s"how do you like ${fruit}s")
+
+// it seems that f-literal is larger than s-literal
+println(f"how do you like $fruit%.3s")
+println(f"Pi, using 355/113 is about $approx%.3f")
 
 
