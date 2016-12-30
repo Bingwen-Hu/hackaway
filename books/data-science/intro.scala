@@ -8,8 +8,4 @@
 
 // Vector
 
-def vector_add(v: List[Double], w: List[Double]): List[(Double, Double)] = {
-  v zip w
-}
-
 

@@ -126,3 +126,138 @@ println(f"how do you like $fruit%.3s")
 println(f"Pi, using 355/113 is about $approx%.3f")
 
 
+// ==================== Regular Expressions ====================
+// Regular in Scala is very different from others!
+
+val input = "Enjoying this apple 3.1415926 times today"
+val pattern = """.* apple ([\d.]+) times .*""".r // look there is a 'r' in tail
+val pattern(amountText) = input                  // very strange usage!
+val amount = amountText.toDouble
+
+// ==================== Type operations ====================
+
+5.asInstanceOf[Long] // convert!
+4.getClass           // show!
+4.isInstanceOf[Int]  // boolean!
+'A'.hashcode         // useful in hashbase functions
+20.toDouble          // convert!
+20.toString          // number to string
+List(1, 2, 3.0).toVector
+
+// ==================== Tuple & Map ====================
+val info = (5, "Korben", true)
+val name = info._2
+
+// another way using '->'
+
+val red = "red" -> "0xFF0000"
+val reversed = red._2 -> red._1
+
+val m = Map("AAPL" -> 597, "MSFT" -> 40)
+val n = m - "AAPL" + ("GOOG" -> 123)
+
+// mutable and immutable
+// collection.immutable.List -> collection.mutable.Buffer
+// collection.immutable.Set -> collection.mutable.Set
+// collection.immutable.Map -> collection.mutable.Map
+
+// ==================== Function ====================
+// basic
+def max(x: Int, y: Int): Int = if (x >= y) x else y
+
+// Type parameter 
+def identity[A](a: A): A = a
+
+// nest functions
+// the underscore indicate func is a function
+def addfunction(x: Int) = {
+  def func(added: Int) = added + x
+  func _
+}
+// the same as 
+def addfunction(x: Int) = {
+  def func(added: Int) = added + x
+  func(_)
+}
+
+// default and name parameters
+def greet(prefix: String, name: String) = s"$prefix $name"
+greet(prefix = "boy", name = "mory")
+
+def greet(prefix: String = "Boy", name: String) = s"$prefix $name"
+greet(name = "Mory")
+
+// vararg parameters
+def isum(xs: Int*) = {
+  var total = 0
+  for (x <- xs) total += x
+  total
+}
+isum(1, 2, 3, 5)
+
+// parameter groups and curry function
+// largerThan7 curry one parameter and become a partially function
+// wait for another parameter to get in
+def max(x: Int)(y: Int) = if (x >= y) x else y
+def largerThan7: Int => Int = max(7) _
+
+
+// high order functions
+def safeStringOps(s: String, f:String => String) = {
+  if (s != null) f(s) else s
+}
+safeStringOps("Good", _.reverse)
+
+// function literals with placeholder
+val doubler : Int => Int = (x: Int) => x * 2
+val doubler2: Int => Int = _ * 2
+
+
+// By-name parameter
+// by-name parameter is confusing but is useful when we want a parameter can
+// accept either a value or a function
+// when a value is passed to a by-name parameter, nothing special
+// when a fucntion is passed than every time the function is referred, it called
+
+def doubles(x: => Int) = { // special syntax
+  println("Now doubling " + x)
+  x * 2
+}
+
+def f(i: Int) = { println(s"Hello from f($i)"); i}
+
+
+
+// finally part of function: high-order with literal
+
+def safeStringOps(s: String, f:String => String) = {
+  if (s != null) f(s) else s
+}
+val uuid = java.util.UUID.randomUUID.toString
+val timeUUID = safeStringOps(uuid, {s =>
+  val now = System.currentTimeMillis
+  val timed = s.take(24) + now
+  timed.toUpperCase
+})
+
+// using parameter group we can simplify
+val timeUUID = safeStringOps(uuid) {s =>
+  val now = System.currentTimeMillis
+  val timed = s.take(24) + now
+  timed.toUpperCase
+}
+
+// another example using by-name parameter
+// show the beauty of scala
+def timer[A](f: => A): A = {
+  def now = System.currentTimeMillis
+  val start = now; val a = f; val end = now
+  println(s"Excuted in ${end - start} ms")
+  a
+}
+
+val veryRandomAmount  = timer {
+  util.Random.setSeed(System.currentTimeMillis)
+  for (i <- 1 to 100000) util.Random.nextDouble
+  util.Random.nextDouble
+}
