@@ -24,6 +24,7 @@ val Anna = users find (_.name contains "a")
 val greet = Anna map (_.greet) getOrElse "hi"
 
 // inheritance and polymorphism
+// In JVM one class can only inherited one class
 class A {
   def hi = "Hello from " + getClass.getName
   override def toString = getClass.getName
@@ -120,7 +121,6 @@ val tripleMe = new Multiplier(3)
 val tripled = tripleMe.apply(10)
 val tripled2 = tripleMe(10)
 
-
 // lazy variable is useful when we don't want to instantiate all
 class RandomPoint {
   val x = {println("creating x"); util.Random.nextInt}
@@ -129,3 +129,63 @@ class RandomPoint {
 
 val p = new RandomPoint()
 println(s"Location is ${p.x}, ${p.y}")
+
+// ==================== Object ====================
+// object is a kind of special class, known as singelton in other lang.
+
+// object is lazy also
+object Hello { println("In hello"); def hi = "hi"}
+println(Hello.hi)
+
+// again
+object HtmlUtils {
+  def removeMarkup(input: String) = {
+    input
+      .replaceAll("""</?\w[^>]*>""", "")
+      .replaceAll("<.*>","")
+  }
+}
+val html = "<html><body><h1>Introduction</h1></body></html>"
+val text = HtmlUtils.removeMarkup(html)
+
+// ==================== case class and traits ====================
+// case class is the class that contain several predefine methods
+// traits class can be extend dynamically with an instant
+
+// auto generated method in case class:
+// apply copy equals hashCode toString unapply
+
+case class Character(name: String, isThief: Boolean)
+val h = Character("Hadrian", true)
+val r = h.copy(name = "Royce")
+println(h == r)
+h match {
+  case Character(x, true) => s"$x is a thief"
+  case Character(x, false) => s"$x is not a thief"
+}
+
+
+// traits class is not object
+trait HtmlUtils {
+  def removeMarkup(input: String) = {
+    input
+      .replaceAll("""</?\w[^>]*>""", "")
+      .replaceAll("<.*>","")
+  }
+}
+
+class Page(val s: String) extends HtmlUtils {
+  def asPlainText = removeMarkup(s)
+}
+
+// use the functions in trait directly
+new Page("<html><body><h1>Introduction</h1></body></html>").asPlainText
+
+// self types is special trait class. it constraint the extends in some way
+class A {def hi = "hi"}
+trait B {self: A =>
+  override def toString = "B: " + hi
+}
+
+class C extends B // extends directly go wrong
+class C extends A with B // this is ok
