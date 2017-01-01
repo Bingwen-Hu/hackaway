@@ -41,3 +41,23 @@
 		  (list (car b) (third b))
 		  nil))
 	  bindforms))
+
+;; two version of and
+;; easy to read but low effection
+(defmacro our-and (&rest args)
+  (case (length args)
+    (0 t)
+    (1 (car args))
+    (t `(if ,(car args)
+	    (our-and ,@(cdr args))))))
+       
+;; high performance not very intution
+(defmacro our-andb (&rest args)
+  (if (null args)
+      t
+      (labels ((our-expander (rest)
+		 (if (cdr rest)
+		     `(if ,(car rest)
+			  ,(our-expander (cdr rest)))
+		     (car rest))))
+	(our-expander args))))
