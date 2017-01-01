@@ -61,3 +61,9 @@
 			  ,(our-expander (cdr rest)))
 		     (car rest))))
 	(our-expander args))))
+
+
+;; let's insert something new: Symbol-macro
+(+ (progn (print "Howdy") 1) 2) 	; => "Howdy" 3
+(symbol-macrolet ((hi (progn (print "Howdy") 1))))
+;; symbol-macro 'hi' is replace every where by its value
