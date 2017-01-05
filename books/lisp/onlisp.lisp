@@ -67,3 +67,12 @@
 (+ (progn (print "Howdy") 1) 2) 	; => "Howdy" 3
 (symbol-macrolet ((hi (progn (print "Howdy") 1))))
 ;; symbol-macro 'hi' is replace every where by its value
+
+
+;; another with-gensym
+
+(defmacro with-gensyms (syms &body body)
+  `(let ,(mapcar #'(lambda (s)
+		     `(,s (gensym)))
+		 syms)
+     ,@body))
