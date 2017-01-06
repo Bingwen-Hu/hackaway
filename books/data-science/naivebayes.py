@@ -37,7 +37,7 @@ def tokenize(message):
 def count_words(training_set):
     """trainiing set consists of pairs (message, is_spam)"""
     counts = defaultdict(lambda:[0, 0])
-    for message, is_spam iin trainiing_set:
+    for message, is_spam in trainiing_set:
         for word in tokenize(message):
             counts[word][0 if is_spam else 1] += 1
     return counts
@@ -45,7 +45,7 @@ def count_words(training_set):
 def word_probabilities(counts, total_spams, total_non_spams, k=0.5):
     "turn the word_counts into a list of triplets w, p(w|span), p(w|~spam)"
     return [(w,
-             (spam+k) / (total_spams + 2*k],
+             (spam+k) / (total_spams + 2*k),
              (non_spam+k) / (total_non_spams + 2*k))
             for w, (spam, non_spam) in counts.iteritems()]
 
