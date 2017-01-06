@@ -4,7 +4,7 @@
 		module="buildingscalarecommendationengine_2.11"
 		revision="1.0"
 		status="integration"
-		publication="20170105230639"
+		publication="20170106210256"
 	>
 		<description>
 		BuildingScalaRecommendationEngine
@@ -34,6 +34,6 @@
 	<dependencies>
 		<dependency org="org.scala-lang" name="scala-compiler" rev="2.11.8" conf="scala-tool->default,optional(default)"/>
 		<dependency org="org.scala-lang" name="scala-library" rev="2.11.8" conf="scala-tool->default,optional(default);compile->default(compile)"/>
-		<dependency org="org.apache.spark" name="spark-mllib_2.10" rev="2.1.0" conf="compile->default(compile)"/>
+		<dependency org="org.apache.spark" name="spark-mllib_2.10" rev="1.3.0" conf="compile->default(compile)"/>
 	</dependencies>
 </ivy-module>
