@@ -60,3 +60,8 @@ def logistic_log_gradient(x, y, beta):
                    for x_i, y_i in zip(x, y)])
 
 
+# apply the model
+
+beta_bar = maximize_stochastic(logistic_log_likelihood_i,
+                               logistic_log_gradient_i,
+                               x_train, y_train, beta_0)
