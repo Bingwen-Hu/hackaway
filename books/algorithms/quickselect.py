@@ -4,17 +4,19 @@
 
 # there is also a partition
 
+def swap(data, index1, index2):
+    data[index1], data[index2] = data[index2], data[index1]
+
 def partition(data, left, right, pivotIndex):
     "data is the unordered list"
     pivotValue = data[pivotIndex]
-    data[pivotIndex], data[right] = data[right], data[pivotIndex]
+    swap(data, pivotIndex, right)
     storeIndex = left
     for i in range(left, right):
         if data[i] < pivotValue:
-            data[i], data[storeIndex] = data[storeIndex], data[i]
+            swap(data, i, storeIndex)
             storeIndex += 1
-    data[right], data[storeIndex] = data[storeIndex], data[right]
-
+    swap(data, right, storeIndex)
     return storeIndex
 
 """ Returns the k-th smallest element of list within left..right inclusive

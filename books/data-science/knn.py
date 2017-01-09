@@ -5,9 +5,9 @@ they are LABELED at that time.
 Seconnd, count the most common class. If there are two or more classes have the
 same number, take some action and retry (such as discard the farthest point)
 Finally we are sure to get the class of the input points.
+
+KNN is a lazy algorithms because it waits for input and then compute.
 """
-
-
 
 import numpy as np
 from collections import Counter
