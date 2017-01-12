@@ -73,3 +73,13 @@ x                                       ; value
 
 
 
+;;; function match
+
+(defn strange-adder 
+  ([x] (strange-adder x 1))
+  ([x y] (+ x y)))
+
+;;; using function as parameter
+(defn call-twice [f x]
+  (f x)
+  (f x))
