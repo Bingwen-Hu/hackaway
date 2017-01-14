@@ -1,0 +1,28 @@
+many times two random variable is corelative, we can use a interaction
+variable to solve such a problem.
+
+eg: X1 and X2 are corelative
+model 1: f = beta0 + X1 * beta1 + X2 * beta2
+model 2: f = beta0 + X1 * beta1 + X2 * beta2 + X1 * X2 * beta3
+model 2 is expected to perfom better.
+
+when the model is not a linear model, we can use polynormal regression
+
+eg: the model is not a simple linear model
+model 1: f = beta0 + X * beta1
+model 2: f = beta0 + X * beta1 + X^2 * beta2
+model 2 is expected to perform better.
+
+==================== variable selection ====================
+Forward selection: start from null model. every time we choose a variable that
+has a least RSS until we want to stop according to some standard.
+
+Backward selection: let all the variable in the model, every time remove the
+variable that has a largest p-value until some standard is met.
+
+Mixed selection: Because every time a variable is added, the related RSS may
+change. So we add a variable and compute the p-value, remove the variable
+whose p-value is too large.
+
+
+
