@@ -9,6 +9,9 @@ If n is small and p is big, a simple linear model performs better.
 If the data show large variance, it means the points locate far away from the
 average.if we choose a non-linear model, it may lead to high variance.
 
+MSE is the most common metric we use to predicate whether the model perform
+well or not.
+MSE = 1/n * sum -> (y_i - y_p) ^ 2
 
 ==================== least squared error ====================
 RSS: residual sum of squares
@@ -16,7 +19,6 @@ say we have a model: y_hat = beta0 + X * beta1
 the error for every prediction: e_i = y - y_hat
 eliminate the sum of squared error: eliminate -> sum -> e_i^2
 let RSS be the least we can get the value of beta0 and beta1
-
 
 TSS: total sum of squares
 let y_bar = average(y)
@@ -26,5 +28,8 @@ R square: donate how much our model can explain the variance of the real model
 R^2 = (TSS - RSS) / TSS
 RSS donates the error that can't be explained by our model. So if R square is
 near 1, our model performs well.
+
+RSE: residual sum of standard error relate to RSS, measure how well the
+coefficient we compute.
 
 
