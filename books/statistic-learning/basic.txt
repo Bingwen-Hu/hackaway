@@ -1,0 +1,30 @@
+Bais is a metrc that represents how well the model fit the training points.
+Variance measures the extent the model will change if we change our training
+points
+
+n donates the number of input data, p donates the number of random variable we
+choose. 
+If n is large and p is small, a non-linear model is better choice.
+If n is small and p is big, a simple linear model performs better.
+If the data show large variance, it means the points locate far away from the
+average.if we choose a non-linear model, it may lead to high variance.
+
+
+==================== least squared error ====================
+RSS: residual sum of squares
+say we have a model: y_hat = beta0 + X * beta1
+the error for every prediction: e_i = y - y_hat
+eliminate the sum of squared error: eliminate -> sum -> e_i^2
+let RSS be the least we can get the value of beta0 and beta1
+
+
+TSS: total sum of squares
+let y_bar = average(y)
+then TSS = sum -> (y_i - y_bar)^2
+
+R square: donate how much our model can explain the variance of the real model
+R^2 = (TSS - RSS) / TSS
+RSS donates the error that can't be explained by our model. So if R square is
+near 1, our model performs well.
+
+
