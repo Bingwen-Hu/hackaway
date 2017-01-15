@@ -1,0 +1,20 @@
+In linear regression, the value of y is range from 0 to +Inf, but there are
+times when we want our predict fall into [0, 1], usually a probability.
+
+==================== logistic regression ====================
+logistic function: f = exp(x) / (1 + exp(x))
+here, if there are two variable we have chosed. for example:
+y = beta0 + x1 * beta1 + x2 * beta2
+we found our model like:
+f(beta) = exp(y) / (1 + exp(y)) 
+where y = beta0 + x1 * beta1 + x2 * beta2
+for every event X we have
+p(X) = exp(y) / (1 + exp(y)) as the probability of event X and
+p(X) / (1 + p(X))  as the happen ratio of X
+
+==================== LDA ====================
+when there are multiclass with multivariable using LDA
+LDA assume that for every p sharing the same variance and they are independent
+when this assumption are false, LDA is not good. 
+QDA is a more complex model than LDA, it has a higher variance and lower bias
+compared to LDA
