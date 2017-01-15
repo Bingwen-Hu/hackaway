@@ -1,0 +1,11 @@
+Just some notes:
+
+Random forest: we say we have the number of p variable, but everytime we train
+a subtree, we use a part of them say m, m < p. Typically, m = sqrt(p)
+how many subtrees we need? range from 50 to 500 or so. Using CV can pick up a
+approciate number.
+
+Bagging: bagging is similar as random forest, but it use all the variable to
+train subtree.
+
+Boosting: a little complex method. sometimes better than random forest.
