@@ -98,7 +98,7 @@ print(metrics.classification_report(y_test, y_pred,
 print(metrics.confusion_matrix(y_test, y_pred))
 
 
-# ============================== cross validation
+# ============================== cross validation KFold
 from sklearn.cross_validation import cross_val_score, KFold
 from sklearn.pipeline import Pipeline
 clf = Pipeline([('scaler', preprocessing.StandardScaler()), 
@@ -107,9 +107,26 @@ cv = KFold(X.shape[0], 5, shuffle=True, random_state=33)
 scores = cross_val_score(clf, X, y, cv=cv)
 print(scores)
 # the average is the value to estimate the real value
+
+# ============================== cross validation leave one out 
+from sklearn.cross_validation import LeaveOneOut, cross_val_score
 from scipy.stats import sem
+
 def mean_score(scores):
     string = "Mean score: {0:.3f} (+/-{1:.3f})"
     return string.format(np.mean(scores), sem(scores))
 print(mean_score(scores))
 # Mean score: 0.800 (+/-0.038)
+
+def loo_cv(X_train, y_train, clf):
+    loo = LeaveOneOut(X_train[:].shape[0]) # number of rows
+    scores = np.zeros(X_train[:].shape[0])
+    for train_index, test_index in loo:
+        X_train_cv, X_test_cv = X_train[train_index], X_train[test_index]
+        y_train_cv, y_test_cv = y_train[train_index], y_train[test_index]
+        clf.clf.fit(X_train_cv, y_train_cv)
+        y_pred = clf.predict(X_test_cv)
+        scores[test_index] = metrics.accuracy_score(y_test_cv.astype(int), y_pred.astype(int))
+    print("Mean score: {0:.3f} {+/-{1:.3f}}".format(npp.mean(scores), sem(scores)))
+
+

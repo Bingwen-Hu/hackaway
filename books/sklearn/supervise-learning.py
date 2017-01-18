@@ -150,3 +150,18 @@ graph = pydot.graph_from_dot_data(dot_data.getvalue())
 graph.write_png('pictureName')
 from IPython.core.display import Image
 Image(filename="pictureName")
+
+# ==================== Random Forest
+from sklearn.ensemble import RandomForestClassifier
+clf = RandomForestClassifier(n_estimators=10, random_state=10)
+clf = clf.fit(X_train, y_train)
+loo_cv(X_train, y_train, clf)   # should be imported from basic.py
+
+# ==================== Extra Tree
+# Extra tree is a forest method. It not only selects for each tree a different, random subset
+# of features but also randomly selects the threshold for each decision
+# Note: Extra tree also show the importance var for the predict
+from sklearn import ensemble
+clf_et = ensemble.ExtraTreeRegressor(n_estimators=10, compute_importances=True, random_state=10)
+train_and_evaluate(clf_et, X_train, y_train)
+print(sort(zip(clf_et.feature_importances_, boston.features.names), axis=0))
