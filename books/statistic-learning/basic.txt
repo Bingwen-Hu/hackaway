@@ -33,3 +33,7 @@ RSE: residual sum of standard error relate to RSS, measure how well the
 coefficient we compute.
 
 
+==================== from ESL
+KNN and simple linear model reppresent two extreme of model.
+Because SLM give some assumption so simplify the computation. 
+1-KNN give no assumption so suffer from curve of dimension.
