@@ -26,3 +26,12 @@ whose p-value is too large.
 
 
 
+==================== derivation ====================
+ridge regression: based on least square regression, using l2 penalty, using all the parameters
+is a smooth method. 
+lasso regression: based on least square regression, using l1 penalty, some coefficient will be 
+set to zeros, so only some of the parameters will be use.
+principal components regression: using all the parameters
+partial least square: using all the parameters
+best subset regression: using the Variable Selection method to choose a part of parameters to 
+determine the model.
