@@ -27,13 +27,41 @@ shopInfo_headers = ['shop_id', 'city_name', 'location_id',
            'cate_1_name', 'cate_2_name', 'cate_3_name']
 user_headers = ['user_id', 'shop_id', 'time_stamp']
 
-shop_info = pd.read_csv('shop_info.txt', names=shopInfo_headers)
-user_pay = pd.read_csv("user_pay.txt", names=user_headers, nrows=100000) # the data is too big
-user_view = pd.read_csv("user_view.txt", names=user_headers)
-extra_user_view = pd.read_csv("extra_user_view.txt", names=user_headers)
 
-print("shop_info, user_pay, user_view, extra_user_view: ")
-print(shop_info.shape, user_pay.shape, user_view.shape, extra_user_view.shape)
+
+shop_info = pd.read_csv('data/shop_info.txt', names=shopInfo_headers)
+# user_pay = pd.read_csv("data/user_pay.txt", names=user_headers, nrows=100000) # the data is too big
+user_view = pd.read_csv("data/user_view.txt", names=user_headers)
+extra_user_view = pd.read_csv("data/extra_user_view.txt", names=user_headers)
+
+
+# ==================== deprecated function ==============================================
+def describe_data():
+    print("shop_info, user_pay, user_view, extra_user_view: ")
+    print(shop_info.shape, user_pay.shape, user_view.shape, extra_user_view.shape)
+
+def spilt_data():
+    "use to spilt the user_pay.txt into 2000 dataset by shop_id"
+    all_data = user_pay         # load first
+    for i in range(2000):
+        index = i+1
+        data = all_data[all_data['shop_id']==index]
+        filename = "datad/shop%s.csv" % index
+        data.to_csv(filename)
+# =======================================================================================
+
+def extract_shop_view_data(shop_id):
+    shop_view = user_view[user_view['shop_id']==shop_id]
+    extra_shop_view = extra_user_view[extra_user_view['shop_id']==shop_id]
+    shop_view = shop_view.append(extra_shop_view)
+    return shop_view
+
+def construct_train_test_data(shop_id):
+    neg_data = extra_shop_view_data(shop_id)
+    pathname = "datad/shop%s.csv" % shop_id
+    pos_data = pd.read_csv(pathname, names=user_headers)
+
+        
 
 # ==================== what should be excluded and included?
 # shop_id sbould NOT be in training because it is just identifies shops.
@@ -44,24 +72,27 @@ print(shop_info.shape, user_pay.shape, user_view.shape, extra_user_view.shape)
 # cate_1, cate_2, cate_3 are categories messages. Very important.should be ENCODED
 
 # so train features are: 
-# city_name (decode) 122
+# city_name (encode) 122
 # per_pay
 # score
 # comment_cnt
 # shop_level
-# cate_1 (decode)  6 
-# cate_2 (decode)  17
-# cate_3 (decode)  44
+# cate_1 (encode)  6 
+# cate_2 (encode)  17
+# cate_3 (encode)  44
 
+# NOTE: encoding can be easily handled using the funciton in /hackaway/books/sklearn/advanced-feature.py
 
-# shop_info, user_pay, user_view, extra_user_view: 
-# (2000, 10) (100000, 3) (5556715, 3) (4549929, 3)
+# ==================== how to construct the training set and testing set?
+# Obviously, the user_
+
 
 cities = shop_info['city_name'] # only 122 cities
 locations = shop_info['location_id']
 cate_1 = shop_info['cate_1_name']
 cate_2 = shop_info['cate_2_name']
 cate_3 = shop_info['cate_3_name']
+
 # locations.describe()
 
 # count    2000.000000
