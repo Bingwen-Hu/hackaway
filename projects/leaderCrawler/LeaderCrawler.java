@@ -2,6 +2,7 @@ package leaderCrawler;
 
 // the same package
 import static leaderCrawler.LeaderUtinity.*;
+import static leaderCrawler.LeaderInfoCrawler.*;
 
 // java package
 import java.io.IOException;
@@ -39,35 +40,39 @@ public class LeaderCrawler
 	public static void main(String[] args) 
 			throws ClientProtocolException, IOException
 	{
+	
 		String names = "Â··É";
 		String[] nameList = names.split("\\|");
 		Arrays.stream(nameList)
 			.distinct()
 			.forEach(name -> {
 				try {
-					crawlerMain(name);
+					Document doc = getHtml(baseUrlforName, name);
+					String summary = getSummaryByDoc(doc);
+					testSummary(summary);
+					print("");
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			});
-		// handle the links of a repetitive name saved by secondStrategy()
-		handleLinks();
-		// debug 
-		for (Leader l: leadersList)
-		{
-			l.showExperience();
-			print("============================================\n");
-		}
+//		// handle the links of a repetitive name saved by secondStrategy()
+//		handleLinks();
+//		// debug 
+//		for (Leader l: leadersList)
+//		{
+//			l.showExperience();
+//			print("============================================\n");
+//		}
 	}
 	
 	/**
-	 * Crawl main function: combine all other components.
+	 * core function: combine all other components.
 	 * @param name: name of the leader
 	 * @throws ClientProtocolException
 	 * @throws IOException
 	 */
-	public static void crawlerMain(String name) 
+	private static void strategySelect(String name) 
 			throws ClientProtocolException, IOException
 	{
 		Document doc = getHtml(baseUrlforName, name);
@@ -87,7 +92,7 @@ public class LeaderCrawler
 	 * @param name: name of the leader
 	 * @param doc: doc of the leader
 	 */
-	public static void firstStrategy(String name, Document doc)
+	private static void firstStrategy(String name, Document doc)
 	{
 		Elements para = doc.select("div.para[label-module='para']");
 		List<String> cleanedPara = cleanPara(para, name); 
@@ -103,7 +108,7 @@ public class LeaderCrawler
 	 * @param name: name of a leader
 	 * @param doc: doc of a leader
 	 */
-	public static void secondStrategy(String name, Document doc)
+	private static void secondStrategy(String name, Document doc)
 	{
 		// name is repetitive, so save the links firstly
 		selectLinks(name, doc);
@@ -121,7 +126,7 @@ public class LeaderCrawler
 	}
 	
 	/**
-	 * select the links of a repetitive name using
+	 * core function: select the links of a repetitive name using
 	 * its social description 
 	 * @param name
 	 * @param doc
@@ -141,7 +146,7 @@ public class LeaderCrawler
 	
 	
 	/**
-	 * check the global parameter linksList 
+	 * core function: check the global parameter linksList 
 	 * and save the proper Leader object
 	 * @throws ClientProtocolException
 	 * @throws IOException
@@ -164,7 +169,7 @@ public class LeaderCrawler
 	}
 	
 	/**
-	 * core function: extract the raw html of given leader
+	 * function: extract the raw html of given leader
 	 * @param name: name of the leader
 	 * @return: raw html of the leader in baike.baidu.com
 	 * @throws ClientProtocolException
@@ -184,7 +189,7 @@ public class LeaderCrawler
 	
 
 	/**
-	 * core function: clean the target paragraph
+	 * function: clean the target paragraph
 	 * @param para: initial dirty para
 	 * @param name: name of the leader
 	 * @return a cleaner paragraph
@@ -203,7 +208,7 @@ public class LeaderCrawler
 	
 	
 	/**
-	 * core function: return leader's experience
+	 * function: return leader's experience
 	 * @param cleanedPara: return by cleanPara()
 	 * @return experience: List of date2AndEvent(start, end, event)
 	 */
@@ -245,6 +250,7 @@ public class LeaderCrawler
 		String[] date2 = dateAndEvent[0].split(pat);
 		if (date2.length == 1){
 			date2AndEvent[0] = date2[0];
+			date2AndEvent[1] = "";
 		} else {
 			date2AndEvent[0] = date2[0];
 			date2AndEvent[1] = date2[1];
