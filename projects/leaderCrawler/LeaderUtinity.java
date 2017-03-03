@@ -25,6 +25,8 @@ public class LeaderUtinity
 	}
 	
 	
+	
+	// just for convenient
 	public static <T> void printArray(T[] array)
 	{
 		for (T element : array)

@@ -8,26 +8,31 @@ import java.util.regex.Pattern;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
+/**
+ * @author Mory
+ * Crawler the Basic information of the leader
+ */
 public class LeaderInfoCrawler
 {
 	// 性别
 	private static String gender = "(?<=，|。| )(男|女)(?=，|。| )";
 	
-	// 民族：只能匹配单字
-	private static String race = "([\\u0391-\\uFFE5]族)";
+	// 民族：五十六民族首字
+	private static String race = "([壮藏裕彝瑶锡乌维佤土塔水畲撒羌普怒纳仫苗蒙门毛满珞僳黎拉柯景京基回赫"
+			+ "哈仡高鄂俄独东侗德傣达朝布保白阿汉]\\S{0,2}族)";
 	
 	// 出生于xxxx， xxxx出生
-	private static String birthDate = "(([年月\\d]+)(?=出?生))|(?<=出?生于)([年月\\d]+)";
+	private static String birthDate = "(([年月日\\d]+)(?=出?生))|(?<=出?生于)([年月\\d]+)";
 	
 	// 省级行政单位的首字
 	private static String 
 		nativePlace = "(?<=[，。])([北上天重黑辽吉河湖山陕安浙江福广海四云贵青甘台内宁新西香澳]\\S+?人)";
 	
 	// 1974年1月(加)入((中国)共产)党
-	private static String joinPartyDate = "([年月\\d]+)(?=加?入中?国?共?产?党)";
+	private static String joinPartyDate = "([年月日\\d]+)(?=加?入中?国?共?产?党)";
 	
 	// 1969年1月(加入中国共产党并)参加(革命)工作
-	private static String joinWorkDate = "([年月\\d]+)+(?=([\\u0391-\\uFFE5]+)?参加(革命)?工作)";
+	private static String joinWorkDate = "([年月日\\d]+)+(?=([\\u0391-\\uFFE5]+)?参加(革命)?工作)";
 	
 	// 清华大学人文社会学院马克思主义理论与思想政治教育专业毕业，在职研究生学历，法学博士学位。
 	private static String eduBackground = "(?<=[，。])([\\u0391-\\uFFE5]*?(专业|党校|学历))"
@@ -37,7 +42,7 @@ public class LeaderInfoCrawler
 	private static String position = "(现任|曾任)[\\u0391-\\uFFE5]+";    
 	
 	
-	
+	// for debug
 	public static void testSummary(String summary)
 	{
 		print("name:           "+getName(summary));
