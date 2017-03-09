@@ -3,3 +3,4 @@ ml-100k
 metastore_db
 derby.log
 *.class
+MNIST_data
