@@ -63,7 +63,7 @@ accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
 # run
 tf.global_variables_initializer().run()
-for i in range(1000):
+for i in range(200):
     batch = mnist.train.next_batch(50)
     if 1 % 100 == 0:
         train_accuracy = accuracy.eval(feed_dict={x: batch[0], y_: batch[1], 
