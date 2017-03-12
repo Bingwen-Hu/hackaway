@@ -44,9 +44,30 @@ def one_hot_encode(X):
     return new_X
 
 # prepare the train set and test set
-dataset = pd.read_csv("/home/mory/kaggle/fer/fer2013/fer2013.csv")
+def get_trainset():
+    import pickle
+    all_df = pd.DataFrame(columns=['X', 'y'])
+    filenames = ['%sdata.bat' % s for s in ['5000', '10000', '15000', '20000']]
+    for filename in filenames:
+        with open(filename, "rb") as f:
+            df = pickle.load(f)
+        all_df = all_df.append(df)
+    return all_df
+"""
+dataset = pd.read_csv("/home/mory/kaggle/fer/fer2013/fer2013.csv", names=['pixels', 'emotion'],
+                      nrows=100, skiprows=30000)
+X_test = dataset.pixels
+y_test = dataset.emotion
+# transform
+X_test = str2list(X_test)
+X_test = str2int(X_test)
+y_test = one_hot_encode(y_test)
+"""
+
+"""
 train = dataset[dataset.Usage=='Training']
-test = dataset[dataset.Usage=='PrivateTest']
+test = dataset[dataset.Usage=='PrivateTest'
+
 
 print(train.shape, test.shape)
 
@@ -58,21 +79,21 @@ y_test = test.emotion
 
 # prepare the training data
 X_tr = str2list(X_train)
-X_tr = str2int(X_tr)             # list
+X_tr = str2int(X_tr)             # list 
 y_tr = one_hot_encode(y_train)      # array
 
 X_te = str2list(X_test, 100)
 X_te = str2int(X_te)
 y_te = one_hot_encode(y_test[:100])
 # now m=2000 p=2304 channel=1, output class=7
-
+"""
 
 x = tf.placeholder(tf.float32, [None, 2304])
 y_ = tf.placeholder(tf.float32, [None, 7])
 x_image = tf.reshape(x, [-1, 48, 48, 1])
 
 # define the first net
-w_conv1 = weight_variable([12, 12, 1, 6])
+w_conv1 = weight_variable([5, 5, 1, 6])
 b_conv1 = bias_variable([6])
 h_conv1 = tf.nn.relu(conv2d(x_image, w_conv1) + b_conv1)
 h_pool1 = max_pool_2x2(h_conv1)
@@ -110,9 +131,12 @@ accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 # commit training
 sess = tf.InteractiveSession()
 tf.global_variables_initializer().run()
+
+
+
 def commit_train(times=100):
     for i in range(times):
-        batch_x, batch_y = get_random_block(X_tr, y_tr, 50)
-        train_step.run(feed_dict={x: batch_x, y_: batch_y, keep_prob: 0.5})
-    print("test accuracy %g" % accuracy.eval(feed_dict={x: X_te, y_: y_te,
-                                                        keep_prob: 1.0}))
+        b_x, b_y = get_random_block(X_train, y_train, 50)
+        train_step.run(feed_dict={x: b_x, y_: b_y, keep_prob: 0.5})
+    print("test accuracy %g" % accuracy.eval(feed_dict={x: X_test, y_: y_test,
+                                                    keep_prob: 1.0}))
