@@ -1,3 +1,5 @@
+import tensorflow as tf
+
 def weight_variable(shape):
     initial = tf.truncated_normal(shape, stddev=0.1)
     return tf.Variable(initial)
@@ -7,10 +9,10 @@ def bias_variable(shape):
     return tf.Variable(initial)
 
 def conv2d(x,W):
-    return tf.nn.cov2d(x,W,strides=[1,1,1,1],padding='VALID')
+    return tf.nn.conv2d(x,W,strides=[1,1,1,1],padding='VALID')
 
 def max_pool_2x2(x):
-    return tf.nn.max_pool(x, ksize=[1, 2, 2, 1],strides=[1, 2, 2, 1], padding='SAME')
+    return tf.nn.max_pool(x, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
 
 x = tf.placeholder("float", shape=[None, 96, 96, 1])
 y_ = tf.placeholder("float", shape=[None, 30])
@@ -50,6 +52,7 @@ def model():
 
 import pandas as pd
 import numpy as np
+import random
 
 TRAIN_FILE = '/home/mory/kaggle/keypoints/training.csv'
 TEST_FILE = '/home/mory/kaggle/keypointstest.csv'
@@ -126,7 +129,7 @@ if __name__ == '__main__':
     train_step = tf.train.AdamOptimizer(1e-3).minimize(rmse)
 
 
-    sess.run(tf.initialize_all_variables())
+    tf.global_variables_initializer().run()
     X,y = input_data()
     X_valid, y_valid = X[:VALIDATION_SIZE], y[:VALIDATION_SIZE]
     X_train, y_train = X[VALIDATION_SIZE:], y[VALIDATION_SIZE:]
@@ -134,7 +137,7 @@ if __name__ == '__main__':
     best_validation_loss = 1000000.0
     current_epoch = 0
     TRAIN_SIZE = X_train.shape[0]
-    train_index = range(TRAIN_SIZE)
+    train_index = list(range(TRAIN_SIZE))
     random.shuffle(train_index)
     X_train, y_train = X_train[train_index], y_train[train_index]
 
