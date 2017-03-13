@@ -5,3 +5,7 @@ derby.log
 *.class
 MNIST_data
 *.bat
+log.txt
+*.index
+*.meta
+*.data-00000-of-00001

@@ -136,8 +136,8 @@ for i in range(100):
     current_accuracy = accuracy.eval(feed_dict={x:X_test, y_:y_test, keep_prob: 1.0})
     if best_accuracy < current_accuracy:
         best_accuracy = current_accuracy
-        current_epoch = i
-        saver.save(sess, 'face_model')
+ #       current_epoch = i
+ #       saver.save(sess, 'face_model')
         stop = 0
     else:
         stop += 1
