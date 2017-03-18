@@ -22,7 +22,7 @@ def max_pool_2x2(x):
                           padding='SAME')
 
 def cnn_model():
-    w_conv1 = weight_variable([5, 5, 1, 32])
+    w_conv1 = weight_variable([3, 3, 1, 32])
     b_conv1 = bias_variable([32])
     h_conv1 = tf.nn.relu(conv2d(x, w_conv1) + b_conv1)
     h_pool1 = max_pool_2x2(h_conv1)
@@ -37,11 +37,10 @@ def cnn_model():
     h_conv3 = tf.nn.relu(conv2d(h_pool2, w_conv3) + b_conv3)
     h_pool3 = max_pool_2x2(h_conv3)
 
-    w_conv4 = weight_variable([3, 3, 96, 128])
+    w_conv4 = weight_variable([5, 5, 96, 128])
     b_conv4 = bias_variable([128])
     h_conv4 = tf.nn.relu(conv2d(h_pool3, w_conv4) + b_conv4)
     h_pool4 = max_pool_2x2(h_conv4)
-
 
     # fc mean full connection
     w_fc1 = weight_variable([3 * 3 * 128, 256])
@@ -136,13 +135,6 @@ for i in range(100):
     current_accuracy = accuracy.eval(feed_dict={x:X_test, y_:y_test, keep_prob: 1.0})
     if best_accuracy < current_accuracy:
         best_accuracy = current_accuracy
- #       current_epoch = i
- #       saver.save(sess, 'face_model')
-        stop = 0
-    else:
-        stop += 1
-        if stop>10:
-            break
     print("the accracy is: %.3f" % current_accuracy)
     print("epoch %d, accuracy: %.3f" % (i, current_accuracy), file=outputfile)
 print("best accuracy: %.3f" % best_accuracy, file=outputfile)
