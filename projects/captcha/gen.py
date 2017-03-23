@@ -41,5 +41,6 @@ def filter_dataset(data):
 
 def gen_dataset(nums=10000):
     data = [gen_captcha_text_and_image() for i in range(nums)]
+    data = filter_dataset(data)
     y, X = zip(*data)
     return X, y
