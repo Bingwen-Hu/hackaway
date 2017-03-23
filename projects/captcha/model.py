@@ -60,14 +60,14 @@ def convolutional_layers():
 
     h_conv3 = tf.nn.relu(conv2d(h_pool2, W_conv3) + b_conv3)
     h_pool3 = max_pool(h_conv3, ksize=(2, 2), stride=(2, 2)) # 15x20
-"""
+	"""
     # Fourth layer
     W_conv4 = weight_variable([5, 5, 128, 256])
     b_conv4 = bias_variable([256])
 
     h_conv4 = tf.nn.relu(conv2d(h_pool3, W_conv4) + b_conv4)
     h_pool4 = max_pool(h_conv4, ksize=(2, 2), stride=(2, 2)) # 4x16
-"""
+	"""
     return x, h_pool3, [W_conv1, b_conv1,
                         W_conv2, b_conv2,
                         W_conv3, b_conv3]
