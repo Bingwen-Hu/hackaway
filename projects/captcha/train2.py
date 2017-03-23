@@ -11,7 +11,7 @@ import gen
 
 # training data
 X_data, y_data = gen.gen_dataset(3000)
-
+X_data = np.array(X_data)
 SAMPLES = len(y_data)
 SLICES_POINT = 0.9*SAMPLES
 # df = None 
