@@ -2,7 +2,7 @@
 """
 Created on Tue Mar  7 16:45:41 2017
 
-@author: Administrator
+@author: Mory
 """
 import requests
 import pandas as pd
