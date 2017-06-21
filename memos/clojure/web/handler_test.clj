@@ -1,7 +1,8 @@
 (ns web.handler-test
   (:require [clojure.test :refer :all]
             [ring.mock.request :as mock]
-            [web.handler :refer :all]))
+            [web.handler :refer :all]
+            [cheshire.core :as json]))
 
 (deftest test-app
   (testing "main route"
@@ -58,3 +59,32 @@
       (let [response (app (mock/request :get "/links/are/you/kidding"))]
         (testing "returns a 404"
           (is (= 404 (:status response))))))))
+
+(deftest json-test
+  (testing "the /clojurefy endpoint"
+    (testing "when provided with some valid JSON"
+      (let [example-map {"hello" "json"}
+            example-json (json/encode example-map)
+            response (app (-> (mock/request :post "/clojurefy" example-json)
+                              ;; Note: content type must be set!
+                              (mock/content-type "application/json")))]
+        (testing "return a 200"
+          (is (= 200 (:status response)))
+          (testing "with a clojure map in the body"
+            (is (= (str example-map) (:body response)))))))
+    (testing "when provided with invalid Json"
+      (let [response (app (-> (mock/request :post "/clojurefy" ";:k")
+                              (mock/content-type "application/json")))]
+        (testing "return a 400"
+          (is (= 400 (:status response))))))))
+
+(deftest json-response-test
+  (testing "the /info endpoint"
+    (let [response (app (mock/request :get "/info"))]
+      (testing "returns a 200"
+        (is (= 200 (:status response))))
+      (testing "with a valid JSON body"
+        (let [info (json/decode (:body response))]
+          (testing "containing the expect keys"
+            (is (= #{"Java Version" "OS Name" "OS Version"}
+                   (set (keys info))))))))))
