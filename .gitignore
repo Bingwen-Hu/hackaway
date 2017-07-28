@@ -11,3 +11,5 @@ log.txt
 *.meta
 *.data-00000-of-00001
 target
+*.exe
+*.pdb
