@@ -23,12 +23,23 @@ void add_history(char* unused) {}
 #include <editline/history.h>
 #endif
 
+/* mory define function  */
+long power(long x, long y) {
+  for (int i = 1; i < y; i++) {
+    x = x * x;
+  }
+  return x;
+}
+
+
 /* Use operator string to see which operation is perform */
 long eval_op(long x, char* op, long y) {
   if (strcmp(op, "+") == 0) {return x * y;}
   if (strcmp(op, "-") == 0) {return x - y;}
   if (strcmp(op, "*") == 0) {return x * y;}
   if (strcmp(op, "/") == 0) {return x / y;}
+  if (strcmp(op, "%") == 0) {return x % y;}
+  if (strcmp(op, "^") == 0) {return power(x, y);}
   return 0;
 }
 
@@ -47,8 +58,8 @@ long eval(mpc_ast_t* t) {
   
   /* Iterate the remaining children and combining */
   int i = 3;
-  while (strstr(t-> children[i]->tag, "expr")) {
-    x = eval_op(x, op, eval(t-> children[i]));
+  while (strstr(t->children[i]->tag, "expr")) {
+    x = eval_op(x, op, eval(t->children[i]));
     i++;
   }
 
@@ -69,7 +80,7 @@ int main(int argc, char** argv) {
   mpca_lang(MPCA_LANG_DEFAULT,
     "                                                     \
       number   : /-?[0-9]+/ ;                             \
-      operator : '+' | '-' | '*' | '/' ;                  \
+      operator : '+' | '-' | '*' | '/' | '%' | '^' ;      \
       expr     : <number> | '(' <operator> <expr>+ ')' ;  \
       lispy    : /^/ <operator> <expr>+ /$/ ;             \
     ",
