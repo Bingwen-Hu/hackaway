@@ -32,14 +32,31 @@ long power(long x, long y) {
 }
 
 
+long min(long x, long y) {
+  if (x > y)
+    return y;
+  else
+    return x;
+}
+
+long max(long x, long y) {
+  if (x > y)
+    return x;
+  else 
+    return y;
+}
+
+
 /* Use operator string to see which operation is perform */
 long eval_op(long x, char* op, long y) {
-  if (strcmp(op, "+") == 0) {return x * y;}
+  if (strcmp(op, "+") == 0) {return x + y;}
   if (strcmp(op, "-") == 0) {return x - y;}
   if (strcmp(op, "*") == 0) {return x * y;}
   if (strcmp(op, "/") == 0) {return x / y;}
   if (strcmp(op, "%") == 0) {return x % y;}
   if (strcmp(op, "^") == 0) {return power(x, y);}
+  if (strcmp(op, "min") == 0) {return min(x, y);}
+  if (strcmp(op, "max") == 0) {return max(x, y);}
   return 0;
 }
 
@@ -80,7 +97,8 @@ int main(int argc, char** argv) {
   mpca_lang(MPCA_LANG_DEFAULT,
     "                                                     \
       number   : /-?[0-9]+/ ;                             \
-      operator : '+' | '-' | '*' | '/' | '%' | '^' ;      \
+      operator : '+' | '-' | '*' | '/' | '%' | '^' |      \
+                 \"max\" | \"min\" ;                      \
       expr     : <number> | '(' <operator> <expr>+ ')' ;  \
       lispy    : /^/ <operator> <expr>+ /$/ ;             \
     ",
@@ -97,7 +115,7 @@ int main(int argc, char** argv) {
     /* attempt to parse the user input */
     mpc_result_t r;
     if (mpc_parse("<stdin>", input, Lispy, &r)) {
-      
+
       long result = eval(r.output);
       printf("%li\n", result);
       mpc_ast_delete(r.output);
@@ -111,7 +129,7 @@ int main(int argc, char** argv) {
   }
 
   /* Underfine and delete our parsers */
-  mpc_cleanup(4, Number, Operator, Expr, Lispy);
+  mpc_cleanup(4, Number, Operator,  Expr, Lispy);
   
   return 0;
 }
