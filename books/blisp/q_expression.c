@@ -242,6 +242,21 @@ lval* builtin_join(lval* a) {
   return x;
 }
 
+
+/* Mory define */
+lval* builtin_len(lval* a) {
+  LASSERT(a, a->count == 1,
+          "Function 'len' passed too many arguments");
+  LASSERT(a, a->cell[0]->type == LVAL_QEXPR,
+          "Function 'len' passed incorrect type.");
+
+
+  lval* x = lval_take(a, 0);
+  long len = x->count;
+
+  return lval_num(len);
+}
+
 lval* builtin_op(lval* a, char* op) {
   
   /* Ensure all arguments are numbers */
@@ -293,6 +308,7 @@ lval* builtin(lval* a, char* func) {
   if (strcmp("tail", func) == 0) {return builtin_tail(a);}
   if (strcmp("join", func) == 0) {return builtin_join(a);}
   if (strcmp("eval", func) == 0) {return builtin_eval(a);}
+  if (strcmp("len", func) == 0) {return builtin_len(a);}
   if (strstr("+-/*", func)) {return builtin_op(a, func);}
   lval_del(a);
   return lval_err("unknown function!");
@@ -386,7 +402,7 @@ int main(int argc, char** argv) {
   mpca_lang(MPCA_LANG_DEFAULT,
     "                                                       \
       number : /-?[0-9]+/ ;                                 \
-      symbol : '+' | '-' | '*' | '/' | \"list\"             \
+      symbol : '+' | '-' | '*' | '/' | \"list\" | \"len\"   \
              | \"head\" | \"tail\" | \"join\" | \"eval\" ;  \
       sexpr  : '(' <expr>* ')' ;                            \
       qexpr  : '{' <expr>* '}' ;                            \
