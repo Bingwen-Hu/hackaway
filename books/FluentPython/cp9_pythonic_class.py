@@ -7,8 +7,16 @@ class Vector2d:
     typecode = 'd'
 
     def __init__(self, x, y):
-        self.x = float(x)
-        self.y = float(y)
+        self.__x = float(x)
+        self.__y = float(y)
+
+    @property
+    def x(self):
+        return self.__x
+
+    @property
+    def y(self):
+        return self.__y
 
     # 支持迭代和解构，因此支持__repr__里的*self语法
     def __iter__(self):
@@ -19,7 +27,7 @@ class Vector2d:
         class_name = type(self).__name__
 
         # !r 在这里表示原生打印，即元组仍是元组，字符串仍是字符串
-        return '{}{{!r}, {!r}}'.format(class_name, *self)
+        return '{}({!r}, {!r})'.format(class_name, *self)
 
     def __str__(self):
         return str(tuple(self))
