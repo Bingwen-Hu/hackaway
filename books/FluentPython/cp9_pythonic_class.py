@@ -56,6 +56,9 @@ class Vector2d:
         components = (format(c, fmt_spec) for c in coords)
         return outer_fmt.format(*components)
 
+    def __hash__(self):
+        return hash(self.x) ^ hash(self.y)
+
     # No self argument; instead, the class itself is passed as cls.
     @classmethod
     def frombytes(cls, octets):
