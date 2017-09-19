@@ -73,3 +73,63 @@ class SentenceIterator:
 # A lazy sentence
 #==============================================================================
 
+
+RE_WORD = re.compile('\w+')
+
+class Sentence:
+
+    def __init__(self, text):
+        self.text = text
+
+    def __repr__(self):
+        return 'Sentence(%s)' % reprlib.repr(self.text)
+
+    # generator
+    def __iter__(self):
+        for match in RE_WORD.finditer(self.text):
+            yield match.group()
+
+    # or replace with a genexp
+    # def __iter__(self):
+    #    return (match.group() for match in RE_WORD.finditer(self.text))
+
+#==============================================================================
+# Example: Arithmetic Progression Generator 算术级数
+#==============================================================================
+
+class ArithmeticProgression:
+
+    def __init__(self, begin, step, end=None):
+        self.begin = begin
+        self.step = step
+        self.end = end # None -> "infinite" series
+
+    def __iter__(self):
+        result = type(self.begin + self.step)(self.begin)
+        forever = self.end is None
+        index = 0
+        while forever or result < self.end:
+            yield result
+            index += 1
+            result = self.begin + self.step * index
+
+# using a generator function
+def aritprog_gen(begin, step, end=None):
+    result = type(begin + step)(begin)
+    forever = end is None
+    index = 0
+    while forever or result < end:
+        yield result
+        index += 1
+        result = begin + step * index
+
+
+# using generator tools
+import itertools
+
+def aritprog_gen2(begin, step, end=None):
+    first = type(begin + step)(begin)
+    ap_gen = itertools.count(first, step)
+    if end is not None:
+        ap_gen = itertools.takewhile(lambda n: n < end, ap_gen)
+    return ap_gen
