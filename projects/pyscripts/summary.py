@@ -7,7 +7,10 @@ from utils import preprocess
 def get_summary(soup):
     """ 百度百科名目 """
     summary = soup.find("div", {"class": 'lemma-summary'})
+    if summary == None:
+        return "没找到相关的条目哦！"
     return summary.get_text().strip()
+
 
 def clean_summary(summary):
     pattern = re.compile('\[\d\]|\xa0|\\n')
