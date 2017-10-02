@@ -191,3 +191,52 @@
 (gethash 'name dict)
 (remhash 'name dict)
 
+
+;;; PRINT writes the raw data for READ
+(print 'abc)
+(print (list 1 2 3))
+(print "Mory will win")
+(print 3.545)
+(print (make-hash-table))
+
+;;; prin1 omits new line and space compared to PRINT
+;;; princ is for human
+(print 'a\ bc)
+(prin1 'a\ bc)
+(princ 'a\ BC)
+
+
+;;; file IO
+(setq out-stream (open "my-temp-file" :direction :output))
+(print 'mory\ and\ Ann out-stream)
+(close out-stream)
+(setq in-stream (open "my-temp-file" :direction :input))
+(read in-stream)
+(close in-stream)
+
+
+;;; control the behavior
+
+(setq foo 'Mory)
+(write foo 
+       :pretty t
+       :right-margin 60
+       :case :downcase)
+
+(let ((*print-pretty* t)
+      (*print-right-margin* 60)
+      (*print-case* :downcase))
+  (prin1 foo))
+
+
+;;; define our own syntax
+
+(defun open-bracket-macro-character (stream char)
+  `',(read-delimited-list #\] stream t))
+(set-macro-character #\[ #'open-bracket-macro-character)
+(set-macro-character #\] (get-macro-character #\)))
+
+[1 2 3 4 5]
+
+
+;;; Here is the End! Thanks for Open Source, for freedom!
