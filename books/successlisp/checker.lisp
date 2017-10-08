@@ -77,3 +77,24 @@
 
 
 ;;; very good! waiting for simple macros to wrap this chapter up
+
+
+(defmacro def-i/o (writer-name reader-name (&rest vars))
+  (let ((file-name (gensym))
+        (var (gensym))
+        (stream (gensym)))
+    `(progn 
+       (defun ,writer-name (,file-name)
+         (with-open-file (,stream ,file-name
+                                  :direction :output :if-exists :supersede)
+           (dolist (,var (list ,@vars))
+             (declare (special ,@vars))
+             (print ,var ,stream))))
+       (defun ,reader-name (,file-name)
+         (with-open-file (,stream ,file-name
+                                  :direction :input :if-does-not-exist :error)
+           (dolist (,var ',vars)
+             (set ,var (read ,stream)))))
+       t)))
+
+;;; It seems that in sbcl the hash-table is something strange
