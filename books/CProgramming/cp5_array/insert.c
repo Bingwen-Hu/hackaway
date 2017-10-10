@@ -22,24 +22,24 @@ int main(){
   
   int lst[] = {10, 4, 2, 7, 3, 1, 9};
   int n = 7, temp;
-
+  
   for (int i=1; i<n; i++){
-    for (int j=0; j<i; j++){
+    temp = lst[i];
+    for (int j=i-1; j>=0; j--){
       if (lst[i]<lst[j]){
-        temp = lst[i];
-        for (int k=i-1; k>=j; k--)
-          lst[k+1] = lst[k];
+        lst[j+1] = lst[j];
         lst[j] = temp;
-      }
-    } /* compare the element and the sorted array */
+      } 
+    }
 
     printf("%dth time: ", i);
     for (int k=0; k<n; k++)
       printf("%d ", lst[k]);
     putchar('\n');
-  } /* loop for the element to insert */
-    
+
+  }
   
+
   return 0;
 }
 
@@ -48,17 +48,5 @@ int main(){
 /* Test Note:
 
    when we move back, the index is from high to low
-
-   Analyze the complexity:
-   
-   for (int i=1; i<n; i++){                  n times
-    for (int j=0; j<i; j++){                 i times, i from 1 to n
-      if (lst[i]<lst[j]){                    
-        temp = lst[i];
-        for (int k=i-1; k>=j; k--)           i-j times, from 0 to n-1
-          lst[k+1] = lst[k];
-        lst[j] = temp;
-      }
-    } 
 
  */
