@@ -2,7 +2,7 @@
 
 #define SIZE 20
 
-void parraledSort(int freq[], int a[]);
+void paralledSort(int freq[], int a[], int cnt);
 
 int main(){
 
@@ -21,20 +21,38 @@ int main(){
       if (b[j]==a[i]){
         found = 1;
         freq[j]++;
-      }
-    } /* loop for b[SIZE] */
+      }} /* loop for b[SIZE] */
     if (!found){
-      b[cnt++] = a[i];
+      b[cnt] = a[i];
+      freq[cnt++]++;
+      
     }
     found = 0;
   } /* loop for a[SIZE] */
+
+  paralledSort(freq, b, cnt);
   
+  for (int i=0; i<cnt; i++){
+    printf("frequency: %d, number: %d\n", freq[i], b[i]);
+  }
 
   return 0;
 }
 
 
 void paralledSort(int freq[], int a[], int cnt){
-  
+  int temp;
 
+  for (int i=0; i<cnt-1; i++){
+    for (int j=i+1; j<cnt; j++){
+      if (freq[i]>freq[j]){
+        temp = freq[i];
+        freq[i] = freq[j];
+        freq[j] = temp;
+        temp = a[i];
+        a[i] = a[j];
+        a[j] = temp;
+      }
+    }
+  } 
 } /* sort the Array A according to frequency */
