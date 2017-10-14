@@ -22,8 +22,8 @@ void main(){
   printf("%d %s", p->len, p->name);
   puts("");
 
-  printf("the address of p: %u\n", &p);
-  printf("the address of the object: %u\n", p);
+  printf("the address of p: %p\n", &p);
+  printf("the address of the object: %p\n", p);
 
   free(p->name);
   free(p);
