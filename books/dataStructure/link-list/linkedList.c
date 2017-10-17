@@ -89,6 +89,20 @@ void insertList(LinkList L, int index, ElemType e){
 
 }
 
+void deleteNode(LinkList L, int index){
+  LinkList p, q;
+  p = L->next;
+  q = L;
+  
+  for(int i=0; i<index; i++){
+    q = p;
+    p = p->next;
+  }
+  q->next = p->next;
+  free(p);
+  L->data--;
+}
+
 
 void main(){
 
@@ -103,9 +117,13 @@ void main(){
   insertList(list, 0, 42);
 
   PrintList(list);
-  
-  DestroyList(list);
 
+  deleteNode(list, 10);
+
+  PrintList(list);
+
+  DestroyList(list);
+  
 
 }
 
@@ -117,5 +135,7 @@ void main(){
    best practice to using {} even when there is only one line after 
    if, for, while or anything else.
    Big trap I trap myself!
+
+   Yeah, I finally got it!
 
  */
