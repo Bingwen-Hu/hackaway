@@ -72,7 +72,7 @@ ElemType GetElem(LinkList L, int index){
 }
 
 
-LinkList insertList(LinkList L, int index, ElemType e){
+void insertList(LinkList L, int index, ElemType e){
   LinkList p, q;
   p = L->next;
   q = L;
@@ -86,7 +86,7 @@ LinkList insertList(LinkList L, int index, ElemType e){
   new->data = e;
   new->next = p;
   L->data++;
-  return L;
+
 }
 
 
@@ -100,7 +100,7 @@ void main(){
 
   PrintList(list);
   
-  list = insertList(list, 0, 42);
+  insertList(list, 0, 42);
 
   PrintList(list);
   
