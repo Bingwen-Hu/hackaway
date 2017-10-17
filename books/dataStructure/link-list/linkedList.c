@@ -10,71 +10,28 @@ typedef struct Node {
   struct Node *next;
 } Node, *LinkList;
 
-int InitNode(LinkList L, ElemType data){
-  L = (LinkList) malloc(sizeof(Node));
-  L->data = data;
-  L->next = NULL;
-  return 0;
-}
 
-
-int GetElem(LinkList L, int i, ElemType *e){
-  int j;
-  LinkList p;
-
-  p = L->next;
-  j = 0;
-  while(p && j < i){
-    p = p->next;
-    j++;
-  }
-  
-  if (!p || j>i)
-    return 0;
-  
-  *e = p->data;
-  return 1;
-}
-
-int InsertElem(LinkList L, int i, ElemType e){
-  LinkList p = L->next;
-  int j = 0;
-  
-  while (p && j < i){
-    p = p->next;
-    j++;
-  }
-  
-  if (!p || j>i)
-    return 0;
-
-  LinkList new = (LinkList) malloc(sizeof(Node));
-  new->data = e;
-  new->next = p->next;
-  p->next = new;
-  return 1;  
-}
-
-
-int DeleteElem(LinkList L, ElemType i){
-
+LinkList InitList(LinkList L, int length){
   LinkList p, q;
-  p = L->next;
-  int j = 0;
+  ElemType r;
 
-  while(p && j<i){
-    q = p;
-    p = p->next;
-    j++;
+  L = (LinkList) malloc(sizeof(Node)); /* head node */
+  L->data = 0;
+  L->next = NULL;
+  q = L;                        /* q as the end pointer */
+
+  for (int i=0; i<length; i++){
+    p = (LinkList) malloc(sizeof(Node));
+    r = rand();
+    p->data = r;
+    p->next = NULL;
+    q->next = p;
+    q = p;                      /* go to the end */
+    L->data++;
   }
-  
-  if (!p || j>i)
-    return 1;
-  
-  q->next = p->next;
-
-  free(p);
+  return L;
 }
+
 
 void PrintList(LinkList L){
   LinkList p = L->next;
@@ -84,25 +41,81 @@ void PrintList(LinkList L){
     printf("%d\t", p->data);
     p = p->next;
   }
+  puts("");
 }
 
+
+void DestroyList(LinkList L){
+  LinkList p; 
+  while (L->next){
+    p = L;
+    L = L->next;
+    free(p);
+  }
+  free(L);
+}
+
+ElemType GetElem(LinkList L, int index){
+  LinkList p = L->next;
+  ElemType e;
+
+  if (index < 0 || L->data < index){
+    puts("index invalid");
+    return 0;
+  }
+
+  for (int i=0; i<index; i++){
+    p = p->next;
+  }
+  e = p->data;
+  return e;
+}
+
+
+LinkList insertList(LinkList L, int index, ElemType e){
+  LinkList p, q;
+  p = L->next;
+  q = L;
+  
+  for (int i=0; i<index; i++){
+    q = p;
+    p = p->next;
+  }
+  LinkList new = (LinkList) malloc(sizeof(Node));
+  q->next = new;
+  new->data = e;
+  new->next = p;
+  L->data++;
+  return L;
+}
 
 
 void main(){
 
-  LinkList list, n1, n2;
-  
-  InitNode(list, 0);
-  InitNode(n1, 49);
-  InitNode(n2, 34);
+  LinkList list, p;
+  int length = 10;
+  int e;
 
-  list->next = n1;
-  list->data++;
-  n1->next = n2;
-  list->data++;
+  list = InitList(list, length);
 
   PrintList(list);
   
+  list = insertList(list, 0, 42);
+
+  PrintList(list);
+  
+  DestroyList(list);
+
+
 }
 
 
+
+
+/* Test Note:
+   
+   best practice to using {} even when there is only one line after 
+   if, for, while or anything else.
+   Big trap I trap myself!
+
+ */
