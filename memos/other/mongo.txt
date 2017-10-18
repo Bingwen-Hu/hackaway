@@ -1,0 +1,38 @@
+导出一个集合collection
+$ mongoexport -d [db名] -c [集合名] -o [目标文件名]
+
+导入一个集合collection
+
+                 db名    集合名           目标文件名
+$ mongoimport -d mory -c Surpasser --file Surpasserbk
+
+导出整个数据库，放到output文件夹下
+$ mongodump -h host -d dbname -o output
+执行之后，会创建一个这样的目录
+output
+  -- mory
+     -- table1
+	 -- tabld2
+
+恢复整个数据库mory数据库
+$ mongorestore -h localhost:27017 -d mory --dir mory
+
+
+
+
+基本操作：
+show dbs
+show collections
+use [dbname]
+
+e.g.
+> use mory
+> show collections // Surpasser, Demons
+> db.Surpasser.insert({"Name": "Ann", "Surpass": "Lightning", "Age", 18})
+> db.Surpasser.find()
+> db.Surpasser.remove({"Name": "Ann"})
+
+
+
+
+
