@@ -74,4 +74,28 @@
 (setf (y rp) 2)
 (setf (number-of-sides rp) 2)
 
-;; multiple inheritance
+
+;; options control initialization and provide documentation
+; init
+(defclass 3d-point4 ()
+  ((x :accessor point-x :initform 0)
+   (y :accessor point-y :initform 0)
+   (z :accessor point-z :initform 0)))
+
+; keyword init
+(defclass 3d-point5 ()
+  ((x :accessor point-x :initform 0 :initarg :x)
+   (y :accessor point-y :initform 0 :initarg :y)
+   (z :accessor point-z :initform 0 :initarg :z)))
+
+(make-instance '3d-point5 :x 32 :y 17 :z -5)
+
+; docs and type
+(defclass 3d-point6 ()
+  ((x :accessor point-x :initform 0 :initarg :x
+      :documentation "x coordinate" :type real)
+   (y :accessor point-y :initform 0 :initarg :y
+      :documentation "y coordinate" :type real)
+   (z :accessor point-z :initform 0 :initarg :z
+      :documentation "z coordinate" :type real)))
+
