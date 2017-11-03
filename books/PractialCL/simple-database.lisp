@@ -98,14 +98,27 @@
 	 #'(lambda (row)
 	     (when (funcall selector-fn row) ;exist
 	       (if title    (setf (getf row :title)  title))
-	       (if artist   (setf (getf row :artist) artist))
+	       (if artist   (setf (getf row :artist) artist))z
 	       (if rating   (setf (getf row :rating) rating))
 	       (if ripped-p (setf (getf row :ripped) ripped)))
 	     row) 			;return value of each map
 	 *db*)))			;totally reset *db*
 
 
-
 (defun delete-rows (selector-fn)
   (setf *db* (remove-if selector-fn *db*)))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; We are going to modify the Where Function, using MACRO
+(defmacro make-comparison-expr (field value)
+ `(equal (getf cd ,field) ,value))
+
+(defun make-comparisons-list (fields)
+  (loop while fields
+       collecting (make-comparison-expr (pop fields) 
+					(pop fields))))
+
+(defmacro where (&rest clauses)
+  `#'(lambda (cd) (and ,@(make-comparisons-list clauses))))
 
