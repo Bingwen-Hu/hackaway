@@ -82,13 +82,13 @@
 
 ;; very important note:
 ;; WHERE return a function as a selector
-(defun where (&key title artist rating (ripped nil ripped-p))
-  #'(lambda (cd)
-      (and
-       (if title    (equal (getf cd :title)  title)  t)
-       (if artist   (equal (getf cd :artist) artist) t)
-       (if rating   (equal (getf cd :rating) rating) t)
-       (if ripped-p (equal (getf cd :ripped) ripped) t))))
+;; (defun where (&key title artist rating (ripped nil ripped-p))
+;;   #'(lambda (cd)
+;;       (and
+;;        (if title    (equal (getf cd :title)  title)  t)
+;;        (if artist   (equal (getf cd :artist) artist) t)
+;;        (if rating   (equal (getf cd :rating) rating) t)
+;;        (if ripped-p (equal (getf cd :ripped) ripped) t))))
 
 
 ;; update
@@ -111,7 +111,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; We are going to modify the Where Function, using MACRO
-(defmacro make-comparison-expr (field value)
+(defun make-comparison-expr (field value)
  `(equal (getf cd ,field) ,value))
 
 (defun make-comparisons-list (fields)
@@ -122,3 +122,5 @@
 (defmacro where (&rest clauses)
   `#'(lambda (cd) (and ,@(make-comparisons-list clauses))))
 
+
+;;; congratulation! I finally make it right!
