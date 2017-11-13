@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>舆情过滤数据库</title>
+</head>
+<body>
+    <table border="1">
+        <tr>
+            <th>项目名称</th>
+            <th>公司ID</th>
+            <th>系统ID</th>
+            <th>关键词</th>
+        </tr>
+        {% for item in li %}
+        <tr>
+            <td>{{ item.Name }}</td>
+            <td>{{ item.CompanyID }}</td>
+            <td>{{ item.SystemID }}</td>
+            <td>{{ item.Keywords }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <br />
+    <a href="/insert/">增加</a>
+    <a href="/update/">修改</a>
+    <a href="/delete/">删除</a>
+</body>
+</html>

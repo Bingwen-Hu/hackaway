@@ -15,7 +15,6 @@ target
 *.pdb
 *checkpoints
 *~
-*temp*
 *.dat
 *.o
 *.db
