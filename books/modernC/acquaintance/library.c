@@ -24,5 +24,6 @@ int main(int argc, char* argv[argc+1]){
         return EXIT_FAILURE;
     }
     fputs("Feeling fine today\n", logfile);
+    fputs("don't do it silently", stdout);
     return EXIT_SUCCESS;
 }
