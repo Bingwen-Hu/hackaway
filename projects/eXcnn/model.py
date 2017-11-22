@@ -13,7 +13,7 @@ def build_graph():
         shape=[None, FLAGS.image_height * FLAGS.image_width])
     x_images = tf.reshape(images, name="image_batch",
         shape=[-1, FLAGS.image_height, FLAGS.image_width, 1])
-    labels = tf.placeholder(dtype=tf.int64, name='label_batch',
+    labels = tf.placeholder(dtype=tf.float32, name='label_batch',
         shape=[None, FLAGS.captcha_size * FLAGS.charset_size])
 
     # define convention network
@@ -46,4 +46,4 @@ def build_graph():
         tf.reshape(labels, [-1, FLAGS.captcha_size, FLAGS.charset_size]), 2)
     accuracy = tf.reduce_mean(tf.cast(
         tf.equal(logits_indices, labels_indices), tf.float32))
-    return images, labels, loss, optimizer, accuracy
+    return images, labels, keep_prob, loss, optimizer, accuracy

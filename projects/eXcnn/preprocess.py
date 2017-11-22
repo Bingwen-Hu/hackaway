@@ -69,7 +69,7 @@ def data_iterator(data_dir, batch_size, num_epochs):
             end_index = min((batch_idx + 1) * batch_size, data_size)
             yield shuffled_data[start_index:end_index]
 
-
+# most ugly function
 def train_data_iterator():
     size = (FLAGS.image_height, FLAGS.image_width)
     data_iter = data_iterator(FLAGS.train_data_dir, FLAGS.batch_size, FLAGS.num_epochs)
@@ -78,7 +78,7 @@ def train_data_iterator():
         y = [get_Y(datum, FLAGS.charset, FLAGS.captcha_size) for datum in data]
         yield X, y
 
-
+# most ugly function
 def test_data_helper(batch_size=None):
     size = (FLAGS.image_height, FLAGS.image_width)
     data = [os.path.join(dir, f) for dir, _, files in
