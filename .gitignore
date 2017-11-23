@@ -13,8 +13,9 @@ log.txt
 target
 *.exe
 *.pdb
-*checkpoints
+checkpoint
 *~
 *.dat
 *.o
 *.db
+.ipynb_*
