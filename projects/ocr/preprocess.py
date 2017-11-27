@@ -30,7 +30,7 @@ def get_X(path, size, random_red=False):
     img = Image.open(path)
 
     if random_red:
-        img = black2red(img)
+        img = black2red(img) if np.random.randint else img
 
     img = img.resize(size).convert('L')
     img = np.array(img).flatten() / 255
