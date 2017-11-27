@@ -19,3 +19,4 @@ checkpoint
 *.o
 *.db
 .ipynb_*
+*.stackdump
