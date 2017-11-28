@@ -10,7 +10,7 @@ void println(int A[], int n){
 void bubbleSort(int A[], int n){
     int t;
     for (int i=0; i<n; i++){
-        for (int j=n; j>i; j--){
+        for (int j=n-1; j>i; j--){
             if (A[j]<A[j-1]){
                 t = A[j];
                 A[j] = A[j-1];
@@ -20,7 +20,6 @@ void bubbleSort(int A[], int n){
 
     }
 }
-
 
 
 void main(){
