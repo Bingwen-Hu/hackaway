@@ -15,8 +15,8 @@ Max-Heap-Insert, Heap-Extract-Max, Heap-Increase-Key, and Heap-Maximum procedure
 run in O(lg n) time, allow the heap data structure to implement a priority queue.
 
 */
-
-
+#include <stdio.h>
+#include <limits.h>
 
 typedef struct heap {
     int data[100];
@@ -62,21 +62,22 @@ void max_heapify(Heap *A, int i){
     }
 }
 
+// n(lg n)
 void build_max_heap(Heap *A){
     //A->heap_size = A->length;
-    for (int i = (A->heap_size-1)/2; i >= 0; i--){
-        max_heapify(A, i);
+    for (int i = (A->heap_size-1)/2; i >= 0; i--){  // n
+        max_heapify(A, i);                          // lg n
     }
 }
 
 
 void heapsort(Heap *A){
-    build_max_heap(A);
+    build_max_heap(A);                      // n(lg n)
     int heap_size = A->heap_size;           // save
-    for (int i=A->heap_size-1; i>0; i--){
+    for (int i=A->heap_size-1; i>0; i--){   // n
         swap(A, 0, i);
         A->heap_size--;                     // modify heap_size
-        max_heapify(A, 0);
+        max_heapify(A, 0);                  // lg n
     }
     A->heap_size = heap_size;               // restore
 }
@@ -90,8 +91,58 @@ void println(Heap *A){
     putchar('\n');
 }
 
+int heap_maximum(Heap *A){
+    if (A->heap_size <= 0){
+        puts("Error: heap is empty!");
+        return -1;
+    }
+    return A->data[0];
+}
+
+int heap_extract_max(Heap *A){
+    int max;
+
+    if (A->heap_size <= 0){
+        puts("Error: heap is empty!");
+        return -1;
+    }
+    max = A->data[0];
+    A->data[0] = A->data[A->heap_size-1];
+    A->heap_size--;
+    max_heapify(A, 0);
+    return max;
+}
+
+// go up with the chain of parents
+void heap_increase_key(Heap *A, int i, int key){
+    if (key < A->data[i]){
+        puts("Error! New key is smaller than current key");
+        return;
+    }
+    A->data[i] = key;
+    while ((i > 0) && (A->data[parent(i)] < A->data[i])){
+        swap(A, i, parent(i));
+        i = parent(i);
+    }
+}
+
+
+void max_heap_insert(Heap *A, int key){
+    A->heap_size = A->heap_size + 1;
+    A->data[A->heap_size-1] = INT_MIN;
+    heap_increase_key(A, A->heap_size-1, key);
+}
+
 void main(){
     Heap A = {{4, 1, 3, 2, 16, 9, 10, 14, 8, 7}, 30, 10};
-    heapsort(&A);
+    build_max_heap(&A);
     println(&A);
+
+    int max = heap_extract_max(&A);
+    printf("Maximum is: %d\n", max);
+    println(&A);
+
+    max_heap_insert(&A, 25);
+    println(&A);
+
 }
