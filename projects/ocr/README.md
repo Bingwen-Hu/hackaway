@@ -22,6 +22,8 @@
 python3 train.py
 
 ### 预测
+```
 from predict import predict
 img = 'path/to/image'
 result = predict(img)
+```
