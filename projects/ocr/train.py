@@ -54,11 +54,10 @@ def train():
                                      graph['is_training']: False}
                         test_opts = [graph['accuracy'], graph['merged_summary_op']]
                         accuracy_test, test_summary = sess.run(test_opts, feed_dict=feed_dict)
-                        if step > 300:
-                            test_writer.add_summary(test_summary, step)
-                            print('===============Eval a batch=======================')
-                            print('the step {0} test accuracy: {1}'.format(step, accuracy_test))
-                            print('===============Eval a batch=======================')
+                        test_writer.add_summary(test_summary, step)
+                        print('===============Eval a batch=======================')
+                        print('the step {0} test accuracy: {1}'.format(step, accuracy_test))
+                        print('===============Eval a batch=======================')
                     # save stage
                     if step % FLAGS.save_steps == 0 and step > FLAGS.min_save_steps:
                         saver.save(sess, os.path.join(FLAGS.checkpoint_dir, FLAGS.model_name), global_step=graph['global_step'])

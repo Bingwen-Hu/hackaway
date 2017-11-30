@@ -2,6 +2,7 @@
 """
 import tensorflow as tf
 import tensorflow.contrib.slim as slim
+from tensorflow.python.ops import control_flow_ops
 
 from config import FLAGS
 
@@ -15,6 +16,7 @@ def build_graph():
         shape=[-1, FLAGS.image_height, FLAGS.image_width, 1])
     labels = tf.placeholder(dtype=tf.float32, name='label_batch',
         shape=[None, FLAGS.captcha_size * FLAGS.charset_size])
+    is_training = tf.placeholder(dtype=tf.bool, shape=[], name='train_flag')
 
     # define convention network
     with slim.arg_scope([slim.conv2d, slim.fully_connected],
@@ -34,16 +36,36 @@ def build_graph():
         logits     = slim.fully_connected(slim.dropout(fc1, keep_prob),
                         FLAGS.charset_size * FLAGS.captcha_size , activation_fn=None, scope='fc2')
 
-    # define loss and optimizer
+    # define loss and accuracy
     loss = tf.reduce_mean(
         tf.nn.sigmoid_cross_entropy_with_logits(logits=logits, labels=labels))
-    optimizer = tf.train.AdamOptimizer(learning_rate=0.001).minimize(loss)
-
-    # define accuracy
     logits_indices = tf.argmax(
         tf.reshape(logits, [-1, FLAGS.captcha_size, FLAGS.charset_size]), 2)
     labels_indices = tf.argmax(
         tf.reshape(labels, [-1, FLAGS.captcha_size, FLAGS.charset_size]), 2)
     accuracy = tf.reduce_mean(tf.cast(
         tf.equal(logits_indices, labels_indices), tf.float32))
-    return images, labels, keep_prob, loss, optimizer, accuracy
+
+    # update ops
+    update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
+    if update_ops:
+        updates = tf.group(*update_ops)
+        loss = control_flow_ops.with_dependencies([updates], loss)
+
+    # optimizer
+    optimizer = tf.train.AdamOptimizer(learning_rate=0.01)
+    train_op = slim.learning.create_train_op(loss, optimizer)
+
+    # log
+    tf.summary.scalar('loss', loss)
+    tf.summary.scalar('accuracy', accuracy)
+    merged_summary_op = tf.summary.merge_all()
+
+    return {'images': images,
+            'labels': labels,
+            'keep_prob': keep_prob,
+            'train_op': train_op,
+            'loss': loss,
+            'is_training': is_training,
+            'accuracy': accuracy,
+            'merged_summary_op': merged_summary_op}
