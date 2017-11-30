@@ -17,3 +17,11 @@
 
 ### predict.py
 模型预测模块
+
+### 训练
+python3 train.py
+
+### 预测
+from predict import predict
+img = 'path/to/image'
+result = predict(img)
