@@ -18,6 +18,13 @@ checkpoint
 *.dat
 *.o
 *.db
+
 .ipynb_*
+
 *.stackdump
+
 log
+
+*pbtxt
+
+*tfevent*

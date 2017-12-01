@@ -1,5 +1,6 @@
 # thanks to tensorflow official model
 # https://github.com/tensorflow/models
+# tensorflow == 1.4
 
 from __future__ import absolute_import
 from __future__ import division
@@ -17,7 +18,7 @@ def batch_norm_relu(inputs, is_training, data_format):
     # fused=True => performance boost
     inputs = tf.layers.batch_normalization(
         inputs=inputs, axis=1 if data_format == 'channel_first' else 3,
-        mementum=_BATCH_NORM_DECAY, epsilon=_BATCH_NORM_EPSILON, center=True,
+        momentum=_BATCH_NORM_DECAY, epsilon=_BATCH_NORM_EPSILON, center=True,
         scale=True, training=is_training, fused=True)
     inputs = tf.nn.relu(inputs)
     return inputs
@@ -173,7 +174,7 @@ def cifar10_resnet_v2_generator(resnet_size, num_classes, data_format=None):
                              name='block_layer3', data_format=data_format)
 
         inputs = batch_norm_relu(inputs, is_training, data_format)
-        inputs = tf.layers.average_pooling2d(inputs=inputs, pool_size=8, strides1,
+        inputs = tf.layers.average_pooling2d(inputs=inputs, pool_size=8, strides=1,
                                              padding='VALID', data_format=data_format)
         inputs = tf.identity(inputs, 'final_avg_pool')
         inputs = tf.reshape(inputs, [-1, 64])

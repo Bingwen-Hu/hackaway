@@ -14,6 +14,8 @@
 # ==============================================================================
 """Runs a ResNet model on the CIFAR-10 dataset."""
 
+# tensorflow == 1.4
+
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
@@ -29,11 +31,11 @@ import model
 parser = argparse.ArgumentParser()
 
 # Basic model parameters.
-parser.add_argument('--data_dir', type=str, default='E:/captcha-data/cifar10_data',
+parser.add_argument('--data_dir', type=str, default='E:/captcha-data/cifar10',
                     help='The path to the CIFAR-10 data directory.')
 parser.add_argument('--model_dir', type=str, default="./models/",
                     help="The directory where the model will be stored.")
-parser.add_argument('--resent_size', type=int, default=32,
+parser.add_argument('--resnet_size', type=int, default=32,
                     help='The size of the ResNet model to use.')
 parser.add_argument('--train_epochs', type=int, default=250,
                     help='The number of epochs to train.')
@@ -174,4 +176,100 @@ def cifar10_model_fn(features, labels, mode, params):
         'probabilities': tf.nn.softmax(logits, name='softmax_tensor')
     }
 
-    pass
+    if mode == tf.estimator.ModeKeys.PREDICT:
+        return tf.estimator.EstimatorSpec(mode=mode, predictions=predictions)
+
+    # calculate loss, which includes softmax cross entropy and L2 regularization.
+    cross_entropy = tf.losses.softmax_cross_entropy(logits=logits, onehot_labels=labels)
+
+    # create a tensor named cross entropy for logging purpose.
+    tf.identity(cross_entropy, name='cross_entropy')
+    tf.summary.scalar('cross_entropy', cross_entropy)
+
+    # add weight decay to the loss.
+    loss = cross_entropy + _WEIGHT_DECAY * tf.add_n(
+            [tf.nn.l2_loss(v) for v in tf.trainable_variables()])
+
+    if mode == tf.estimator.ModeKeys.TRAIN:
+        # scale the learning rate linearly with the batch size. When the batch
+        # size is 128, the learning rate should be 0.1
+        initial_learning_rate = 0.1 * params['batch_size'] / 128
+        batches_per_epoch = _NUM_IMAGES['train'] / params['batch_size']
+        global_step = tf.train.get_or_create_global_step()
+
+        # Multiply the learning rate by 0.1 at 100, 150, and 200 epochs.
+        boundaries = [int(batches_per_epoch * epoch) for epoch in [100, 150, 200]]
+        values = [initial_learning_rate * decay for decay in [1, 0.1, 0.01, 0.001]]
+        learning_rate = tf.train.piecewise_constant(
+                tf.cast(global_step, tf.int32), boundaries, values)
+
+        # create a tensor named learning_rate for logging purpose
+        learning_rate = tf.identity(learning_rate, name='learning_rate')
+        tf.summary.scalar('learning_rate', learning_rate)
+
+        optimizer = tf.train.MomentumOptimizer(
+                learning_rate=learning_rate, momentum=_MOMENTUM)
+
+        # Batch norm requires update ops to be added as a dependency to the train_op
+        update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
+        with tf.control_dependencies(update_ops):
+            train_op = optimizer.minimize(loss, global_step)
+    else:
+        train_op = None
+
+    accuracy = tf.metrics.accuracy(
+            tf.argmax(labels, axis=1), predictions['classes'])
+    metrics = {'accuracy': accuracy}
+
+    # create a tensor named train_accuracy for logging purposes.
+    tf.identity(accuracy[1], name='train_accuracy')
+    tf.summary.scalar('train_accuracy', accuracy[1])
+
+    return tf.estimator.EstimatorSpec(
+            mode=mode,
+            predictions=predictions,
+            loss=loss,
+            train_op=train_op,
+            eval_metric_ops=metrics)
+
+
+def main(_):
+    # Using the winograd non=fused algorithms provides a small performance boost
+    os.environ['TF_ENABLE_WINOGRAD_NONFUSED'] = '1'
+
+    # set up a runconfig to only save checkpoints once per traing cycle
+    run_config = tf.estimator.RunConfig().replace(save_checkpoints_secs=1e9)
+    cifar_classifier = tf.estimator.Estimator(
+            model_fn=cifar10_model_fn, model_dir=FLAGS.model_dir, config=run_config,
+            params={
+                'resnet_size': FLAGS.resnet_size,
+                'data_format': FLAGS.data_format,
+                'batch_size' : FLAGS.batch_size,
+            })
+
+    for _ in range(FLAGS.train_epochs // FLAGS.epochs_per_eval):
+        tensors_to_log = {
+            'learning_rate': 'learning_rate',
+            'cross_entropy': 'cross_entropy',
+            'train_accuracy': 'train_accuracy'
+        }
+
+        logging_hook = tf.train.LoggingTensorHook(
+                tensors=tensors_to_log, every_n_iter=100)
+
+        cifar_classifier.train(
+            input_fn=lambda: input_fn(
+                True, FLAGS.data_dir, FLAGS.batch_size, FLAGS.epochs_per_eval),
+            hooks=[logging_hook]
+        )
+
+        # Evaluate the modeland print results
+        eval_results = cifar_classifier.evaluate(
+            input_fn=lambda: input_fn(False, FLAGS.data_dir, FLAGS.batch_size)
+        )
+        print(eval_results)
+
+if __name__ == '__main__':
+    tf.logging.set_verbosity(tf.logging.INFO)
+    FLAGS, unparsed = parser.parse_known_args()
+    tf.app.run(argv=[sys.argv[0]] + unparsed)
