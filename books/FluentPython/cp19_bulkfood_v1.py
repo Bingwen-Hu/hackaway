@@ -1,4 +1,4 @@
-# cp19 LineItem
+# cp19 LineItem, good example to see the protected property in Python
 
 class LineItem:
 
