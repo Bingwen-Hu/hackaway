@@ -18,7 +18,7 @@ checkpoint
 *.dat
 *.o
 *.db
-
+.idea
 .ipynb_*
 
 *.stackdump
