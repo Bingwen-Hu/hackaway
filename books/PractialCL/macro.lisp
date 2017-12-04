@@ -69,3 +69,16 @@
           (,ending-value-name ,end))
          ((> ,var ,ending-value-name))
        ,@body)))
+
+
+;;; a very convenient macro
+(defmacro with-gensyms ((&rest names) &body body)
+  `(let ,(loop for n in names collect `(,n (gensym)))
+     ,@body))
+
+
+;;; use as this
+(with-gensyms (mory ann)
+  `(let ((,mory "mory")
+         (,ann  "Ann"))
+     (format t "Hello ~a, ~a~%" ,ann ,mory)))
