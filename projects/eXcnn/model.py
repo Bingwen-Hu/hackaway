@@ -53,7 +53,7 @@ def build_graph():
         loss = control_flow_ops.with_dependencies([updates], loss)
 
     # optimizer
-    optimizer = tf.train.AdamOptimizer(learning_rate=0.01)
+    optimizer = tf.train.AdamOptimizer(learning_rate=0.001)
     train_op = slim.learning.create_train_op(loss, optimizer)
 
     # log

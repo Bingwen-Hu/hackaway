@@ -1,6 +1,6 @@
 # fluent python hard way to finish but I will continue!
 
-# A user-defined class implementing __getattr__ can implement 
+# A user-defined class implementing __getattr__ can implement
 # "virtual attributes" by computing values on the fly whenever
 # somebody tries to read a nonexistent attribute like obj.noexist
 
@@ -55,8 +55,8 @@ def load():
             local.write(remote.read())
     with open(JSON, encoding='utf-8') as fp:
         return json.load(fp)
-		
-		
+
+
 from collections import abc
 import keyword
 class FrozenJSON:
@@ -82,7 +82,10 @@ class FrozenJSON:
         if hasattr(self.__data, name):
             return getattr(self.__data, name)
         else:
-            return FrozenJSON(self.__data[name])		
-			
-# Note: __new__ construct the object than if pass to __init__ if 
+            return FrozenJSON(self.__data[name])
+
+# Note: __new__ construct the object than if pass to __init__ if
 # the object return by __new__ is the same as the one initialization.
+
+
+# chapter 19 is an very important chapter about class.
