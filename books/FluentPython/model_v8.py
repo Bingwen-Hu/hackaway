@@ -1,4 +1,6 @@
+# chapter 21, this script keep using __prepare__ to keep the order of parameters
 import abc
+import collections
 
 class AutoStorage:
     __counter = 0
@@ -46,10 +48,26 @@ class NonBlank(Validated):
             raise ValueError('value cannot be empty or blank')
         return value
 
-# cp21 class decorator
-def entity(cls):
-    for key, attr in cls.__dict__.items():
-        if isinstance(attr, Validated):
-            type_name = type(attr).__name__
-            attr.storage_name = '_{}#{}'.format(type_name, key)
-    return cls
+class EntityMeta(type):
+    """metaclass for business entities with validated fields"""
+
+    @classmethod
+    def __prepare__(cls, name, bases):
+        return collections.OrderedDict()
+
+
+    def __init__(cls, name, bases, attr_dict):
+        super().__init__(name, bases, attr_dict)
+        cls._field_names = []
+        for key, attr in attr_dict.items():
+            if isinstance(attr, Validated):
+                type_name = type(attr).__name__
+                attr.storage_name = '_{}#{}'.format(type_name, key)
+                cls._field_names.append(key)
+
+class Entity(metaclass=EntityMeta):
+    """Business entity with validate fields"""
+    @classmethod
+    def field_names(cls):
+        for name in cls._field_names:
+            yield name

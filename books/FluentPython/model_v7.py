@@ -1,3 +1,4 @@
+# chapter 21
 import abc
 
 class AutoStorage:
@@ -46,10 +47,15 @@ class NonBlank(Validated):
             raise ValueError('value cannot be empty or blank')
         return value
 
-# cp21 class decorator
-def entity(cls):
-    for key, attr in cls.__dict__.items():
-        if isinstance(attr, Validated):
-            type_name = type(attr).__name__
-            attr.storage_name = '_{}#{}'.format(type_name, key)
-    return cls
+class EntityMeta(type):
+    """metaclass for business entities with validated fields"""
+
+    def __init__(cls, name, bases, attr_dict):
+        super().__init__(name, bases, attr_dict)
+        for key, attr in attr_dict.items():
+            if isinstance(attr, Validated):
+                type_name = type(attr).__name__
+                attr.storage_name = '_{}#{}'.format(type_name, key)
+
+class Entity(metaclass=EntityMeta):
+    """Business entity with validate fields"""

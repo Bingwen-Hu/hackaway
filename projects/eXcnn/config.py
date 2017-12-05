@@ -14,7 +14,7 @@ tf.app.flags.DEFINE_integer('image_width', 100, "Needs to provide same value as 
 
 tf.app.flags.DEFINE_integer('batch_size', 64, 'Validation batch size')
 tf.app.flags.DEFINE_integer('num_epochs', 20, 'Validation batch size')
-tf.app.flags.DEFINE_integer('min_save_steps', 3000, 'the mininum training steps to save a model')
+tf.app.flags.DEFINE_integer('min_save_steps', 300, 'the mininum training steps to save a model')
 tf.app.flags.DEFINE_integer('eval_steps', 100, "the step num to eval")
 tf.app.flags.DEFINE_integer('save_steps', 1000, "the steps to save")
 
