@@ -25,3 +25,8 @@ def filter_modulo(items, modulo):
             yield item
 
 # flake8 is a tool Mory you should be familiar with
+
+# issues: modify when iterate, using list to make a copy
+set_ = {'spam', 'eggs'}
+for item in list(set_):
+    set_.remove(item)
