@@ -21,7 +21,7 @@ tf.app.flags.DEFINE_integer('save_steps', 1000, "the steps to save")
 tf.app.flags.DEFINE_string('model_name', 'captcha-model', 'Name of model file')
 tf.app.flags.DEFINE_string('checkpoint_dir', './models/', 'the checkpoint dir')
 tf.app.flags.DEFINE_string('train_data_dir', 'E:/captcha-data/zips/12W/', 'the train dataset dir')
-tf.app.flags.DEFINE_string('test_data_dir', 'E:/captcha-data/sina/test2/', 'the test dataset dir')
+tf.app.flags.DEFINE_string('test_data_dir', 'E:/captcha-data/sina/test/', 'the test dataset dir')
 tf.app.flags.DEFINE_string('log_dir', './log', 'the logging dir')
 
 tf.app.flags.DEFINE_boolean('restore', False, 'whether to restore from checkpoint')
