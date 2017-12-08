@@ -7,8 +7,7 @@ from config import FLAGS
 from model import build_graph
 from preprocess import train_data_iterator, test_data_helper
 
-# new ocr
-from new_model import build_graph
+
 
 def train():
     with tf.Session() as sess:
