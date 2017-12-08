@@ -19,7 +19,7 @@ def batch_norm_relu(inputs, is_training, data_format):
     inputs = tf.layers.batch_normalization(
         inputs=inputs, axis=1 if data_format == 'channel_first' else 3,
         momentum=_BATCH_NORM_DECAY, epsilon=_BATCH_NORM_EPSILON, center=True,
-        scale=True, training=is_training, fused=True)
+        scale=True, training=is_training, fused=True) # mory Note: fused not in tf version 1.2.1
     inputs = tf.nn.relu(inputs)
     return inputs
 
@@ -42,7 +42,7 @@ def fixed_padding(inputs, kernel_size, data_format):
     return padded_inputs
 
 
-# what's filters?
+# what's filters? filters is output
 def conv2d_fixed_padding(inputs, filters, kernel_size, strides, data_format):
     """
     Args:
