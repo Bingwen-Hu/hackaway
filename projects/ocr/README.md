@@ -1,6 +1,4 @@
-# ocr
-
-### 中文汉字印刷体识别
+### ocr 中文汉字印刷体识别
 修改自这个[仓库](https://github.com/soloice/Chinese-Character-Recognition)，将训练与预测分隔出来，便于作为接口提供识别服务
 
 ### config.py
