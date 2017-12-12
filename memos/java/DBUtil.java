@@ -17,8 +17,8 @@ import com.csvreader.CsvReader;
 public class DBUtil {
     
     private static final String URL="jdbc:mysql://192.168.1.224:3306/mysql";
-    private static final String NAME="yunrun";
-    private static final String PASSWORD="Yunrun2016!@#";
+    private static final String NAME="mory";
+    private static final String PASSWORD="siriusdemon";
 //    private static final String leaderExpPath = "E:/data/ALL_leaderExp2_14.csv";
 //    private static final String leaderBasicPath = "E:/data/ALL_leaderBasic2_14.csv";
     
@@ -50,12 +50,12 @@ public class DBUtil {
     			int leader_id = getLeaderID(stmt);
     			
     			while(csvLeaderExp.readRecord() && 
-    					(csvLeaderExp.get("ĞÕÃû").equals(csvLeaderBasic.get("ĞÕÃû"))))
+    					(csvLeaderExp.get("å§“å").equals(csvLeaderBasic.get("å§“å"))))
     			{
     				writeExp(pStatExp, csvLeaderBasic, csvLeaderExp, leader_id);
     				System.out.println("    experience....");
     			}
-    			System.out.println(csvLeaderBasic.get("ĞÕÃû") + " person finish.");
+    			System.out.println(csvLeaderBasic.get("å§“å") + " person finish.");
     		conn.commit();
     		}
     	} catch (Exception e) {
@@ -72,16 +72,16 @@ public class DBUtil {
     public static void writeBasic(PreparedStatement stmt, CsvReader csvLeaderBasic) 
     		throws IOException, SQLException, ParseException
     {
-		stmt.setString(1, csvLeaderBasic.get("ĞÕÃû"));
-		stmt.setString(2, csvLeaderBasic.get("ĞÔ±ğ"));
-		stmt.setString(3, csvLeaderBasic.get("Ãñ×å"));
-		stmt.setDate(4, strToDate(csvLeaderBasic.get("³öÉúÄêÔÂ"), "basic"));
-		stmt.setString(5, csvLeaderBasic.get("¼®¹á"));
-		stmt.setDate(6, strToDate(csvLeaderBasic.get("Èëµ³Ê±¼ä"), "basic"));
-		stmt.setDate(7, strToDate(csvLeaderBasic.get("²Î¼Ó¹¤×÷Ê±¼ä"), "basic"));
-		stmt.setString(8, csvLeaderBasic.get("½ÌÓı±³¾°"));
-		stmt.setString(9, csvLeaderBasic.get("×î¸ßÑ§Àú "));
-		stmt.setString(10, csvLeaderBasic.get("Ö°Îñ"));
+		stmt.setString(1, csvLeaderBasic.get("å§“å"));
+		stmt.setString(2, csvLeaderBasic.get("æ€§åˆ«"));
+		stmt.setString(3, csvLeaderBasic.get("æ°‘æ—"));
+		stmt.setDate(4, strToDate(csvLeaderBasic.get("å‡ºç”Ÿå¹´æœˆ"), "basic"));
+		stmt.setString(5, csvLeaderBasic.get("ç±è´¯"));
+		stmt.setDate(6, strToDate(csvLeaderBasic.get("å…¥å…šæ—¶é—´"), "basic"));
+		stmt.setDate(7, strToDate(csvLeaderBasic.get("å‚åŠ å·¥ä½œæ—¶é—´"), "basic"));
+		stmt.setString(8, csvLeaderBasic.get("æ•™è‚²èƒŒæ™¯"));
+		stmt.setString(9, csvLeaderBasic.get("æœ€é«˜å­¦å† "));
+		stmt.setString(10, csvLeaderBasic.get("èŒåŠ¡"));
 		
 		stmt.executeUpdate();
     }
@@ -100,9 +100,9 @@ public class DBUtil {
     				throws IOException, SQLException, ParseException
     {
     	pStatExp.setInt(1, id);
-    	pStatExp.setDate(2, strToDate(csvLeaderExp.get("ÆğÊ¼Ê±¼ä"), "exp")); 
-    	pStatExp.setDate(3, strToDate(csvLeaderExp.get("ÖÕÖ¹Ê±¼ä"), "exp"));
-    	pStatExp.setString(4, csvLeaderExp.get("ÈÎÖ°ĞÅÏ¢"));
+    	pStatExp.setDate(2, strToDate(csvLeaderExp.get("èµ·å§‹æ—¶é—´"), "exp")); 
+    	pStatExp.setDate(3, strToDate(csvLeaderExp.get("ç»ˆæ­¢æ—¶é—´"), "exp"));
+    	pStatExp.setString(4, csvLeaderExp.get("ä»»èŒä¿¡æ¯"));
 
     	pStatExp.executeUpdate();
     }
@@ -124,7 +124,7 @@ public class DBUtil {
     	else
     		strFormat = "yyyy.MM";
     	
-    	// Èç¹û¿ÕÔò²¹³ä
+    	// å¦‚æœç©ºåˆ™è¡¥å……
     	if (strDate.isEmpty()) {
     		if (basicCalled)
     			strDate = "9999/01/01";
