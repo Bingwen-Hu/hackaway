@@ -9,14 +9,6 @@ def text2vec(text, charset):
     """Function used to transform text string to a numpy array vector.
     :param text: namely the captcha code.
     :param charset: charset used by the specific problem.
-
-    Usage::
-
-      >>> from utils import text2vec
-      >>> from constants import ALL_ALPHABET
-      >>> text = "AbdTd"
-      >>> text2vec(text, ALL_ALPHABET)
-      array([ 0.,  0.,  0., ...,  0.,  0.,  0.])
     """
     def char2vec(c):
         y = np.zeros((len(charset),))
@@ -38,7 +30,7 @@ def get_X(path, size):
     """resize, convert to gray, flatten and normalizes
     """
     img = Image.open(path)
-    img = img.resize(size).convert('L')
+    img = img.resize(size, Image.BICUBIC).convert('L')
     img = np.array(img).flatten() / 255
     return img
 
