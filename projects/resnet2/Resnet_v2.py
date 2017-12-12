@@ -1,11 +1,6 @@
-# without test
-
-import time
-import math
 import collections
 import tensorflow as tf
 import tensorflow.contrib.slim as slim
-from datetime import datetime
 
 class Block(collections.namedtuple('Block', ['scope', 'unit_fn', 'args'])):
     """A named tuple describing a ResNet block.
@@ -107,7 +102,7 @@ def bottleneck(inputs, depth, depth_bottleneck, stride,
 
 
 
-def resnet_v2(inputs, blocks, num_classes=None, global_pool=True, include_root_block=True, reuse=None, scope=None):
+def resnet_v2(inputs, blocks, num_classes, keep_prob, include_root_block=True, reuse=None, scope=None):
     with tf.variable_scope(scope, 'resnet_v2', [inputs], reuse=reuse) as sc:
         end_points_collection = sc.original_name_scope + '_end_points'
         with slim.arg_scope([slim.conv2d, bottleneck, stack_blocks_dense], outputs_collections=end_points_collection):
@@ -118,90 +113,75 @@ def resnet_v2(inputs, blocks, num_classes=None, global_pool=True, include_root_b
                 net = slim.max_pool2d(net, [3, 3], stride=2, scope='pool1')
             net = stack_blocks_dense(net, blocks)
             net = slim.batch_norm(net, activation_fn=tf.nn.relu, scope='postnorm')
-            if global_pool:
-                net = tf.reduce_mean(net, [1, 2], name='pool5', keep_dims=True)
-            if num_classes is not None:
-                net = slim.conv2d(net, num_classes, [1, 1], activation_fn=None,
-                                  normalizer_fn=None, scope='logits')
+            # glabal pool
+            net = tf.reduce_mean(net, [1, 2], name='pool5', keep_dims=True)
+            # below codes add by mory
+            net = slim.flatten(net)
+            net = slim.fully_connected(slim.dropout(net, keep_prob), 1024,
+                                       activation_fn=tf.nn.relu, scope='fc1')
+            logits = slim.fully_connected(slim.dropout(net, keep_prob),
+                                          num_classes, activation_fn=None, scope='logits')
+            print("logits info:", logits)
             end_points = slim.utils.convert_collection_to_dict(end_points_collection)
-            if num_classes is not None:
-                end_points['predictions'] = slim.softmax(net, scope='predictions')
-            return net, end_points
+            return logits, end_points
 
 
-def resnet_v2_50(inputs, num_classes=None, global_pool=None, reuse=None, scope='resnet_v2_50'):
+def resnet_v2_50(inputs, num_classes, keep_prob, reuse=None, scope='resnet_v2_50'):
     blocks = [
         Block('block1', bottleneck, [(256,  64,  1)] * 2 + [(256,  64,  2)]),
         Block('block2', bottleneck, [(512,  128, 1)] * 3 + [(512,  128, 2)]),
         Block('block3', bottleneck, [(1024, 256, 1)] * 5 + [(1024, 256, 2)]),
         Block('block4', bottleneck, [(2048, 512, 1)] * 3)
     ]
-    return resnet_v2(inputs, blocks, num_classes, global_pool, include_root_block=True,
+    return resnet_v2(inputs, blocks, num_classes, keep_prob, include_root_block=True,
                      reuse=reuse, scope=scope)
 
-def resnet_v2_101(inputs, num_classes=None, global_pool=True, reuse=None, scope='resnet_v2_101'):
-    blocks = [
-        Block('block1', bottleneck, [(256,  64,  1)] * 2  + [(256, 64, 2)]),
-        Block('block2', bottleneck, [(512,  128, 1)] * 3  + [(512, 128, 2)]),
-        Block('block3', bottleneck, [(1024, 256, 1)] * 22 + [(1024, 256, 2)]),
-        Block('block4', bottleneck, [(2048, 512, 1)] * 3)
-    ]
-    return resnet_v2(inputs, blocks, num_classes, global_pool, include_root_block=True,
-                     reuse=reuse, scope=scope)
+# dirty function
+def build_graph(is_training):
+    from config import FLAGS
+    inputs = tf.placeholder(tf.float32, [None, FLAGS.image_height * FLAGS.image_width], 'images')
+    keep_prob = tf.placeholder(tf.float32, None, 'keep_prob')
+    inputs_shape = tf.reshape(inputs, [-1, FLAGS.image_height, FLAGS.image_width, 1], 'inputs_shape')
+    labels = tf.placeholder(tf.float32, [None, FLAGS.charset_size * FLAGS.captcha_size], 'labels')
+    with slim.arg_scope(resnet_arg_scope(is_training=is_training)):
+        logits, end_points = resnet_v2_50(inputs_shape, FLAGS.charset_size * FLAGS.captcha_size, keep_prob=keep_prob)
+
+    loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=logits, labels=labels))
+    optimizer = tf.train.AdamOptimizer(learning_rate=0.001).minimize(loss)
+    max_idx_p = tf.argmax(tf.reshape(logits, [-1, FLAGS.image_height, FLAGS.image_width]), 2)
+    max_idx_l = tf.argmax(tf.reshape(labels, [-1, FLAGS.image_height, FLAGS.image_width]), 2)
+    accuracy = tf.reduce_mean(tf.cast(tf.equal(max_idx_l, max_idx_p), tf.float32))
+    return {'images': inputs,
+            'labels': labels,
+            'accuracy': accuracy,
+            'optimizer': optimizer,
+            'loss': loss,
+            'net': net}
 
 
-def resnet_v2_152(inputs, num_classes=None, global_pool=True, reuse=None, scope='resnet_v2_152'):
-    blocks = [
-        Block('block1', bottleneck, [(256,  64,  1)] * 2  + [(256, 64, 2)]),
-        Block('block2', bottleneck, [(512,  128, 1)] * 7  + [(512, 128, 2)]),
-        Block('block3', bottleneck, [(1024, 256, 1)] * 35 + [(1024, 256, 2)]),
-        Block('block4', bottleneck, [(2048, 512, 1)] * 3)
-    ]
-    return resnet_v2(inputs, blocks, num_classes, global_pool, include_root_block=True,
-                     reuse=reuse, scope=scope)
+if __name__ == '__main__':
+    import time
+    import numpy as np
+    from preprocess import train_data_iterator
+    batch_size = 32
+    height, width = 40, 100
+    inputs = tf.placeholder(tf.float32, [None, height * width], 'inputs')
+    inputs_shape = tf.reshape(inputs, [-1, height, width, 1], 'inputs_shape')
+    keep_prob = tf.placeholder(tf.float32, [], 'keep_prob')
+    with slim.arg_scope(resnet_arg_scope(is_training=True)):
+       logits, end_points = resnet_v2_50(inputs_shape, 310, keep_prob)
 
+    init = tf.global_variables_initializer()
+    sess = tf.Session()
+    sess.run(init)
 
-def resnet_v2_200(inputs, num_classes=None, global_pool=True, reuse=None, scope='resnet_v2_200'):
-    blocks = [
-        Block('block1', bottleneck, [(256,  64,  1)] * 2  + [(256, 64, 2)]),
-        Block('block2', bottleneck, [(512,  128, 1)] * 23 + [(512, 128, 2)]),
-        Block('block3', bottleneck, [(1024, 256, 1)] * 35 + [(1024, 256, 2)]),
-        Block('block4', bottleneck, [(2048, 512, 1)] * 3)
-    ]
-    return resnet_v2(inputs, blocks, num_classes, global_pool, include_root_block=True,
-                     reuse=reuse, scope=scope)
-
-
-# helper function
-def time_tensorflow_run(session, target, info_string):
-    num_steps_burn_in = 10
-    total_duration = 0.0
-    total_duration_squared = 0.0
-
-    for i in range(num_batches + num_steps_burn_in):
-        start_time = time.time()
-        _ = session.run(target)
-        duration = time.time() - start_time
-        if i >= num_steps_burn_in:
-            if not i % 10:
-                print("%s: step %d, duration = %.3f" %
-                      (datetime.now(), i - num_steps_burn_in, duration))
-            total_duration += duration
-            total_duration_squared += duration * duration
-
-    mn = total_duration / num_batches
-    vr = total_duration_squared / num_batches - mn * mn
-    sd = math.sqrt(vr)
-    print('%s: %s across %d steps, %.3f +/- %.3f sec / batch'%
-          (datetime.now(), info_string, num_batches, mn, sd))
-batch_size = 32
-height, width = 40, 100
-inputs = tf.random_uniform((batch_size, height, width, 3))
-with slim.arg_scope(resnet_arg_scope(is_training=False)):
-    net, end_points = resnet_v2_50(inputs, 310)
-
-init = tf.global_variables_initializer()
-sess = tf.Session()
-sess.run(init)
-num_batches = 100
-time_tensorflow_run(sess, net, "forward")
+    for X, y in train_data_iterator():
+        break
+    print(y)
+    stime = time.time()
+    logits_ = sess.run(logits, feed_dict={inputs: X, keep_prob: 0.5})
+    etime = time.time() - stime
+    print('time pass: {}'.format(etime))
+    loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=logits_, labels=y))
+    optimizer = tf.train.AdamOptimizer(learning_rate=0.001).minimize(loss)
+    print("loss: {}".format(loss))
