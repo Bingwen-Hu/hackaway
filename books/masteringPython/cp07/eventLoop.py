@@ -1,3 +1,5 @@
+# Warning: test on linux is ok, on windows is not ok......
+
 # there two bundled event loop implementations
 # async.SelectorEventLoop & async.ProactorEventLoop (only on windows)
 
