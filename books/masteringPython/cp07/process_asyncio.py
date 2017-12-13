@@ -1,3 +1,5 @@
+# only on linux, maybe a bug
+
 import time
 import asyncio
 
@@ -11,7 +13,7 @@ async def async_process_sleeper():
     print('Finished sleep at %.1f' % (time.time() - t))
 
 loop = asyncio.get_event_loop()
-for i in range(5):
+for i in range(1):
     task = loop.create_task(async_process_sleeper())
 
 future = loop.call_later(1, loop.stop)
