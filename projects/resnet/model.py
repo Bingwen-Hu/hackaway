@@ -24,7 +24,6 @@ def batch_norm_relu(inputs, is_training, data_format):
     return inputs
 
 
-# strange padding, why not depend on dimension
 def fixed_padding(inputs, kernel_size, data_format):
     """kernel_size: the kernel to be used in the conv2d or max_pool2d operation.
                     should be a positive integer.

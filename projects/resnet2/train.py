@@ -31,7 +31,8 @@ def train():
                 for step, (x_batch, y_batch) in enumerate(train_data_iterator()):
                     start_time = time.time()
                     feed_dict = {graph['images']: x_batch,
-                                 graph['labels']: y_batch}
+                                 graph['labels']: y_batch,
+                                 graph['keep_prob']: 0.5}
                     _, loss_val = sess.run([graph['optimizer'], graph['loss']], feed_dict=feed_dict)
                     end_time = time.time()
                     print("the step {0} takes {1} loss {2}".format(step, end_time - start_time, loss_val))
@@ -40,7 +41,8 @@ def train():
                     if step % FLAGS.eval_steps == 0:
                         x_batch_test, y_batch_test = test_data_helper(128)
                         feed_dict = {graph['images']: x_batch_test,
-                                     graph['labels']: y_batch_test}
+                                     graph['labels']: y_batch_test,
+                                     graph['keep_prob']: 1.0}
                         accuracy_test = sess.run(graph['accuracy'], feed_dict=feed_dict)
                         print('===============Eval a batch=======================')
                         print('the step {0} test accuracy: {1}'.format(step, accuracy_test))

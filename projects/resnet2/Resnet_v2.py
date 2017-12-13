@@ -121,7 +121,6 @@ def resnet_v2(inputs, blocks, num_classes, keep_prob, include_root_block=True, r
                                        activation_fn=tf.nn.relu, scope='fc1')
             logits = slim.fully_connected(slim.dropout(net, keep_prob),
                                           num_classes, activation_fn=None, scope='logits')
-            print("logits info:", logits)
             end_points = slim.utils.convert_collection_to_dict(end_points_collection)
             return logits, end_points
 
@@ -140,33 +139,34 @@ def resnet_v2_50(inputs, num_classes, keep_prob, reuse=None, scope='resnet_v2_50
 def build_graph(is_training):
     from config import FLAGS
     inputs = tf.placeholder(tf.float32, [None, FLAGS.image_height * FLAGS.image_width], 'images')
-    keep_prob = tf.placeholder(tf.float32, None, 'keep_prob')
+    keep_prob = tf.placeholder(tf.float32, [], 'keep_prob')
     inputs_shape = tf.reshape(inputs, [-1, FLAGS.image_height, FLAGS.image_width, 1], 'inputs_shape')
     labels = tf.placeholder(tf.float32, [None, FLAGS.charset_size * FLAGS.captcha_size], 'labels')
     with slim.arg_scope(resnet_arg_scope(is_training=is_training)):
-        logits, end_points = resnet_v2_50(inputs_shape, FLAGS.charset_size * FLAGS.captcha_size, keep_prob=keep_prob)
+        logits, end_points = resnet_v2_50(inputs_shape, FLAGS.charset_size * FLAGS.captcha_size, keep_prob)
 
     loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=logits, labels=labels))
     optimizer = tf.train.AdamOptimizer(learning_rate=0.001).minimize(loss)
-    max_idx_p = tf.argmax(tf.reshape(logits, [-1, FLAGS.image_height, FLAGS.image_width]), 2)
-    max_idx_l = tf.argmax(tf.reshape(labels, [-1, FLAGS.image_height, FLAGS.image_width]), 2)
+    max_idx_p = tf.argmax(tf.reshape(logits, [-1, FLAGS.charset_size, FLAGS.captcha_size]), 2)
+    max_idx_l = tf.argmax(tf.reshape(labels, [-1, FLAGS.charset_size, FLAGS.captcha_size]), 2)
     accuracy = tf.reduce_mean(tf.cast(tf.equal(max_idx_l, max_idx_p), tf.float32))
     return {'images': inputs,
             'labels': labels,
             'accuracy': accuracy,
             'optimizer': optimizer,
             'loss': loss,
-            'net': net}
+            'logits': logits,
+            'keep_prob': keep_prob}
 
 
 if __name__ == '__main__':
-    import time
     import numpy as np
     from preprocess import train_data_iterator
     batch_size = 32
     height, width = 40, 100
     inputs = tf.placeholder(tf.float32, [None, height * width], 'inputs')
     inputs_shape = tf.reshape(inputs, [-1, height, width, 1], 'inputs_shape')
+    labels = tf.placeholder(tf.float32, [None, 310], 'labels')
     keep_prob = tf.placeholder(tf.float32, [], 'keep_prob')
     with slim.arg_scope(resnet_arg_scope(is_training=True)):
        logits, end_points = resnet_v2_50(inputs_shape, 310, keep_prob)
@@ -178,10 +178,7 @@ if __name__ == '__main__':
     for X, y in train_data_iterator():
         break
     print(y)
-    stime = time.time()
-    logits_ = sess.run(logits, feed_dict={inputs: X, keep_prob: 0.5})
-    etime = time.time() - stime
-    print('time pass: {}'.format(etime))
-    loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=logits_, labels=y))
+    loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=logits, labels=y))
     optimizer = tf.train.AdamOptimizer(learning_rate=0.001).minimize(loss)
-    print("loss: {}".format(loss))
+    loss_val = sess.run(loss, feed_dict={inputs: X, labels:y, keep_prob:0.5})
+    print("loss: {}".format(loss_val))
