@@ -137,6 +137,7 @@ def resnet_v2_50(inputs, num_classes, keep_prob, reuse=None, scope='resnet_v2_50
 
 # dirty function
 def build_graph(is_training):
+    from tensorflow.python.ops import control_flow_ops
     from config import FLAGS
     inputs = tf.placeholder(tf.float32, [None, FLAGS.image_height * FLAGS.image_width], 'images')
     keep_prob = tf.placeholder(tf.float32, [], 'keep_prob')
@@ -146,6 +147,11 @@ def build_graph(is_training):
         logits, end_points = resnet_v2_50(inputs_shape, FLAGS.charset_size * FLAGS.captcha_size, keep_prob)
 
     loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(logits=logits, labels=labels))
+    update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
+    if update_ops:
+        updates = tf.group(*update_ops)
+        loss = control_flow_ops.with_dependencies([updates], loss)
+
     optimizer = tf.train.AdamOptimizer(learning_rate=0.001).minimize(loss)
     max_idx_p = tf.argmax(tf.reshape(logits, [-1, FLAGS.charset_size, FLAGS.captcha_size]), 2)
     max_idx_l = tf.argmax(tf.reshape(labels, [-1, FLAGS.charset_size, FLAGS.captcha_size]), 2)
