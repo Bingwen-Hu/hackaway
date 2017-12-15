@@ -13,3 +13,7 @@ def singleton(cls):
 class Spam(object):
     def __init__(self):
         print('Executing init')
+
+
+spam = Spam()
+print(type(spam))
