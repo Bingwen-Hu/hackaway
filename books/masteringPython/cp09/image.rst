@@ -7,3 +7,6 @@ images
 
 .. image:: Python.png
     :scale: 120
+
+
+The python logo
