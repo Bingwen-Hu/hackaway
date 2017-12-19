@@ -6,3 +6,4 @@ src_docs
 
    eggs
    spam
+         google_style
