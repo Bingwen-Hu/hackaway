@@ -30,3 +30,4 @@ _build
 text8.zip
 .cache
 .coverage
+htmlcov
