@@ -29,3 +29,4 @@ books/masteringPython/cp09/*.html
 _build
 text8.zip
 .cache
+.coverage

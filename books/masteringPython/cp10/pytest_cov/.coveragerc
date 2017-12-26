@@ -6,28 +6,25 @@ fail_under = 100
 # These functions are generally only needed for debugging and/or extra safety so
 # we want to ignore them from the coverage requirements
 exclude_lines =
-# Make it possible to ignore blocks of code
-pragma: no
-cover
+    # Make it possible to ignore blocks of code
+    pragma: no cover
 
 
-# Generally only debug code uses this
-def __repr__
+    # Generally only debug code uses this
+    def __repr__
 
 
-# if a debug setting is set, skip testing
-if self\.debug:
+    # if a debug setting is set, skip testing
+    if self\.debug:
     if settings.DEBUG
 
-# Don't worry about safety checks and expected errors
-raise AssertionError
-raise NotImplementedError
+    # Don't worry about safety checks and expected errors
+    raise AssertionError
+    raise NotImplementedError
 
-# This code will probably never run so don't complain about that
-if 0:
-    if __name__ == '__main__':
-
-
+    # This code will probably never run so don't complain about that
+    if 0:
+    if __name__ == .__main__.:
     @abc.abstractmethod
 
 
