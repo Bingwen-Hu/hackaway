@@ -161,4 +161,4 @@ intersphinx_mapping = {'https://docs.python.org/': None}
 import os
 import sys
 
-sys.path.insert(0, os.path.join(os.path.abspath('..'), 'src'))
+sys.path.insert(0, os.path.join(os.path.abspath('..'), 'source_test'))

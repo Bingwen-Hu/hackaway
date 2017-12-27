@@ -63,7 +63,7 @@ print(tag('p', 'hello', 'world', cls='sidebar'))
 # even "content" is considered as a keyword parameter
 print(tag(content="testing", name="img"))
 my_tag = {'name': 'img', 'title': 'Sunset Boulevard',
-          'src': 'sunset.jpg', 'cls': 'framed'}
+          'source_test': 'sunset.jpg', 'cls': 'framed'}
 print(tag(**my_tag))
 
 #==============================================================================

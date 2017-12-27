@@ -2,7 +2,7 @@ import pytest
 import sys
 import os
 
-sys.path.insert(0, os.path.join(os.path.abspath('..'), 'src'))
+sys.path.insert(0, os.path.join(os.path.abspath('..'), 'source_test'))
 
 # if I can't find it, I can't test it
 # TODO: the path is missing
