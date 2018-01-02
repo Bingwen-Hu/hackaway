@@ -10,12 +10,11 @@
 
 
 ### basic
-'''
+```
 #include <math>
-'''
+```
 
 should compile with
-'''
+```
 -lm
-'''
-
+```
