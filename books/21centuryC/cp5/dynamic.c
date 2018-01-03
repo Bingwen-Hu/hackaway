@@ -22,12 +22,12 @@ void get_a_function(){
 }
 
 void compile_and_run(){
-    if (system("c99 -fPIC -shared fn.c -o fn.so")!=0){
+    if (system("c99 -fPIC -shared fn.c -lm -o fn.so")!=0){
         printf("Compilation error.");
         return;
     }
 
-    void *handle = dlopen("fn.so", RTLD_NOW);
+    void *handle = dlopen("./fn.so", RTLD_LAZY);
     if (!handle) printf("Failed to load fn.so: %s\n", dlerror());
 
     typedef double (*fn_type)(double);
