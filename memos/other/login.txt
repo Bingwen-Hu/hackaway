@@ -1,0 +1,3 @@
+In a linux machine, login a remote machine
+
+ssh username@ipaddress -p portnumber
