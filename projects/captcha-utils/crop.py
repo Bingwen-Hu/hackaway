@@ -5,14 +5,12 @@ import numpy as np
 import os
 import glob
 
-from config import WIDTH, HEIGHT, DIR_IMAGE, DIR_SAVE
-
-
 
 def crop_and_save(path, parts, savedir):
     """
-    path: 图片路径
-    parts:表示把图片切成几个部分，一般是验证码的个数
+    Args:
+        path: 图片路径
+        parts:表示把图片切成几个部分，一般是验证码的个数
     """
     codes = os.path.basename(path)[:parts]
     img = Image.open(path)
@@ -29,22 +27,36 @@ def crop_and_save(path, parts, savedir):
 
 
 def multi_vertical_crop(img, pieces=3):
+    """按列对图片进行切割。首先找出目标片段所在的列，这个需要按需调整筛选条件。
+    然后，筛选出边界点，即cutpoints。因为边界点的下一点即是新的片段的起始点，
+    所以有了pieces个边界点后，就可以进行切割了。
+
+    Args:
+        img: PIL.Image object
+        pieces: number of pieces
+
+    Returns:
+        list of PIL.Image object
+    """
     width, height = img.size
     data = np.array(img)
 
-    # cup by columns
-    points = [i for i in range(width) if np.sum(data[:, i]) > 0]
+    # 以黑点(<140)的数目大于2作为分界条件
+    points = [i for i in range(width) if np.sum(data[:, i] < 140) > 2]
+    # 找出边界点
     cutpoints = [i for i in range(len(points)-1) if points[i]+1 != points[i+1]]
     if len(cutpoints) != pieces:
         print("image has something unfit")
         return None
     i, j, k = cutpoints
+    # 边界点的下一点即是新片段的起始点
     cutpoints = ((points[0], points[i]), (points[i+1], points[j]),
                  (points[j+1], points[k]), (points[k+1], points[-1]))
 
     imagelist = []
     for start, end in cutpoints:
-        imagelist.append(img.crop((start, 0, end, height)))
+        # end+1是因为crop不包含边界，需要+1包含
+        imagelist.append(img.crop((start, 0, end+1, height)))
     return imagelist
 
 def all_crop(img):
@@ -53,6 +65,10 @@ def all_crop(img):
     return img_
 
 def horizon_crop(img):
+    """按行切割
+
+
+    """
     width, height = img.size
     data = np.array(img)
 
