@@ -21,6 +21,27 @@ def pixel_replace(image, threshold, replace, larger=False):
     return Image.fromarray(image)
 
 
+def add_spot(image, num, color):
+    """
+    Args:
+         image: PIL.Image object
+         num: number of spot
+         color: color of spot
+
+    Returns:
+        spotted_image PIL.Image object
+    """
+    data = np.array(image)
+    height, width = data.shape
+    all_pos = [[i, j] for i in range(height) for j in range(width)]
+    np.random.shuffle(all_pos)
+    use_pos = all_pos[:num]
+    for (x, y) in use_pos:
+        data[x][y] = color
+    img = Image.fromarray(data)
+    return img
+
+
 def rotate(image, resample=None, angle=None):
     if angle is None:
         angle = np.random.randint(-15, 15)

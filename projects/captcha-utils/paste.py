@@ -8,8 +8,6 @@ def random_select_pieces(piecepaths, num):
     np.random.shuffle(piecepaths)
     return piecepaths[:num]
 
-
-
 def paste(mode, piecepaths, size, savepath=None):
     """将几个片段拼成一个文件
     Args:

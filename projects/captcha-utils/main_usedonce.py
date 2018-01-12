@@ -1,3 +1,5 @@
+"""本文件用于随意测试和组合process.py crop.py paste.py文件功能"""
+
 import os
 import glob
 from uuid import uuid1
@@ -8,7 +10,7 @@ from skimage import morphology
 
 import process
 import crop
-
+import paste
 
 def rbg2gray():
     filepaths = glob.glob("E:/captcha-data/sina2/wb/*")
@@ -38,13 +40,13 @@ def crop_and_save(path, pieces, savedir):
     # 按以文本作为开头命名
     for c, im in zip(codes, hcrop_images):
         im.save(os.path.join(savedir, f"{c}{uuid1()}.jpg"))
-#
-filepaths = glob.glob("E:/captcha-data/sina2/wb/*")
 
-imglist = [Image.open(p).convert("L") for p in filepaths]
-imglist = [process.pixel_replace(img, 140, 255, True) for img in imglist]
-imglist = [process.pixel_replace(img, 1, 255, False) for img in imglist]
-imgdict = {os.path.basename(p):img for (p, img) in zip(filepaths, imglist)}
+def gen_imgdict():
+    filepaths = glob.glob("E:/captcha-data/sina2/wb2/*")
+    imglist = [Image.open(p).convert("L") for p in filepaths]
+    imglist = [process.pixel_replace(img, 140, 255, True) for img in imglist]
+    imglist = [process.pixel_replace(img, 1, 255, False) for img in imglist]
+    imgdict = {os.path.basename(p):img for (p, img) in zip(filepaths, imglist)}
 
 def erosion_and_dilation(image):
     data = np.array(image)
@@ -70,3 +72,20 @@ def combine(imgdict):
             save(code, imagelist)
     return failed
 
+
+piecespath = glob.glob("crops/good/*")
+savedir = "E:/captcha-data/sina2/gentrain/"
+
+def paste_image(piecespath):
+    selectpaths = paste.random_select_pieces(piecespath, 4)
+    codes = [os.path.basename(path)[0] for path in selectpaths]
+    codes = ''.join(codes)
+    image = paste.paste("L", selectpaths, (104, 30))
+    image = process.add_spot(image, 20, 0)
+    return image, codes
+
+
+def save_image(image, codes, savedir):
+    name = f"codes{uuid1()}.jpg"
+    path = os.path.join(savedir, name)
+    image.save(path)
