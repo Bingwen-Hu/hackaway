@@ -2,8 +2,8 @@
 // exercise 2.11
 #include <stdio.h>
 #include <stdlib.h>
+#include "utilities.h"
 
-void swap(int *, int *);
 void test_2_10();
 void test_2_11();
 
@@ -36,10 +36,4 @@ void test_2_11(){
     free(second);
 }
 
-
-void swap(int *first, int *second){
-    int temp = *first;
-    *first = *second;
-    *second = temp;
-}
 
