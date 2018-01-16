@@ -7,4 +7,4 @@ mysql_test: mysql.o
 
 
 clean:
-	rm -rf mysql_test
+	rm -rf mysql_test *.o
