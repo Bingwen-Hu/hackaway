@@ -19,9 +19,12 @@ primes:
 strncpy:
 	$(CC) strncpy.c $(CFLAGS) -o $@
 
-astrncpy:
-	$(CC) astrncpy.c $(CFLAGS) -o $@
+astrncpy: utilities.o
+	$(CC) astrncpy.c utilities.c $(CFLAGS) -o $@
+
+astrncat: utilities.o astrncat.o
+	$(CC) astrncat.c utilities.c $(CFLAGS) -o $@
 
 clean:
 	rm -rf birthday bdaystruct swap squares primes
-	rm -rf strncpy *.o astrncpy
+	rm -rf strncpy *.o astrncpy astrncat
