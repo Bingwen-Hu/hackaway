@@ -44,3 +44,20 @@
 (minusp -1)
 (plusp 1)
 (plusp -1)
+
+
+;;; character
+; just note for some functions:
+; char= char/= char< char> char<= char>=
+; char-equal char-not-equal char-lessp char-greaterp 
+; char-not-greaterp char-not-lessp
+
+;;; string, similar to character
+; string= string/= string< string> string<= string>=
+; string-equal string-not-equal string-lessp string-greaterp 
+; string-not-greaterp string-not-lessp 
+
+(string= "mory" "mory")
+(string> "mory" "Ann")
+(string/= "lisp" "lissome")
+(string< "moryann" "Jenny" :start1 3 :start2 2)
