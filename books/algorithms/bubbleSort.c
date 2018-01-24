@@ -17,7 +17,6 @@ void bubbleSort(int A[], int n){
                 A[j-1] = t;
             }
         }
-
     }
 }
 
