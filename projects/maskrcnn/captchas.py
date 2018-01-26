@@ -33,7 +33,7 @@ class CaptchasConfig(Config):
     IMAGES_PER_GPU = 8
 
     # Number of classes (including background)
-    NUM_CLASSES = 1 + 62  # background + 3 shapes
+    NUM_CLASSES = 62  # background + 3 shapes
 
     # Use small images for faster training. Set the limits of the small side
     # the large side, and that determines the image shape.
@@ -67,6 +67,8 @@ class CaptchasDataset(utils.Dataset):
         self.charset = ("abcdefghijklmnopqrstuvwxyz" +
                         "ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
                         "0123456789")
+        for i, letter in enumerate(self.charset):
+            self.add_class("captchas", i, letter)
 
     def load_image(self, image_id):
         """返回对应的图片数据"""
@@ -76,7 +78,7 @@ class CaptchasDataset(utils.Dataset):
     def image_reference(self, image_id):
         """返回这张图片对应的验证码"""
         info = self.image_info[image_id]
-        return info["captchas"]
+        return info["class_ids"]
 
 
     def load_mask(self, image_id):
@@ -142,7 +144,7 @@ class CaptchasDataset(utils.Dataset):
 
     def create_data(self, count, width, height):
         for i in range(count):
-            piecepaths = glob.glob("crops/*")
+            piecepaths = glob.glob("data/*")
             piecepaths = self.random_select_pieces(piecepaths, 3)
             image, mask, class_ids = self.generate_data("L", piecepaths, (width, height))
-            self.add_image(source='captchas', image_id=i, image=image, mask=mask, class_ids=class_ids)
+            self.add_image(source='captchas', image_id=i, path=None, image=np.array(image), mask=mask, class_ids=class_ids)
