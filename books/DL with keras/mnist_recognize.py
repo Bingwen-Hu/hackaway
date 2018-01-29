@@ -44,7 +44,11 @@ y_test = np_utils.to_categorical(y_test, nb_classes)
 # 10 outputs
 # final stage is softmax
 model = Sequential()
-model.add(Dense(nb_classes, input_shape=(reshaped, )))
+model.add(Dense(n_hidden, input_shape=(reshaped,)))
+model.add(Activation('relu'))
+model.add(Dense(n_hidden))
+model.add(Activation('relu'))
+model.add(Dense(nb_classes))
 model.add(Activation('softmax'))
 model.summary()
 
