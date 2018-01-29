@@ -9,12 +9,13 @@ from keras.models import Sequential
 from keras.layers.core import Dense, Activation, Dropout
 from keras.optimizers import SGD, RMSprop, Adam
 from keras.utils import np_utils
+from keras import regularizers
 np.random.seed(1671) # for reproducibility
 
 
 
 # network and training
-nb_epoch = 250
+nb_epoch = 20
 batch_size = 128
 verbose = 1
 nb_classes = 10 # number of outputs = number of digits
@@ -46,7 +47,7 @@ Y_test = np_utils.to_categorical(y_test, nb_classes)
 # 10 outputs
 # final stage is softmax
 model = Sequential()
-model.add(Dense(n_hidden, input_shape=(reshaped,)))
+model.add(Dense(n_hidden, input_shape=(reshaped,), kernel_regularizer=regularizers.l2(0.01)))
 model.add(Activation('relu'))
 model.add(Dropout(dropout))
 model.add(Dense(n_hidden))
@@ -77,3 +78,9 @@ history = model.fit(X_train, Y_train, batch_size=batch_size, epochs=nb_epoch,
 score = model.evaluate(X_test, Y_test, verbose=verbose)
 print('Test score: ', score[0])
 print('Test accuracy: ', score[1])
+
+
+# L1 regularization (also known as lasso)
+# L2 regularization (also known as ridge)
+# Elastic net regularization: combine of two preceding techniques
+
