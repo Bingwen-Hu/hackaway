@@ -58,7 +58,7 @@ model.add(Dense(nb_classes))
 model.add(Activation('softmax'))
 model.summary()
 
-# TensorBoard(log_dir='./logs', histogram_freq=0, write_graph=True, write_images=False)
+
 # pandas version conflict
 
 # 激活函数
@@ -78,7 +78,8 @@ model.summary()
 # Recall
 model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
 history = model.fit(X_train, Y_train, batch_size=batch_size, epochs=nb_epoch,
-                    verbose=verbose, validation_split=validation_split)
+                    verbose=verbose, validation_split=validation_split,
+                    callbacks=[TensorBoard(log_dir='./logs', histogram_freq=0, write_graph=True, write_images=False)])
 score = model.evaluate(X_test, Y_test, verbose=verbose)
 print('Test score: ', score[0])
 print('Test accuracy: ', score[1])
