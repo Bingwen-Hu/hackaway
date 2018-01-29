@@ -6,7 +6,7 @@ model MNIST dataset
 import numpy as np
 from keras.datasets import mnist
 from keras.models import Sequential
-from keras.layers.core import Dense, Activation
+from keras.layers.core import Dense, Activation, Dropout
 from keras.optimizers import SGD
 from keras.utils import np_utils
 np.random.seed(1671) # for reproducibility
@@ -14,14 +14,14 @@ np.random.seed(1671) # for reproducibility
 
 
 # network and training
-nb_epoch = 200
+nb_epoch = 250
 batch_size = 128
 verbose = 1
 nb_classes = 10 # number of outputs = number of digits
 optimizer = SGD() # SGD optimizer
 n_hidden = 128
 validation_split = 0.2 # how much TRAIN is reserved for validation
-
+dropout = 0.3
 # data: shuffled and split between train and test sets
 (X_train, y_train), (X_test, y_test) = mnist.load_data()
 # X_train is 60000 rows of 28x28 values --> reshaped in 60000x784
@@ -32,13 +32,15 @@ X_test = X_test.reshape(10000, reshaped)
 X_train = X_train.astype('float32')
 X_test = X_test.astype('float32')
 
+# normalize
 X_train /= 255
 X_test /= 255
 print(X_train.shape[0], 'train sample')
 print(X_test.shape[0], 'test sample')
 
-y_train = np_utils.to_categorical(y_train, nb_classes)
-y_test = np_utils.to_categorical(y_test, nb_classes)
+# convert class vectors to binary class matrices
+Y_train = np_utils.to_categorical(y_train, nb_classes)
+Y_test = np_utils.to_categorical(y_test, nb_classes)
 
 
 # 10 outputs
@@ -46,8 +48,10 @@ y_test = np_utils.to_categorical(y_test, nb_classes)
 model = Sequential()
 model.add(Dense(n_hidden, input_shape=(reshaped,)))
 model.add(Activation('relu'))
+model.add(Dropout(dropout))
 model.add(Dense(n_hidden))
 model.add(Activation('relu'))
+model.add(Dropout(dropout))
 model.add(Dense(nb_classes))
 model.add(Activation('softmax'))
 model.summary()
@@ -68,8 +72,8 @@ model.summary()
 # Precision
 # Recall
 model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
-history = model.fit(X_train, y_train, batch_size=batch_size, epochs=nb_epoch,
+history = model.fit(X_train, Y_train, batch_size=batch_size, epochs=nb_epoch,
                     verbose=verbose, validation_split=validation_split)
-score = model.evaluate(X_test, y_test, verbose=verbose)
+score = model.evaluate(X_test, Y_test, verbose=verbose)
 print('Test score: ', score[0])
 print('Test accuracy: ', score[1])
