@@ -4,6 +4,7 @@ model MNIST dataset
 """
 
 import numpy as np
+from keras.callbacks import TensorBoard
 from keras.datasets import mnist
 from keras.models import Sequential
 from keras.layers.core import Dense, Activation, Dropout
@@ -56,6 +57,9 @@ model.add(Dropout(dropout))
 model.add(Dense(nb_classes))
 model.add(Activation('softmax'))
 model.summary()
+
+# TensorBoard(log_dir='./logs', histogram_freq=0, write_graph=True, write_images=False)
+# pandas version conflict
 
 # 激活函数
 # simgoid 用于二分类，每个值都介于0和1之间，但每各值之间相互独立
