@@ -7,7 +7,7 @@ import numpy as np
 from keras.datasets import mnist
 from keras.models import Sequential
 from keras.layers.core import Dense, Activation, Dropout
-from keras.optimizers import SGD
+from keras.optimizers import SGD, RMSprop, Adam
 from keras.utils import np_utils
 np.random.seed(1671) # for reproducibility
 
@@ -18,7 +18,7 @@ nb_epoch = 250
 batch_size = 128
 verbose = 1
 nb_classes = 10 # number of outputs = number of digits
-optimizer = SGD() # SGD optimizer
+optimizer = RMSprop() # SGD optimizer
 n_hidden = 128
 validation_split = 0.2 # how much TRAIN is reserved for validation
 dropout = 0.3
