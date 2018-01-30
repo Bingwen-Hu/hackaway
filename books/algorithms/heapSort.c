@@ -70,21 +70,31 @@ void max_heapify(Heap *A, int i){
     }
 }
 
-// n(lg n)
 // Note: for a nearly complete tree, start from 0, tree->length/2 is the 
-// first leave node
+// first leave node. So, if we want to build a heap, we should start 
+// from the last node that is not a leaf node, and go up to the root
+// step by step
+// time: n / 2 * lg n => n(lg n)
 void build_max_heap(Heap *A){
     //A->heap_size = A->length;
-    for (int i = (A->heap_size/2 - 1); i >= 0; i--){  // n
-        max_heapify(A, i);                          // lg n
+    for (int i = A->heap_size/2-1 ; i >= 0; i--){    // n / 2
+        max_heapify(A, i);                           // lg n
     }
 }
 
 
+/* firstly, build a max heap
+ * iterate from the last one to the second one
+ * swap the first one and the iterate one
+ * and shrink the swap size to exclude the last one
+ * cause the maximum be placed the last position
+ * now, it is not a heap anymore, so heap_size set 
+ * to 0 is proper.
+ */
 void heapsort(Heap *A){
     build_max_heap(A);                      // n(lg n)
     int heap_size = A->heap_size;           // save
-    for (int i=A->heap_size-1; i>0; i--){   // n
+    for (int i=A->heap_size-1; i>0; i--){   // n - 1 
         swap(A, 0, i);
         A->heap_size--;                     // modify heap_size
         max_heapify(A, 0);                  // lg n
@@ -109,6 +119,11 @@ int heap_maximum(Heap *A){
     return A->data[0];
 }
 
+/* judgement
+ * get the first one, swap the first and 
+ * the last one and shrink the heap size
+ * finally heapify on the new first value
+ */
 int heap_extract_max(Heap *A){
     int max;
 
@@ -122,6 +137,7 @@ int heap_extract_max(Heap *A){
     max_heapify(A, 0);
     return max;
 }
+
 
 // go up with the chain of parents
 void heap_increase_key(Heap *A, int i, int key){
@@ -144,7 +160,9 @@ void max_heap_insert(Heap *A, int key){
 }
 
 void main(){
-    Heap A = {{4, 1, 3, 2, 16, 9, 10, 14, 8, 7}, 30, 10};
+    Heap A = {.data={4, 1, 3, 2, 16, 9, 10, 14, 8, 7}, 
+              .length=30,
+              .heap_size=10};
     build_max_heap(&A);
     println(&A);
 
