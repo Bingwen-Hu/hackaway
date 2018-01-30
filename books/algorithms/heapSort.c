@@ -42,8 +42,14 @@ void swap(Heap *A, int i, int j){
     A->data[i] = A->data[i] - A->data[j];
 }
 
-/** sort the i element, although recursive but lg n time.
-*/
+/* sort the i element, although recursive but lg n time.
+ * think about a triangle consist of i, i-left, i-right nodes
+ * find out the index of largest value of three
+ * if the index is i itself, it means done
+ * else swap the i and the index, focus on the largest index
+ * and run again.
+ * it results the larger value goes up and smaller value down
+ */
 void max_heapify(Heap *A, int i){
     int l = left(i);
     int r = right(i);
