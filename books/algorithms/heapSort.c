@@ -49,6 +49,8 @@ void swap(Heap *A, int i, int j){
  * else swap the i and the index, focus on the largest index
  * and run again.
  * it results the larger value goes up and smaller value down
+ * because every tine it chooses one branch to go down, so
+ * the time is O(lg n)
  */
 void max_heapify(Heap *A, int i){
     int l = left(i);
