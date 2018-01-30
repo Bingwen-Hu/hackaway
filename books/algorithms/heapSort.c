@@ -163,6 +163,7 @@ void max_heap_insert(Heap *A, int key){
     heap_increase_key(A, A->heap_size-1, key);
 }
 
+
 void main(){
     Heap A = {.data={4, 1, 3, 2, 16, 9, 10, 14, 8, 7}, 
               .length=10,
@@ -180,6 +181,10 @@ void main(){
     for (int i = 0; i < A.length; i++)
         printf("%d ", A.data[i]);
     putchar('\n');
+
+    // after heapsort, the heap is broken
+    // so need to rebuild it
+    build_max_heap(&A);
 
     printf("After insert 25: ");
     max_heap_insert(&A, 25);
