@@ -1,5 +1,6 @@
 import numpy as np
-import scipy.misc
+import imageio
+import skimage
 from keras.models import model_from_json
 from keras.optimizers import SGD
 
@@ -12,8 +13,8 @@ model.load_weights(model_weights)
 
 
 # load images
-img_names = ['/home/Downloads/cat.jpeg', '/home/Downloads/dog.jpg']
-imgs = [np.transpose(scipy.misc.imresize(scipy.misc.imread(img_name), (32, 32)),
+img_names = ['/home/mory/Downloads/cat.jpeg', '/home/mory/Downloads/dog.jpg']
+imgs = [np.transpose(skimage.transform.resize(imageio.imread(img_name), (32, 32)),
                      (1, 0, 2)).astype('float32') for img_name in img_names]
 imgs = np.array(imgs) / 255
 
