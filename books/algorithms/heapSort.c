@@ -9,7 +9,7 @@ A[parent(i)] <= A[i]
 
 Very Important Procedures:
 Max-Heapify, which runs in O(lg n)time, is the key to maintaining the max-heap property.
-Buil-Max-Heap, which runs in linear time, produces a max-heap from an unordered input array.
+Build-Max-Heap, which runs in linear time, produces a max-heap from an unordered input array.
 Heapsort procedure, which runs in O(n lg n) time, sorts an array in place.
 Max-Heap-Insert, Heap-Extract-Max, Heap-Increase-Key, and Heap-Maximum procedures, which
 run in O(lg n) time, allow the heap data structure to implement a priority queue.
