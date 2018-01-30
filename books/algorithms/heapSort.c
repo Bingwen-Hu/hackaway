@@ -18,6 +18,11 @@ run in O(lg n) time, allow the heap data structure to implement a priority queue
 #include <stdio.h>
 #include <limits.h>
 
+/* data is the space to store elements
+ * length is the number of elements, no matter it is heap or not
+ * heap_size is the size of a heap, when data is not a heap, 
+ * heap_size is 0.
+ */
 typedef struct heap {
     int data[100];
     int length;
@@ -76,8 +81,8 @@ void max_heapify(Heap *A, int i){
 // step by step
 // time: n / 2 * lg n => n(lg n)
 void build_max_heap(Heap *A){
-    //A->heap_size = A->length;
-    for (int i = A->heap_size/2-1 ; i >= 0; i--){    // n / 2
+    A->heap_size = A->length;
+    for (int i = A->length/2-1 ; i >= 0; i--){       // n / 2
         max_heapify(A, i);                           // lg n
     }
 }
@@ -93,13 +98,11 @@ void build_max_heap(Heap *A){
  */
 void heapsort(Heap *A){
     build_max_heap(A);                      // n(lg n)
-    int heap_size = A->heap_size;           // save
     for (int i=A->heap_size-1; i>0; i--){   // n - 1 
         swap(A, 0, i);
         A->heap_size--;                     // modify heap_size
         max_heapify(A, 0);                  // lg n
     }
-    A->heap_size = heap_size;               // restore
 }
 
 /** here, heap_size is broken after sort. */
@@ -123,6 +126,7 @@ int heap_maximum(Heap *A){
  * get the first one, swap the first and 
  * the last one and shrink the heap size
  * finally heapify on the new first value
+ * causes length and heap size inequal
  */
 int heap_extract_max(Heap *A){
     int max;
@@ -161,15 +165,23 @@ void max_heap_insert(Heap *A, int key){
 
 void main(){
     Heap A = {.data={4, 1, 3, 2, 16, 9, 10, 14, 8, 7}, 
-              .length=30,
-              .heap_size=10};
+              .length=10,
+              .heap_size=0};
     build_max_heap(&A);
     println(&A);
 
     int max = heap_extract_max(&A);
     printf("Maximum is: %d\n", max);
+    printf("After extract maximum: ");
     println(&A);
 
+    heapsort(&A);
+    puts("after sort");
+    for (int i = 0; i < A.length; i++)
+        printf("%d ", A.data[i]);
+    putchar('\n');
+
+    printf("After insert 25: ");
     max_heap_insert(&A, 25);
     println(&A);
 
