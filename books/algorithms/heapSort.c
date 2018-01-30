@@ -1,4 +1,4 @@
-/** The heap data structure
+/** The heap data structure -- heap is a nearly complete binary tree
 Give array A, A[0] is the root, then
 
 In a MAX-HEAP, the max-heap property is that for every node i other than the root.
@@ -71,9 +71,11 @@ void max_heapify(Heap *A, int i){
 }
 
 // n(lg n)
+// Note: for a nearly complete tree, start from 0, tree->length/2 is the 
+// first leave node
 void build_max_heap(Heap *A){
     //A->heap_size = A->length;
-    for (int i = (A->heap_size-1)/2; i >= 0; i--){  // n
+    for (int i = (A->heap_size/2 - 1); i >= 0; i--){  // n
         max_heapify(A, i);                          // lg n
     }
 }
