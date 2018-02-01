@@ -16,3 +16,11 @@
 (with-open-file (in path)
   (dotimes (i 7)
     (eval (read in))))
+
+
+;; print -> s-expression
+;; prin1 -> just he s-expression
+;; pprint -> beautiful print
+
+
+;; big topic on pathname
