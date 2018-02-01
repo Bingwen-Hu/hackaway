@@ -5,4 +5,5 @@ create a env
 
 show envs
 
-```conda env list``
+```conda env list```
+
