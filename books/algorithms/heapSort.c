@@ -105,7 +105,7 @@ void heapsort(Heap *A){
     }
 }
 
-/** here, heap_size is broken after sort. */
+
 void println(Heap *A){
     printf("Heap size: %d\n", A->heap_size);
     for (int i = 0; i < A->heap_size; i++){
