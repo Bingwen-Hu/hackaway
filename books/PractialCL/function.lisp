@@ -18,4 +18,4 @@
 
 ;;; a taste for loop
 (loop for i from 0 to 10 by 2 do
-     (format t "~a ~%"))
+     (format t "~a ~%" i))
