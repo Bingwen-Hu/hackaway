@@ -4,36 +4,26 @@ Created on Fri Feb  2 09:50:24 2018
 
 @author: Mory
 """
-from email.mime.text import MIMEText
-from datetime import datetime, timedelta
+import os
 import smtplib
 import pymysql
 import time
-import argparse
+from email.mime.text import MIMEText
+from datetime import datetime, timedelta
 
 
-parser = argparse.ArgumentParser()
-parser.add_argument('--host', help='mysql host')
-parser.add_argument('--user', help='mysql username')
-parser.add_argument('--passwd', help='mysql password')
-parser.add_argument('--port', help='mysql port')
-parser.add_argument('--receiver', help='receiver username')
-parser.add_argument('--sender', help='sender username')
-parser.add_argument('--sender_pass', help='sender password')
-args = parser.parse_args()
-
-HOST = args.host
-USER = args.user
-PASSWORD = args.passwd
-PORT = int(args.port)
+HOST = os.environ.get('HOST')
+USER = os.environ.get('USER')
+PASSWORD = os.environ.get('PASS')
+PORT = int(os.environ.get('PORT'))
 DATABASE = "urun_statistic"
 TABLE = 'wechat_info'
 
 
-mailto_list = [args.receiver]
+mailto_list = [os.get('RECEIVER')]
 mail_host = 'smtp.163.com'
-mail_user = args.sender
-mail_pass = args.sender_pass
+mail_user = os.get('SENDER')
+mail_pass = os.get('SENDER_PASS')
 
 
 
@@ -96,18 +86,23 @@ def send_mail(to_list, subject, content):
 if __name__ == '__main__':
     subject = "程序监控报告"
     lastsend = "2018-02-01"
-
+    result = 0
     while True:
-        conn = connect_sql(HOST, USER, PASSWORD, DATABASE, PORT)
         date, _ = gen_date()
-        result = fetch_mysql(conn, date)
-
-        if result > 0 and lastsend != date:
-            content = f"{date}: Mory, 程序运行正常，返回了{result}条信息"
+        try:
+            conn = connect_sql(HOST, USER, PASSWORD, DATABASE, PORT)
+            result = fetch_mysql(conn, date)
+        except:
+            content = f"{date}: Mory, 数据库连接异常"
             send_mail(mailto_list, subject, content)
-            lastsend = date
-        elif result == 0:
-            content = f"{date}: Mory，程序可能运行不正常，得马上检查一下！"
-            send_mail(mailto_list, subject, content)
-        conn.close()
+        else:
+            if result > 0 and lastsend != date:
+                content = f"{date}: Mory, 程序运行正常，返回了{result}条信息"
+                send_mail(mailto_list, subject, content)
+                lastsend = date
+            elif result == 0:
+                content = f"{date}: Mory，程序可能运行不正常，得马上检查一下！"
+                send_mail(mailto_list, subject, content)
+        finally:
+            conn.close()
         time.sleep(3600)
