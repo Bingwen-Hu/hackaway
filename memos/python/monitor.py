@@ -8,7 +8,9 @@ from email.mime.text import MIMEText
 from datetime import datetime, timedelta
 import smtplib
 import pymysql
+import time
 import argparse
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--host', help='mysql host')
@@ -92,11 +94,20 @@ def send_mail(to_list, subject, content):
         return False
 
 if __name__ == '__main__':
-    conn = connect_sql(HOST, USER, PASSWORD, DATABASE, PORT)
-    date, _ = gen_date()
-    result = fetch_mysql(conn, date)
-    if result > 0:
-        content = "Mory, 程序运行正常"
-    else:
-        content = "Mory，程序可能运行不正常，得马上检查一下！"
-    send_mail(mailto_list, '程序监控报告', content)
+    subject = "程序监控报告"
+    lastsend = "2018-02-01"
+
+    while True:
+        conn = connect_sql(HOST, USER, PASSWORD, DATABASE, PORT)
+        date, _ = gen_date()
+        result = fetch_mysql(conn, date)
+
+        if result > 0 and lastsend != date:
+            content = f"{date}: Mory, 程序运行正常，返回了{result}条信息"
+            send_mail(mailto_list, subject, content)
+            lastsend = date
+        elif result == 0:
+            content = f"{date}: Mory，程序可能运行不正常，得马上检查一下！"
+            send_mail(mailto_list, subject, content)
+        conn.close()
+        time.sleep(3600)
