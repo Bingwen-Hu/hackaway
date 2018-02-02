@@ -20,10 +20,10 @@ DATABASE = "urun_statistic"
 TABLE = 'wechat_info'
 
 
-mailto_list = [os.get('RECEIVER')]
+mailto_list = [os.environ.get('RECEIVER')]
 mail_host = 'smtp.163.com'
-mail_user = os.get('SENDER')
-mail_pass = os.get('SENDER_PASS')
+mail_user = os.environ.get('SENDER')
+mail_pass = os.environ.get('SENDER_PASS')
 
 
 
