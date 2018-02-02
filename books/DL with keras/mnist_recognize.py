@@ -88,4 +88,3 @@ print('Test accuracy: ', score[1])
 # L1 regularization (also known as lasso)
 # L2 regularization (also known as ridge)
 # Elastic net regularization: combine of two preceding techniques
-
