@@ -36,3 +36,5 @@ htmlcov
 *.lnk
 *.h5
 alice_in_wonderland.txt
+test_data.txt
+train_data.txt

@@ -1,8 +1,9 @@
+# basic RNN, have a problem of vanish gradient
+
 from __future__ import print_function
 from keras.layers import Dense, Activation
 from keras.layers.recurrent import SimpleRNN
 from keras.models import Sequential
-from keras.utils.vis_utils import plot_model
 import numpy as np
 
 
