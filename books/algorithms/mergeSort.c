@@ -44,7 +44,7 @@ void merge(int A[], int p, int q, int r){
     }
 }
 
-mergeSort(int A[], int p, int r){
+void mergeSort(int A[], int p, int r){
     if ((p+1) < r){
         int q = (p + r) / 2; // floor
         mergeSort(A, p, q);
