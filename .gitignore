@@ -38,3 +38,5 @@ htmlcov
 alice_in_wonderland.txt
 test_data.txt
 train_data.txt
+LD2011_2014.txt
+LD_250.npy
