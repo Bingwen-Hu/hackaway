@@ -9,7 +9,7 @@ import collections
 import matplotlib.pyplot as plt
 import nltk
 import numpy as np
-import os
+
 
 
 # we need to know how many unique words in data
