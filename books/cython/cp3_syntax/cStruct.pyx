@@ -10,3 +10,20 @@ def struct_test():
     print("No matter struct or pointer to a struct, access a "
           "proper is using a dot.")
     print("age is {}, level is {}".format(age, level))
+
+
+# union
+cdef union uu:
+    int a
+    short b, c
+
+ctypedef struct mycpx:          # same as cdef
+    float real
+    float imag
+
+
+def mycpx_test():
+    cdef mycpx cpx = mycpx(real=1.0, imag=0.3)
+    print(f"real part is: {cpx.real}, image part is {cpx.imag}")
+
+
