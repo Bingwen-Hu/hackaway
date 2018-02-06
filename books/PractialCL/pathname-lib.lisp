@@ -63,3 +63,10 @@
     #-(or sbcl cmu lispworks openmcl allegro clisp)
     (error "list-directory not implemented")))
 
+#+clisp
+(defun clisp-subdirectories-wildcard (wildcard)
+  (make-pathname
+   :directory (append (pathname-directory wildcard) (list :wild))
+   :name nil
+   :type nil
+   :defaults wildcard))
