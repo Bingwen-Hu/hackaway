@@ -1,4 +1,4 @@
 ### Face to Face Recognizer
 
-- face local
+- face locate
 - face compare and match
