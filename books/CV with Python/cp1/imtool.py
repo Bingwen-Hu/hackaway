@@ -48,7 +48,9 @@ def pca(X):
         X: matrix with training data stored as flattened arrays in rows
 
     Returns:
-        projection matrix (with import dimension first), variance, and mean
+        V: projection matrix (with import dimension first)
+        S: variance
+        mean_X: mean
     """
     nb_data, nb_features = X.shape
     mean_X = X.mean(axis=0)
