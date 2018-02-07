@@ -32,8 +32,6 @@ COCO_MODEL_PATH = os.path.join(ROOT_DIR, "mask_rcnn_coco.h5")
 # Download COCO trained weights from Releases if needed
 if not os.path.exists(COCO_MODEL_PATH):
     utils.download_trained_weights(COCO_MODEL_PATH)
-
-
 class CaptchasConfig(config.Config):
     """Configuration for training on the toy shapes dataset.
     Derives from the base Config class and overrides values specific
