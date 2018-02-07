@@ -294,7 +294,7 @@ for image_id in image_ids:
                          r["rois"], r["class_ids"], r["scores"])
     APs.append(AP)
 
-print("mAP: ", np.mean(APs))()
+print("mAP: ", np.mean(APs))
 dataset_train.load_shapes(500, config.IMAGE_SHAPE[0], config.IMAGE_SHAPE[1])
 dataset_train.prepare()
 
