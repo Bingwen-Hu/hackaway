@@ -299,7 +299,7 @@ dataset_train.load_shapes(500, config.IMAGE_SHAPE[0], config.IMAGE_SHAPE[1])
 dataset_train.prepare()
 
 # Validation dataset
-dataset_val = ShapesDataset()
+dataset_val = CaptchasDataset()
 dataset_val.load_shapes(50, config.IMAGE_SHAPE[0], config.IMAGE_SHAPE[1])
 dataset_val.prepare()
 
