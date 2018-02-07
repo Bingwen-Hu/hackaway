@@ -1,6 +1,6 @@
 cdef class Particle_cy:
     """simple Particle extension type."""
-    cdef double mass, position, velocity
+    cdef readonly double mass, position, velocity
     
     def __init__(self, m, p, v):
         self.mass = m
