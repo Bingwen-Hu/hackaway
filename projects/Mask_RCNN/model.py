@@ -603,7 +603,7 @@ class DetectionTargetLayer(KE.Layer):
     target_class_ids: [batch, TRAIN_ROIS_PER_IMAGE]. Integer class IDs.
     target_deltas: [batch, TRAIN_ROIS_PER_IMAGE, NUM_CLASSES,
                     (dy, dx, log(dh), log(dw), class_id)]
-                   Class-specific bbox refinments.
+                   Class-specific bbox refinements.
     target_mask: [batch, TRAIN_ROIS_PER_IMAGE, height, width)
                  Masks cropped to bbox boundaries and resized to neural
                  network output size.
@@ -615,7 +615,7 @@ class DetectionTargetLayer(KE.Layer):
         super(DetectionTargetLayer, self).__init__(**kwargs)
         self.config = config
 
-    def call(self, inputs):
+    def call(self, inputs, **kwargs):
         proposals = inputs[0]
         gt_class_ids = inputs[1]
         gt_boxes = inputs[2]
@@ -744,7 +744,7 @@ class DetectionLayer(KE.Layer):
         super(DetectionLayer, self).__init__(**kwargs)
         self.config = config
 
-    def call(self, inputs):
+    def call(self, inputs, **kwargs):
         def wrapper(rois, mrcnn_class, mrcnn_bbox, image_meta):
             detections_batch = []
             _, _, window, _ = parse_image_meta(image_meta)
