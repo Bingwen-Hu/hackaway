@@ -48,3 +48,22 @@ def denoise(img, U_init, tolerance=0.1, tau=0.125, tv_weight=100):
         error = np.linalg.norm(U - U_old) / np.sqrt(height * width)
 
     return U, img - U  # denoised image and texture residual
+
+
+if __name__ == '__main__':
+    from PIL import Image
+    import pylab as pl
+    img = Image.open("E:/Mory/object.png").convert("L")
+    data = np.array(img)
+    U, T = denoise(data, data)
+
+    pl.figure()
+    pl.gray()
+    pl.imshow(data)
+
+    pl.figure()
+    pl.gray()
+    pl.imshow(U)
+    pl.axis('equal')
+    pl.axis('off')
+    pl.show()
