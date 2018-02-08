@@ -136,3 +136,4 @@ def append_images(img1, img2):
 
 def plot_matches(img1, img2, locates1, locates2, matchscore, show_below=True):
     """ Show a figure with lines joining the accepted matches """
+    pass
