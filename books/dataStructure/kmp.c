@@ -21,8 +21,19 @@
 
 #include <stdio.h>
 
-void compute_next(char *T, int *next, int len){
+void compute_next(char *P, int *next, int len){
+    int i=0, j=-1;
+    next[0] = 0;
 
+    while(i < len-1){
+        if (j <= 0 || P[i] == P[j]){
+            ++i; ++j; 
+            next[i] = j;
+        } else {
+            j = next[j]; 
+        }
+    
+    }
 }
 
 
