@@ -30,12 +30,8 @@ def get_X(path, size):
     """resize, convert to gray, flatten and normalizes
     """
     img = Image.open(path).convert("RGB")
-    width_o, height_o = img.size
-    width_n, height_n = size
-    width_p = (width_n - width_o) // 2
-    height_p = (height_n - height_o) // 2
-    img = np.pad(np.array(img), [(height_p, height_p), (width_p, width_p), (0, 0)], mode='constant')
-    img = img / 255
+    img = img.resize(size, Image.BICUBIC)
+    img = np.array(img) / 255
     return img
 
 

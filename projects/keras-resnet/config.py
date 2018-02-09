@@ -9,8 +9,8 @@ CHARSET = string.ascii_letters + string.digits
 tf.app.flags.DEFINE_string('charset', CHARSET, "Charset to recognize")
 tf.app.flags.DEFINE_integer('charset_size', len(CHARSET), "Charset size obviously")
 tf.app.flags.DEFINE_integer('captcha_size', 5, "Number of captcha text")
-tf.app.flags.DEFINE_integer('image_height', 200, "Needs to provide same value as in training.")
-tf.app.flags.DEFINE_integer('image_width', 200, "Needs to provide same value as in training.")
+tf.app.flags.DEFINE_integer('image_height', 60, "Needs to provide same value as in training.")
+tf.app.flags.DEFINE_integer('image_width', 150, "Needs to provide same value as in training.")
 
 tf.app.flags.DEFINE_integer('batch_size', 64, 'Validation batch size')
 tf.app.flags.DEFINE_integer('num_epochs', 200, 'Validation batch size')
