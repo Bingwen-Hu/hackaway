@@ -20,7 +20,10 @@ enums: enums.o
 std_array: std_array.o
 	$(CXX) $(CFLAGS) std_array.cpp -o $@
 
+functions: functions.o
+	$(CXX) $(CFLAGS) functions.cpp -o $@
+
 clean:
 	rm -rf hello test_namespaces cast digits enums
-	rm -rf std_array
+	rm -rf std_array functions
 	rm -rf *.o
