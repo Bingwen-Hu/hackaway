@@ -3,7 +3,7 @@
  * defalut access level is private
  * this keyword
  */
-
+// #pragma once
 #ifndef SURPASSER_H_
 #define SURPASSER_H_
 
