@@ -1,36 +1,37 @@
-/* string */
+/* string
+ * two way initialization (assign and direct-initialization)
+ * handle with C-style string 
+ * string compare
+ * string length and modify
+ * substr in C++, careful!
+ */
 #include <iostream>
 #include <string>
 using namespace std;
 
+
 int main(){
-
-    string h = "hello";
-    std::cout << h << endl;
-
-
-    string a = (string)"Hello" + "good"; // string cast is needed
-
-    /* raw string is supported. */
-    string cmd = R"(E:\Mory\gogs\haa)";  // () is needed
-    std::cout << cmd <<endl;
-
-    /* string function */
-    size_t len = cmd.length();
-    std::cout << "length of cmd is: " << len        << endl
-              << "or using size(): "  << cmd.size() << endl;
+   string h = "hello"; 
+   string w(" world");
+   string a = h + w;
+   cout << a << endl;
 
 
-    // string encode
-    string  u3 = u8"utf-8 good";
+   // C-style string
+   char c[] = "world";
+   string b = h + (string)c;
+   string e = "hello" + (string)" world";
 
-    /* this two raise error
+   cout << b << endl
+        << e << endl;
 
-    u16string u16 = u"utf-16 oh";
-    u32string u32 = U"Is it right";
-    std::cout << u3  << endl
-              << u16 << endl
-              << u32 << endl;
 
-    */
+   // String content compare
+   // using == is ok
+   string s = " world";
+   cout << "s is equals to w? " << (s == w) << endl;
+
+   // string length or size
+   cout << "length of " << s << " is : " << s.length() << endl;
+   cout << "s.substr(1, 5) is " << s.substr(1, 5) << endl;
 }
