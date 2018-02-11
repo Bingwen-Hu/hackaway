@@ -14,8 +14,13 @@ class Surpasser
 private: 
     std::string kind = "Nothing";
     int level = 0;
+
 public:
+    Surpasser();
+    Surpasser(const std::string & kind, int level);
+    ~Surpasser();
     void show();
 };
+
 
 #endif
