@@ -1,6 +1,7 @@
 #include "surpasser.h"
 #include <iostream>
 #include <memory>
+using namespace SurpasserLand;
 
 int main(){
     // stack-based object
