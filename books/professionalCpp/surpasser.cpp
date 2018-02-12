@@ -1,10 +1,10 @@
 // surpasser class definition
 #include "surpasser.h"
 #include <iostream>
-Surpasser::Surpasser(){
-    s_name = "unknown";
-    s_type = PlainPeople; 
-    s_level = SurpasserLevel::Nothing;
+Surpasser::Surpasser(): 
+    s_name("Who you are?"),
+    s_type(PlainPeople),
+    s_level(SurpasserLevel::Nothing){
 }
 
 Surpasser::Surpasser(const std::string name, SurpasserType type, SurpasserLevel level){

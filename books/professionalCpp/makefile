@@ -35,9 +35,12 @@ const: const.o
 test_surpasser: test_surpasser.o surpasser.o
 	$(CXX) $(CFLAGS) test_surpasser.cpp surpasser.cpp -o $@
 
+vector: vector.o
+	$(CXX) $(CFLAGS) vector.cpp -o $@
+
 
 clean:
 	rm -rf hello test_namespaces cast digits enums
 	rm -rf std_array functions pass_by_ref exceptions
-	rm -rf const test_surpasser
+	rm -rf const test_surpasser vector
 	rm -rf *.o
