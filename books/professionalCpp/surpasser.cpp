@@ -5,10 +5,7 @@
 
 namespace SurpasserLand {
     Surpasser::Surpasser(): 
-        s_name("Who you are?"),
-        s_type(PlainPeople),
-        s_level(SurpasserLevel::Nothing){
-        }
+        Surpasser("unknown", PlainPeople, SurpasserLevel::Nothing){};
 
     Surpasser::Surpasser(const std::string name, SurpasserType type, SurpasserLevel level){
         s_name = name;
