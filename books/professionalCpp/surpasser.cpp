@@ -7,11 +7,10 @@ namespace SurpasserLand {
     Surpasser::Surpasser(): 
         Surpasser("unknown", PlainPeople, SurpasserLevel::Nothing){};
 
-    Surpasser::Surpasser(const std::string name, SurpasserType type, SurpasserLevel level){
-        s_name = name;
-        s_type = type;
-        s_level = level;
-    }
+    Surpasser::Surpasser(const std::string name, SurpasserType type, SurpasserLevel level):
+        s_name(name),
+        s_type(type),
+        s_level(level){};
 
     Surpasser::~Surpasser(){
         // nothing to do
