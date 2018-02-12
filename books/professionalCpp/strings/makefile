@@ -1,12 +1,12 @@
-CXX=g++
-CFLAGS=-g -Wall --std=c++14
+CXX=clang++
+CXXFLAGS=-g -Wall --std=c++14
 
 
 literals: literals.o
-	$(CXX) $(CFLAGS) literals.cpp -o $@
+	$(CXX) $(CXXFLAGS) literals.cpp -o $@
 
 raw: raw.o
-	$(CXX) $(CFLAGS) raw.cpp -o $@
+	$(CXX) $(CXXFLAGS) raw.cpp -o $@
 
 clean:
 	rm -rf literals raw
