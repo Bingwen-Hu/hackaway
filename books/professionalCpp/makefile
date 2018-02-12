@@ -23,7 +23,10 @@ std_array: std_array.o
 functions: functions.o
 	$(CXX) $(CFLAGS) functions.cpp -o $@
 
+pass_by_ref: pass_by_ref.o
+	$(CXX) $(CFLAGS) pass_by_ref.cpp -o $@
+
 clean:
 	rm -rf hello test_namespaces cast digits enums
-	rm -rf std_array functions
+	rm -rf std_array functions pass_by_ref
 	rm -rf *.o
