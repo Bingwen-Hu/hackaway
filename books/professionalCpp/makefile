@@ -26,7 +26,14 @@ functions: functions.o
 pass_by_ref: pass_by_ref.o
 	$(CXX) $(CFLAGS) pass_by_ref.cpp -o $@
 
+exceptions: exceptions.o
+	$(CXX) $(CFLAGS) exceptions.cpp -o $@
+
+const: const.o
+	$(CXX) $(CFLAGS) const.cpp -o $@
+
 clean:
 	rm -rf hello test_namespaces cast digits enums
-	rm -rf std_array functions pass_by_ref
+	rm -rf std_array functions pass_by_ref exceptions
+	rm -rf const
 	rm -rf *.o
