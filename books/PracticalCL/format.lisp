@@ -45,3 +45,29 @@
 (format nil "~r" 1234)
 
 ;;; conditional formatting
+(format nil "~[cero~;uno~;dos~]" 0)
+(format nil "~[cero~;uno~;dos~]" 1)
+(format nil "~[cero~;uno~;dos~]" 2)
+
+;until 
+(format nil "~[good~;soso~:;bad...~]" 2)
+(format nil "~[good~;soso~:;bad...~]" 20)
+
+;;; an example
+(defparameter *list-etc*
+  "~#[NONE~;~a~;~a and ~a~:;~a, ~a~]~#[~; and ~a~:;, ~a, etc~].")
+
+(format nil *list-etc*)
+(format nil *list-etc* 'a)
+(format nil *list-etc* 'a 'b)
+(format nil *list-etc* 'a 'b 'c)
+(format nil *list-etc* 'a 'b 'c 'd)
+(format nil *list-etc* 'a 'b 'c 'd 'e)
+
+
+;;; iteration
+(format nil "~{~a, ~}" '(1 2 3 4))
+(format nil "~{~a~^, ~}" '(1 2 3 4))
+(format nil "~@{~a~^, ~}" 1 2 3)
+
+
