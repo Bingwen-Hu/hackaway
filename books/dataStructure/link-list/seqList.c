@@ -10,12 +10,11 @@
 
 typedef int Status;
 typedef int ElemType;
-typedef struct {
 
+typedef struct {
   ElemType data[MAXSIZE];
   int length;
-
-} seqList;
+}seqList;
 
 
 Status InitElem(seqList *L){
@@ -28,10 +27,10 @@ Status InitElem(seqList *L){
 Status GetElem(seqList L, int i, ElemType *e) {
   
   if (L.length == 0 || i < 0 || i > L.length-1)
-    return ERROR;               /* something wrong */
+    return ERROR;                /* something wrong */
   
-  *e = L.data[i];             /* get the value */
-  return OK;                    /* success */
+  *e = L.data[i];                /* get the value */
+  return OK;                     /* success */
 }
 
 
@@ -40,17 +39,16 @@ Status InsertElem(seqList *L, int i, ElemType e) {
   if ((L->length == MAXSIZE) || (i < 0) || (i > MAXSIZE-1)) 
     return ERROR;               /* something wrong */
 
-  while (i > L->length)
+  while (i > L->length)         // shift i
     i--;
 
-
-  for(int k = i; k < L->length; k++)
+  for (int k = i; k < L->length; k++)
     L->data[k+1] = L->data[k];
-  
   L->data[i] = e;               /* insert value */
   L->length++;                  /* increse length */
   return OK;
 }
+
 
 Status DeleteElem(seqList *L, int i) {
   if (i < 0 || i >= L->length || L->length == 0)
@@ -62,6 +60,7 @@ Status DeleteElem(seqList *L, int i) {
   L->length--;
   return OK;
 }
+
 
 Status PrintElem(seqList L){
   printf("Elements in List: ");
