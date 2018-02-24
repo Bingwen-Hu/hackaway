@@ -16,7 +16,7 @@ LinkList InitList(LinkList L, int length){
   ElemType r;
 
   L = (LinkList) malloc(sizeof(Node)); /* head node */
-  L->data = 0;
+  L->data = 0;                  // store the length
   L->next = NULL;
   q = L;                        /* q as the end pointer */
 
@@ -54,6 +54,7 @@ void DestroyList(LinkList L){
   }
   free(L);
 }
+
 
 ElemType GetElem(LinkList L, int index){
   LinkList p = L->next;
@@ -111,22 +112,13 @@ void main(){
   int e;
 
   list = InitList(list, length);
-
   PrintList(list);
-  
   insertList(list, 0, 42);
-
   PrintList(list);
-
   deleteNode(list, 10);
-
   PrintList(list);
-
   DestroyList(list);
-  
-
 }
-
 
 
 
@@ -137,5 +129,4 @@ void main(){
    Big trap I trap myself!
 
    Yeah, I finally got it!
-
  */
