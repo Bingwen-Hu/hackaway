@@ -20,38 +20,39 @@ void println(int A[], int n){
   puts("");
 }
 
-/* thank you */
+
 void insertSort(int A[], int n){
   int i, j, t;
   for (i=1; i<n; i++){
-    t = A[i];
+    // save part
+    t = A[i]; 
+    // move part
     for (j=i; j>0 && (A[j-1] > t); j--){
       A[j] = A[j-1];
     }
+    // store part
     A[j] = t;
   }
 }
 
 
-
+/* d is the distance, initializes as half of length
+ * every iteration, d -= 2 until d < 1 then stop
+ * when d == 1, it is insert-sort
+ */
 void shellSort(int A[], int n){
   int t, j;
 
   for (int d=5; d >= 1; d -= 2){
     for (int i=d; i < n; ++i){
+      // if-part is a small insert sort part
       if (A[i] < A[i-d]){
         t = A[i];
-        /* printf("d=%d i=%d t=%d \n", d, i, t); */
         for (j=i; j>0 && (t<A[j-d]); j -= d){
-          printf("d=%d i=%d A[%d]_%d move to A[%d]_%d\n", 
-                 d, i, j-d, A[j-d], j, A[j]);
           A[j] = A[j-d];
         }
         A[j] = t;
-        printf("\t A[%d] is set to %d\n", j, t);
       }
-      /* printf("d=%d, i=%d\t", d, i);  */
-      /* println(A, n); */
     }
   }
 }
