@@ -43,3 +43,4 @@ LD_250.npy
 AirQualityUCI.csv
 build
 *.so
+.vscode
