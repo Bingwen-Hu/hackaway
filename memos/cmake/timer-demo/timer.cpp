@@ -1,3 +1,16 @@
+/* demo using conan and cmake -- only linux
+ *
+ * Commands:
+ *   mkdir build && cd build
+ *   conan install ..
+ *
+ *   cmake .. -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release
+ *   cmake --build .
+ *   
+ *   ./bin/timer
+ */
+
+
 #include "Poco/Timer.h"
 #include "Poco/Thread.h"
 #include "Poco/Stopwatch.h"
