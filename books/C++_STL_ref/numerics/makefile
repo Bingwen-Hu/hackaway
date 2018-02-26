@@ -1,6 +1,6 @@
 CXX=g++
 CXXFLAGS=-g -std=c++14 -Wall
-ALL_TARGET=q_cmath q_complex q_ratio
+ALL_TARGET=q_cmath q_complex q_ratio q_random
 
 q_cmath: q_cmath.o
 	${CXX} ${CXXFLAGS} q_cmath.cpp -o $@
@@ -10,6 +10,9 @@ q_complex: q_complex.o
 
 q_ratio: q_ratio.o
 	${CXX} ${CXXFLAGS} q_ratio.cpp -o $@
+
+q_random: q_random.o
+	${CXX} ${CXXFLAGS} q_random.cpp -o $@
 
 clean:
 	rm -rf *.o 
