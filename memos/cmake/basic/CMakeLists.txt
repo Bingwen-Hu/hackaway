@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 2.8)
 
 # project infomation
-project (cmake-basic)
+project (multifile)
 
 # target
-add_executable(calculate calculate.c)
+add_executable(calculate calculate.c MathFunction.c)
