@@ -1,3 +1,7 @@
+/* *
+ * ratio: numerator / denominator
+ * 
+ */
 #include <ratio>
 #include <iostream>
 #include <typeinfo>
@@ -20,8 +24,3 @@ int main(){
 
     return 0;
 }
-
-
-
-// test Note
-// C++ error is very strange
