@@ -1,6 +1,10 @@
+/* *
+ * ratio: numerator / denominator
+ * 
+ */
 #include <ratio>
 #include <iostream>
-#include <typeinfo>
+#include <typeinfo> // typeid
 using namespace std;
 
 typedef std::ratio<1, 3> a_third;
@@ -20,8 +24,3 @@ int main(){
 
     return 0;
 }
-
-
-
-// test Note
-// C++ error is very strange

@@ -1,4 +1,9 @@
-// quick learn C++ stl reference
+/* *
+ * basic, using C library in C++
+ * 
+ * Note that: 
+ *     fabs return an int
+ */
 
 #include <cmath>
 #include <iostream>
@@ -13,8 +18,3 @@ int main(){
 
     return 0;
 }
-
-// test note
-// fabs return int
-
-

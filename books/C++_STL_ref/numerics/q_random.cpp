@@ -1,10 +1,17 @@
-// two ways to generate random
-// True non-deterministic random number std::random_device
+/* * two ways to generate random
+ * True non-deterministic random number std::random_device
+ * 
+ * steps to generate random
+ *     1. create a generator
+ *     2. choose a distribution
+ *     3. pass the generator to the distribution
+ */
 
 #include <random>
 #include <iostream>
 #include <functional>
 #include <vector>
+
 using namespace std;
 
 
@@ -15,6 +22,7 @@ int main(){
     int dice_roll = distribution(generator);
     cout << "Random number: " << dice_roll << endl;
 
+    // bind(x, y, z...) => x(y(Z)) ???
     function<int()> roller = bind(distribution, generator);
     for (int i=0; i<10; ++i)
         cout << roller() << " ";
@@ -23,8 +31,7 @@ int main(){
 
     random_device seeder;
     const auto seed = seeder.entropy() ? seeder() : time(nullptr);
-    default_random_engine generator1(
-        static_cast<default_random_engine::result_type>(seed));
+    default_random_engine generator1( static_cast<default_random_engine::result_type>(seed) );
     uniform_int_distribution<int> distribution1(1, 6);
     int dice_roll1 = distribution1(generator1);
     cout << "Random number: " << dice_roll1 << endl;

@@ -22,7 +22,7 @@ int main(){
     // slice
     valarray<int> ints = {0, 1, 2, 3, 4, 5, 6, 7};
     slice mySlicer(2, 3, 2);
-    const valarray<int>& constInts = ints;
+    const valarray<int>& constInts = ints; //ref to ints
     auto copies = constInts[mySlicer];
     auto refs = ints[mySlicer];
     valarray<int> factors{6, 3, 2};
