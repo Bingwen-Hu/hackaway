@@ -45,3 +45,9 @@ or using the most suitable spider to parse url
 ```
 scrapy parse --spider=[spider-name] url
 ```
+
+### save to files
+save to several format files, including json, j1, csv, xml
+```
+scrapy crawl [spider-name] -o items.json
+```
