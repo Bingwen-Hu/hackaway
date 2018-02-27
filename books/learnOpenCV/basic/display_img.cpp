@@ -6,7 +6,9 @@ int main(int argc, char** argv) {
     
     cv::namedWindow("cat", cv::WINDOW_AUTOSIZE);
     cv::imshow("cat", img);
-    cv::waitKey(0);
+    
+    // wait for user to press a key and then exit
+    cv::waitKey(0); 
     cv::destroyWindow("cat");
     return 0;
 }
