@@ -39,7 +39,7 @@ class ProperitesItem(Item):
 
 ### start spider
 ```
-scrapy crawl [project-name]
+scrapy crawl [spider-name]
 ```
 or using the most suitable spider to parse url
 ```
