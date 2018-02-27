@@ -41,3 +41,7 @@ class ProperitesItem(Item):
 ```
 scrapy crawl [project-name]
 ```
+or using the most suitable spider to parse url
+```
+scrapy parse --spider=[spider-name] url
+```
