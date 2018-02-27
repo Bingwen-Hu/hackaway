@@ -2,7 +2,7 @@ CXXFLAGS=-g -Wall -std=c++14 `pkg-config --cflags opencv`
 LDLIBS=`pkg-config --libs opencv`
 CXX=g++
 OBJECTS=display_img display_video video_trackbar simple_transform
-OBJECTS+=downsample canny_demo
+OBJECTS+=downsample canny_demo camera
 
 display_img: display_img.o
 	$(CXX) display_img.cpp $(CXXFLAGS) $(LDLIBS)  -o $@
@@ -21,6 +21,9 @@ downsample: downsample.o
 
 canny_demo: canny_demo.o
 	$(CXX) canny_demo.cpp $(CXXFLAGS) $(LDLIBS)  -o $@
+
+camera: camera.o
+	$(CXX) camera.cpp $(CXXFLAGS) $(LDLIBS)  -o $@
 
 clean:
 	rm -rf *.o
