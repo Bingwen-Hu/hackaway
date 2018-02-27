@@ -4,9 +4,9 @@ int main(int argc, char** argv) {
     cv::Mat img = cv::imread("/home/mory/Downloads/cat.jpeg", -1);
     if ( img.empty() ) return -1;
     
-    cv::namedWindow("show image", cv::WINDOW_AUTOSIZE);
+    cv::namedWindow("cat", cv::WINDOW_AUTOSIZE);
     cv::imshow("cat", img);
     cv::waitKey(0);
-    cv::destroyWindow("show image");
+    cv::destroyWindow("cat");
     return 0;
 }
