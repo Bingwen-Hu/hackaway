@@ -1,7 +1,7 @@
 CXXFLAGS=-g -Wall -std=c++14 `pkg-config --cflags opencv`
 LDLIBS=`pkg-config --libs opencv`
 CXX=g++
-OBJECTS=display_img display_video video_trackbar
+OBJECTS=display_img display_video video_trackbar simple_transform
 
 display_img: display_img.o
 	$(CXX) display_img.cpp $(CXXFLAGS) $(LDLIBS)  -o $@
@@ -11,6 +11,9 @@ display_video: display_video.o
 
 video_trackbar: video_trackbar.o
 	$(CXX) video_trackbar.cpp $(CXXFLAGS) $(LDLIBS)  -o $@
+
+simple_transform: simple_transform.o
+	$(CXX) simple_transform.cpp $(CXXFLAGS) $(LDLIBS)  -o $@
 
 clean:
 	rm -rf *.o
