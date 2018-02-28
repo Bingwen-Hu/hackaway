@@ -10,7 +10,7 @@ class KeynewsSpider(scrapy.Spider):
     def parse(self, response):
         item = SinaItem()
         item['centerNews'] = response.xpath(
-            '//*/h1[@data-client="headline"][1]/a/text()').extract_first()
+            '//*/h1[@data-client="headline"]/a/text()').extract()
         item['rightNews'] =  response.xpath(
-            '//*/div[@class="tl"]/a/text()').extract_first()
+            '//*/div[@class="tl"]/a/text()').extract()
         return item
