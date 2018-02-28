@@ -11,9 +11,12 @@ $ scrapy crawl codewars -a username=[username] -a password=[password]
 """
 
 import scrapy
+from scrapy.loader import ItemLoader
 from scrapy.linkextractors import LinkExtractor
 from scrapy.spiders import CrawlSpider, Rule
 from scrapy.http import FormRequest, Request
+
+from bing.items import CodewarsItem
 
 class CodewarsSpider(CrawlSpider):
     name = 'codewars'
@@ -40,4 +43,7 @@ class CodewarsSpider(CrawlSpider):
         return formrequest
 
     def parse(self, response):
-        return {"url": response.url}
+        loader = ItemLoader(item=CodewarsItem(), response=response)
+        loader.add_xpath('image_urls', "//*/div[@class='profile-pic']/img/@src")
+        
+        return loader.load_item()

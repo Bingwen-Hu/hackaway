@@ -13,3 +13,6 @@ class BingItem(scrapy.Item):
     # name = scrapy.Field()
     Title = Field()
     Date = Field()
+
+class CodewarsItem(scrapy.Item):
+    image_urls = Field()
