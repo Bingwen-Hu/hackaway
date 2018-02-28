@@ -6,7 +6,7 @@
 """
 import scrapy
 from scrapy.loader import ItemLoader
-from scrapy.linkextractors import LinkExtractor
+from scrapy.linkextractors import LinkExtractor  
 from scrapy.spiders import CrawlSpider, Rule
 from bing.items import BingItem
 from datetime import datetime
