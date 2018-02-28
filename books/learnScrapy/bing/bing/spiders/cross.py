@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
-
+""" cross scrapes demo
+1. start_urls as a start entry
+2. parse get urls from the start page, for every url call parse_item
+3. parse_item follow the url then get the title content
+"""
 import scrapy
 from scrapy.http import Request
 from scrapy.loader import ItemLoader
