@@ -14,4 +14,7 @@ class KeynewsSpider(scrapy.Spider):
         loader.add_xpath('centerNews', '//*/h1[@data-client="headline"]/a/text()',
             MapCompose(lambda t: t[:4]), Join())
         loader.add_xpath('rightNews', '//*/div[@class="tl"]/a/text()')
+
+        loader.add_value('hostname', response.url)
+        loader.add_value('author', 'Mory')
         return loader.load_item()

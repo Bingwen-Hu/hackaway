@@ -13,3 +13,6 @@ class SinaItem(scrapy.Item):
     # name = scrapy.Field()
     centerNews = Field()
     rightNews = Field()
+
+    hostname = Field()
+    author = Field()
