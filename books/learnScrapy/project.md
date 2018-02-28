@@ -8,7 +8,8 @@ scrapy startproject mory-spiders
 
 ### create spiders
 ```
-scrapy genspider [spider-name] [domain]
+scrapy genspider [spider-name] [domain] 
+scrapy genspider [spider-name] [domain] -t TEMPLATE
 ```
 
 
