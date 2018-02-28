@@ -10,6 +10,11 @@ class KeynewsSpider(scrapy.Spider):
     start_urls = ['http://news.sina.com.cn/']
 
     def parse(self, response):
+        """ This function parses sina page
+        @url http://news.sina.com.cn/
+        @returns items 1
+        @scrapes centerNews rightNews hostname author
+        """
         loader = ItemLoader(item=SinaItem(), response=response)
         loader.add_xpath('centerNews', '//*/h1[@data-client="headline"]/a/text()',
             MapCompose(lambda t: t[:4]), Join())
