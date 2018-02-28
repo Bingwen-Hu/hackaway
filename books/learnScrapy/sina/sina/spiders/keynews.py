@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import scrapy
+from scrapy.loader import ItemLoader
 from sina.items import SinaItem
 
 class KeynewsSpider(scrapy.Spider):
@@ -8,9 +9,7 @@ class KeynewsSpider(scrapy.Spider):
     start_urls = ['http://news.sina.com.cn/']
 
     def parse(self, response):
-        item = SinaItem()
-        item['centerNews'] = response.xpath(
-            '//*/h1[@data-client="headline"]/a/text()').extract()
-        item['rightNews'] =  response.xpath(
-            '//*/div[@class="tl"]/a/text()').extract()
-        return item
+        loader = ItemLoader(item=SinaItem(), response=response)
+        loader.add_xpath('centerNews', '//*/h1[@data-client="headline"]/a/text()')
+        loader.add_xpath('rightNews', '//*/div[@class="tl"]/a/text()')
+        return loader.load_item()
