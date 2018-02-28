@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+""" using template crawl, same as cross spider but less code
+1. start from the start_urls
+2. rule define how to fetch urls from the init page
+3. parse_item do the heavy work
+"""
 import scrapy
 from scrapy.loader import ItemLoader
 from scrapy.linkextractors import LinkExtractor
