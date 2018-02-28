@@ -22,20 +22,6 @@ class ProperitesItem(Item):
     # primary fields
     title       = Field()
     price       = Field()
-    description = Field()
-    address     = Field()
-    image_urls  = Field()
-
-    # calculated fields
-    images      = Field()
-    location    = Field()
-
-    # basic infomation fields
-    url         = Field()
-    project     = Field()
-    spider      = Field()
-    server      = Field()
-    date        = Field()
 ```
 
 ### start spider
@@ -52,3 +38,22 @@ save to several format files, including json, j1, csv, xml
 ```
 scrapy crawl [spider-name] -o items.json
 ```
+
+
+### deploy
+install server and client.
+```
+pip install scrapyd scrapyd-client
+```
+
+server side:
+```
+[sudo] scrapyd
+```
+
+client side:
+Enter the root directory of a scrapy project, then
+```
+scrapyd-deploy
+```
+
