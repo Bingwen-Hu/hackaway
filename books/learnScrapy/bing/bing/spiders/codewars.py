@@ -4,6 +4,10 @@
 2. parse_login then fill the user and pass field in the form,
    by doing this, url change to dashboard, nor sign_in
 3. parse the dashboard page
+
+
+Note that, run from command line and pass the user and password as
+$ scrapy crawl codewars -a username=[username] -a password=[password]
 """
 
 import scrapy
@@ -30,8 +34,8 @@ class CodewarsSpider(CrawlSpider):
         """
         formrequest = FormRequest.from_response(
             response, 
-            formdata={"user[email]"    : "username@163.com",
-                      "user[password]" : "password"}
+            formdata={"user[email]"    : getattr(self, 'username'),
+                      "user[password]" : getattr(self, 'password')}
         )
         return formrequest
 
