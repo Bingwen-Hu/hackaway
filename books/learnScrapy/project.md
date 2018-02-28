@@ -57,3 +57,12 @@ Enter the root directory of a scrapy project, then
 scrapyd-deploy
 ```
 
+### schudele and cancel jobs
+using curl to submit a job
+```
+curl http://localhost:6800/schedule.json -d project=sina -d spider=keynews
+```
+when submit a job successfully, a jobid will return. Then we can use it to cancel a job
+```
+curl http://localhost:6800/cancel.json -d project=sina -d job=[jobid]
+```
