@@ -12,3 +12,9 @@ response.xpath("//*/a/text()").extract()
 response.xpath('//*/a[@href="http://blog.sina.com.cn/lm/sports/"]').extract()
 response.xpath('//*/a/span[@class="ct_tit"][1]/text()).extract()
 ```
+
+
+### limit spider crawl
+```
+scrapy crawl [spider] s CLOSESPIDER_ITEMCOUNT=10
+```
