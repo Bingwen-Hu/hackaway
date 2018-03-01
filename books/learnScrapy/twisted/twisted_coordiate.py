@@ -18,6 +18,7 @@ def twisted_developer_day(customers):
 
     work = (inline_install(customer) for customer in customers)
     coop = task.Cooperator()
+    # every time get 5 jobs as a batch
     join = defer.DeferredList([coop.coiterate(work) for i in range(5)])
     join.addCallback(lambda _: reactor.stop())
     print("Bye from Twisted developer!")
