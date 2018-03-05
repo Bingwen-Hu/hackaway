@@ -33,8 +33,8 @@ nodenames = ['id', 'name', 'url', 'title', 'content', 'author', 'from', 'time', 
 for nodename in nodenames:
     node = doc.createElement(nodename)
     if nodename in ['title', 'content', 'time', 'image']:
-        text = doc.createTextNode("%s content" % nodename)
-        node.appendChild(text)
+        cdata = doc.createCDATASection("%s content" % nodename)
+        node.appendChild(cdata)
     root.appendChild(node)
 
 with open('root.xml', 'w') as f:
