@@ -1,6 +1,6 @@
 CC=g++
 CXXFLAGS=-g -Wall -std=c++14
-TARGETS=hello initstyle constant for vector Vector
+TARGETS=hello initstyle constant for vector Vector enum
 
 
 clean:
@@ -25,3 +25,6 @@ vector: vector.o
 
 Vector: Vector.o
 	$(CC) Vector.cpp $(CXXFLAGS) -o $@
+
+enum: enum.o
+	$(CC) enum.cpp $(CXXFLAGS) -o $@
