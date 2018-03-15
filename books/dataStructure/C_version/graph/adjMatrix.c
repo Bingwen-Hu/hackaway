@@ -19,6 +19,7 @@ void CreateMGraph(MGraph *G){
     scanf("%d,%d", &G->numVertexes, &G->numEdges);
     printf("Points: %d\nEdges: %d\n", G->numVertexes, G->numEdges);
 
+    getchar();
     printf("start enter %d chars: \n", G->numVertexes);
     for (i = 0; i < G->numVertexes; i++)
         G->vexs[i] = getchar();
@@ -38,6 +39,7 @@ void CreateMGraph(MGraph *G){
 
 
 void printGraph(MGraph *G){
+    printf("-----------------\n");
     printf("Graph information\n"); 
     printf("-----------------\n");
     for (int i=0; i < G->numVertexes; i++){
@@ -46,12 +48,48 @@ void printGraph(MGraph *G){
         }
         puts("\n");
     }
+    puts("\n");
+}
+
+/* Depth first search using adjacent Matrix */
+typedef enum {FALSE, TRUE} Boolean;
+Boolean visited[MAXVEX];
+
+// DFS
+// @param i: index of one point
+void DFS(MGraph G, int i){
+    visited[i] = TRUE;
+    // print vex
+    printf("%c ", G.vexs[i]);
+    
+    // scan the ith row, if there is some point
+    // unvisited, go along with the point, so 
+    // we go deeper and deeper
+    for (int j = 0; j < G.numVertexes; j++){
+        if (G.arc[i][j] == 1 && !visited[j]) 
+            DFS(G, j);
+    }
+}
+
+void DFSTraverse(MGraph G){
+    // every point is not visited at the beginning
+    for (int i=0; i < G.numVertexes; i++){
+        visited[i] = FALSE;
+    }
+
+    // for every point, if it is not visited, using DFS
+    // at that point
+    for (int i=0; i < G.numVertexes; i++){
+        if (!visited[i]){
+            DFS(G, i); 
+        }
+    }
+    puts("");
 }
 
 int main(){
     MGraph m = {.arc = {0}};
-    m.numVertexes = 5;
-    m.numEdges = 5;
     CreateMGraph(&m);
     printGraph(&m);
+    DFSTraverse(m);
 }
