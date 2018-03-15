@@ -1,6 +1,6 @@
 CC=g++
 CXXFLAGS=-g -Wall -std=c++14
-TARGETS=hello initstyle constant for vector
+TARGETS=hello initstyle constant for vector Vector
 
 
 clean:
@@ -22,3 +22,6 @@ for: for.o
 
 vector: vector.o
 	$(CC) vector.cpp $(CXXFLAGS) -o $@
+
+Vector: Vector.o
+	$(CC) Vector.cpp $(CXXFLAGS) -o $@
