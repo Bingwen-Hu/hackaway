@@ -1,6 +1,6 @@
 CC=g++
 CXXFLAGS=-g -Wall -std=c++14
-TARGETS=hello initstyle constant
+TARGETS=hello initstyle constant for
 
 
 clean:
@@ -16,3 +16,6 @@ initstyle: initstyle.o
 
 constant: constant.o
 	$(CC) constant.cpp $(CXXFLAGS) -o $@
+
+for: for.o
+	$(CC) for.cpp $(CXXFLAGS) -o $@
