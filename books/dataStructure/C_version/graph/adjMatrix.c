@@ -95,14 +95,17 @@ void BFSTraverse(MGraph G){
     for (int i=0; i < G.numVertexes; i++){
         visited[i] = FALSE;
     }
-    
+
     for (int i=0; i < G.numVertexes; i++){
         if (!visited[i]){
             visited[i] = TRUE;
             printf("%c ", G.vexs[i]);
             EnQueue(&Q, i);
+
+            // seek the relation of ith vert
             while (!QueueEmpty(&Q)){
                 DeQueue(&Q, &i);
+                // check for rest element on that vert
                 for (int j=0; j < G.numVertexes; j++){
                     if (G.arc[i][j] == 1 && !visited[j]){
                         visited[j] = TRUE;
