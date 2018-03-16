@@ -1,6 +1,7 @@
 /** Adjacency Matrix represent graph
  */
 #include <stdio.h>
+#include "queue.h"
 
 typedef char VertexType;
 typedef int EdgeType;
@@ -87,9 +88,39 @@ void DFSTraverse(MGraph G){
     puts("");
 }
 
+void BFSTraverse(MGraph G){
+    // init
+    Queue Q;
+    InitQueue(&Q);
+    for (int i=0; i < G.numVertexes; i++){
+        visited[i] = FALSE;
+    }
+    
+    for (int i=0; i < G.numVertexes; i++){
+        if (!visited[i]){
+            visited[i] = TRUE;
+            printf("%c ", G.vexs[i]);
+            EnQueue(&Q, i);
+            while (!QueueEmpty(&Q)){
+                DeQueue(&Q, &i);
+                for (int j=0; j < G.numVertexes; j++){
+                    if (G.arc[i][j] == 1 && !visited[j]){
+                        visited[j] = TRUE;
+                        printf("%c ", G.vexs[j]);
+                        EnQueue(&Q, j);
+                    }
+                }
+            }
+        }
+    }
+    puts("");
+}
+
+
 int main(){
     MGraph m = {.arc = {0}};
     CreateMGraph(&m);
     printGraph(&m);
     DFSTraverse(m);
+    BFSTraverse(m);
 }
