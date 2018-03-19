@@ -2,17 +2,7 @@
  */
 #include <stdio.h>
 #include "queue.h"
-
-typedef char VertexType;
-typedef int EdgeType;
-#define MAXVEX 100
-#define INFINITY 1024
-
-typedef struct {
-    VertexType vexs[MAXVEX];        // point table
-    EdgeType arc[MAXVEX][MAXVEX];   // relation table
-    int numVertexes, numEdges;
-} MGraph;
+#include "adjMatrix.h"
 
 void CreateMGraph(MGraph *G){
     int i, j, k, w;
