@@ -9,6 +9,5 @@ clean:
 adjMatrix: adjMatrix.o queue.o
 	$(CC) adjMatrix.c queue.c $(CFLAGS) -o $@
 
-adjList: adjList.o
-	$(CC) adjList.c $(CFLAGS) -o $@
-
+adjList: adjList.o queue.o
+	$(CC) adjList.c queue.c $(CFLAGS) -o $@

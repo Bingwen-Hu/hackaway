@@ -1,6 +1,6 @@
 /** adjList for Graph
  */
-
+#include "queue.h"
 #include <stdio.h>
 #include <stdlib.h>
 #define MAXVEX 100
@@ -84,7 +84,7 @@ Boolean visited[MAXVEX];
 void DFS(GraphAdjList *GL, int i){
     EdgeNode *p;
     visited[i] = TRUE;
-    printf("%c, ", GL->adjList[i].data);
+    printf("%c ", GL->adjList[i].data);
     p = GL->adjList[i].firstedge;
     while (p) {
         if (!visited[p->adjvex]){
@@ -95,6 +95,7 @@ void DFS(GraphAdjList *GL, int i){
 }
 
 void DFSTraverse(GraphAdjList *GL){
+    printf("DFS: ");
     for (int i=0; i < GL->numVertexes; i++){
         visited[i] = FALSE;
     }
@@ -105,7 +106,36 @@ void DFSTraverse(GraphAdjList *GL){
     putchar('\n');
 }
 
+void BFSTraverse(GraphAdjList *GL){
+    printf("BFS: ");
+    EdgeNode *p;
+    Queue Q;
+    for (int i=0; i < GL->numVertexes; i++){
+        visited[i] = FALSE;
+    }
+    InitQueue(&Q);
 
+    for (int i=0; i < GL->numVertexes; i++){
+        if (!visited[i]){
+            visited[i] = TRUE;
+            printf("%c ", GL->adjList[i].data);
+            EnQueue(&Q, i);
+            while (!QueueEmpty(&Q)){
+                DeQueue(&Q, &i);
+                p = GL->adjList[i].firstedge;
+                while (p) {
+                    if (!visited[p->adjvex]) {
+                        visited[p->adjvex] = TRUE;
+                        printf("%c ", GL->adjList[p->adjvex].data);
+                        EnQueue(&Q, p->adjvex);
+                    }
+                    p = p->next;
+                }
+            }
+        }
+    }
+    putchar('\n');
+}
 
 
 int main(){
@@ -113,4 +143,5 @@ int main(){
     createALGraph(&G);
     printGraphAdjlist(&G);
     DFSTraverse(&G);
+    BFSTraverse(&G);
 }
