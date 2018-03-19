@@ -1,6 +1,6 @@
 CC=gcc
 CFLAGS=-g -Wall -std=c11
-OBJECTS=DFS_BFS_Matrix adjList
+OBJECTS=DFS_BFS_Matrix adjList prim_matrix
 
 clean:
 	rm -rf *.o
@@ -8,6 +8,9 @@ clean:
 
 DFS_BFS_Matrix: DFS_BFS_Matrix.o queue.o adjMatrix.o
 	$(CC) DFS_BFS_Matrix.c queue.c adjMatrix.c $(CFLAGS) -o $@
+
+prim_matrix: prim_matrix.o queue.o adjMatrix.o
+	$(CC) prim_matrix.c queue.c adjMatrix.c $(CFLAGS) -o $@
 
 adjList: adjList.o queue.o
 	$(CC) adjList.c queue.c $(CFLAGS) -o $@
