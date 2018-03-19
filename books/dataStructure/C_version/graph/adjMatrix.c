@@ -121,6 +121,11 @@ void BFSTraverse(MGraph G){
 
 
 // Mini Span Tree algorithms -- Prim
+// basic: 
+// start from any point, and search for every edge connect to it
+// find the lowest cost point and add it to span tree
+// then search on the new accepted point and using its weights
+// to override the cost value if lower.
 void MiniSpanTree_Prim(MGraph *G){
     int min;
     int adjvex[MAXVEX];
