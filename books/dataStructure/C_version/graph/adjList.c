@@ -77,8 +77,40 @@ void printGraphAdjlist(GraphAdjList *G){
     }
 }
 
+typedef enum {FALSE, TRUE} Boolean;
+Boolean visited[MAXVEX];
+
+// DFS using adjList
+void DFS(GraphAdjList *GL, int i){
+    EdgeNode *p;
+    visited[i] = TRUE;
+    printf("%c, ", GL->adjList[i].data);
+    p = GL->adjList[i].firstedge;
+    while (p) {
+        if (!visited[p->adjvex]){
+            DFS(GL, p->adjvex);
+        }
+        p = p->next;
+    }
+}
+
+void DFSTraverse(GraphAdjList *GL){
+    for (int i=0; i < GL->numVertexes; i++){
+        visited[i] = FALSE;
+    }
+    for (int i=0; i < GL->numVertexes; i++){
+        if (!visited[i])
+            DFS(GL, i);
+    }
+    putchar('\n');
+}
+
+
+
+
 int main(){
     GraphAdjList G;
     createALGraph(&G);
     printGraphAdjlist(&G);
+    DFSTraverse(&G);
 }

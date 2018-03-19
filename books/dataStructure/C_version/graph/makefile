@@ -1,6 +1,6 @@
 CC=gcc
 CFLAGS=-g -Wall -std=c11
-OBJECTS=adjMatrix
+OBJECTS=adjMatrix adjList
 
 clean:
 	rm -rf *.o
@@ -8,4 +8,7 @@ clean:
 
 adjMatrix: adjMatrix.o queue.o
 	$(CC) adjMatrix.c queue.c $(CFLAGS) -o $@
+
+adjList: adjList.o
+	$(CC) adjList.c $(CFLAGS) -o $@
 
