@@ -147,7 +147,7 @@ void MiniSpanTree_Prim(MGraph *G){
             j++;
         }
 
-        printf("(%d, %d)", adjvex[k], k);   // print current lowest weight
+        printf("(%d, %d)%s", adjvex[k], k, i == G->numVertexes-1 ? "\n" : "->");   // print current lowest weight
         lowcost[k] = 0;                     // accept the point
 
         for (j = 1; j < G->numVertexes; j++){
