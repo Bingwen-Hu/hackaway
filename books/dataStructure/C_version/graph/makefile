@@ -1,6 +1,6 @@
 CC=gcc
 CFLAGS=-g -Wall -std=c11
-OBJECTS=DFS_BFS_Matrix adjList prim_matrix
+OBJECTS=DFS_BFS_Matrix adjList prim_matrix kruskal
 
 clean:
 	rm -rf *.o
@@ -14,3 +14,6 @@ prim_matrix: prim_matrix.o queue.o adjMatrix.o
 
 adjList: adjList.o queue.o
 	$(CC) adjList.c queue.c $(CFLAGS) -o $@
+
+kruskal: kruskal.o
+	$(CC) kruskal.c $(CFLAGS) -o $@
