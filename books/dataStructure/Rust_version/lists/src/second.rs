@@ -1,29 +1,29 @@
 /** 
- * advanced Option use
+ * advanced Option use: take, map and lambda expression as a gift.
  * Generics
  * Lifetimes
  * Iterators
  */
-pub struct List {
-    head: Link,
+pub struct List<T> {
+    head: Link<T>,
 }
 
 // yay type aliases!
 // Link is a option type with Box of Node
 // but Node has a type of Link! Recursive!
-type Link = Option<Box<Node>>;
+type Link<T> = Option<Box<Node<T>>>;
 
-struct Node {
-    elem: i32,
-    next: Link,
+struct Node<T> {
+    elem: T,
+    next: Link<T>,
 }
 
-impl List {
+impl<T> List<T> {
     pub fn new() -> Self {
         List { head: None }
     }
 
-    pub fn push(&mut self, elem: i32) {
+    pub fn push(&mut self, elem: T) {
         let new_node = Box::new(Node {
             elem: elem,
             next: self.head.take(),
@@ -31,7 +31,7 @@ impl List {
         self.head = Some(new_node);
     }
 
-    pub fn pop(&mut self) -> Option<i32> {
+    pub fn pop(&mut self) -> Option<T> {
         self.head.take().map(|node| {
             let node = *node;
             self.head = node.next;
@@ -41,7 +41,7 @@ impl List {
 }
 
 // every type impl Drop will be deallocate after became junk.
-impl Drop for List {
+impl<T> Drop for List<T> {
     fn drop(&mut self) {
         let mut cur_link = self.head.take();
         while let Some(mut boxed_node) = cur_link {
