@@ -1,7 +1,7 @@
 /* define recursive data structure using Box */
 use std::mem;
 
-
+// 0 overhead abstract
 pub struct List {
     head: Link,
 }
@@ -54,6 +54,23 @@ impl List {
         }
     }
 }
+
+// every type impl Drop will be deallocate after became junk.
+impl Drop for List {
+    fn drop(&mut self) {
+        let mut cur_link = mem::replace(&mut self.head, Link::Empty);
+        // while let means do this thing until this pattern fail
+        // here, it means
+        //     if cur_link is Link::More then
+        //     boxed_node = *cur_link.More
+        //     cur_link = boxed_node.next
+        // loop it
+        while let Link::More(mut boxed_node) = cur_link {
+            cur_link = mem::replace(&mut boxed_node.next, Link::Empty);
+        }
+    }
+}
+
 
 /* add this means code of test only build when development and will not
 build into final execute or library */
