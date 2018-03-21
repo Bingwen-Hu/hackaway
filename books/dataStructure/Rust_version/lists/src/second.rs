@@ -38,6 +38,12 @@ impl<T> List<T> {
             node.elem
         })
     }
+
+    pub fn peek(&self) -> Option<&T> {
+        self.head.as_ref().map(|node| {
+            &node.elem
+        })
+    }
 }
 
 // every type impl Drop will be deallocate after became junk.
