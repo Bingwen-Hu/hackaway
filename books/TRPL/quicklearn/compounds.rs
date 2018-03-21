@@ -18,7 +18,23 @@ fn show_array(message: &'static str){
     println!("First value of a is {}", a[0]);
 }
 
+fn show_matrix(message: &'static str){
+    println!("{}", message);
+    let a = [
+        [1, 2, 3, 4],
+        [3, 4, 5, 6]
+    ];
+    
+    for vec in a.iter() {
+        for e in vec.iter() {
+            print!("{} ", e);
+        }
+        println!("");
+    }
+}
+
 fn main(){
     show_tuple("show tuple!");
     show_array("show array!");
+    show_matrix("show matrix!");
 }
