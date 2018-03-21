@@ -48,6 +48,15 @@ void ShortestPath_Dijkstra(MGraph *G, int v0, Pathmatrix *P, ShortPathTable *D){
     }
 }
 
+void printPath(MGraph *G, Pathmatrix P){
+    int before = G->numVertexes -1;
+    printf("Paths: %c%s", G->vexs[before], " ");
+    while (before != 0){
+        before = P[before];
+        printf("%c%s", G->vexs[before], " ");
+    }
+    putchar('\n');
+}
 
 int main(){
     // prepare graph
@@ -82,12 +91,5 @@ int main(){
     int v0 = 0;
 
     ShortestPath_Dijkstra(&G, v0, &P, &D);
-    printf("Paths:   ");
-    for (int i = 0; i < G.numVertexes; i++){
-        printf("%2d%s", P[i], i == G.numVertexes-1 ? "\n" : " ");
-    }
-    printf("Weights: ");
-    for (int i = 0; i < G.numVertexes; i++){
-        printf("%2d%s", D[i], i == G.numVertexes-1 ? "\n" : " ");
-    }
+    printPath(&G, P);
 }
