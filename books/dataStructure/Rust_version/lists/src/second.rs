@@ -4,8 +4,6 @@
  * Lifetimes
  * Iterators
  */
-use std::mem;
-
 pub struct List {
     head: Link,
 }
@@ -28,13 +26,13 @@ impl List {
     pub fn push(&mut self, elem: i32) {
         let new_node = Box::new(Node {
             elem: elem,
-            next: mem::replace(&mut self.head, None),
+            next: self.head.take(),
         });
         self.head = Some(new_node);
     }
 
     pub fn pop(&mut self) -> Option<i32> {
-        match mem::replace(&mut self.head, None) {
+        match self.head.take() {
             None => None,
             // move value from boxed_node first
             Some(node) => {
@@ -49,9 +47,9 @@ impl List {
 // every type impl Drop will be deallocate after became junk.
 impl Drop for List {
     fn drop(&mut self) {
-        let mut cur_link = mem::replace(&mut self.head, None);
+        let mut cur_link = self.head.take();
         while let Some(mut boxed_node) = cur_link {
-            cur_link = mem::replace(&mut boxed_node.next, None);
+            cur_link = boxed_node.next.take();
         }
     }
 }
