@@ -22,6 +22,7 @@ struct Node {
  * &mut self | mutable reference  | like reference in C++  |
  * &self     | shared reference   | like const reference   |
  * ---------------------------------------------------------
+ * Note: special case can bypass &self
  */
 impl List {
     pub fn new() -> Self {
