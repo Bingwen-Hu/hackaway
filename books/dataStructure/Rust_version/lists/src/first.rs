@@ -55,14 +55,19 @@ impl List {
     }
 }
 
+/* add this means code of test only build when development and will not
+build into final execute or library */
 #[cfg(test)]
 mod test {
+    // because test is a new module, so List should be imported from 
+    // super scope.
     use super::List;
     
     #[test]
     fn basic() {
         let mut list = List::new();
         
+        // test for None
         assert_eq!(list.pop(), None);
 
         list.push(1);
@@ -75,6 +80,7 @@ mod test {
         list.push(5);
         list.push(6);
         
+        // test for None
         assert_eq!(list.pop(), Some(6));
         assert_eq!(list.pop(), Some(5));
         assert_eq!(list.pop(), Some(1));
