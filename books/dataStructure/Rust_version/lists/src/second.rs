@@ -40,8 +40,16 @@ impl<T> List<T> {
     }
 
     pub fn peek(&self) -> Option<&T> {
+        // using as_ref to build a ref to the element inside
+        // the List
         self.head.as_ref().map(|node| {
             &node.elem
+        })
+    }
+
+    pub fn peek_mut(&mut self) -> Option<&mut T> {
+        self.head.as_mut().map(|node| {
+            &mut node.elem
         })
     }
 }
@@ -84,6 +92,17 @@ mod test {
         assert_eq!(list.pop(), Some(5));
         assert_eq!(list.pop(), Some(1));
         assert_eq!(list.pop(), None);
+    }
 
+    #[test]
+    fn peek() {
+        let mut list = List::new();
+        assert_eq!(list.peek(), None);
+        assert_eq!(list.peek_mut(), None);
+        for i in 1..4 {
+            list.push(i);
+        }
+        assert_eq!(list.peek(), Some(&3));
+        assert_eq!(list.peek_mut(), Some(&mut 3));
     }
 }
