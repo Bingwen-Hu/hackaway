@@ -7,6 +7,11 @@ void println(int A[], int n){
     putchar('\n');
 }
 
+
+/* i indexing 0 from n-1, aka head to tail
+ * j start from n-1, and push the smaller
+ * one to head 
+ */
 void bubbleSort(int A[], int n){
     int t;
     for (int i=0; i<n; i++){
