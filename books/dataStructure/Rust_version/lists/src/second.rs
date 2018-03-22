@@ -10,6 +10,10 @@ pub struct List<T> {
     head: Link<T>,
 }
 
+pub struct Iter<'a, T: 'a> {
+    next: Option<&'a Node<T>>,
+}
+
 // yay type aliases!
 // Link is a option type with Box of Node
 // but Node has a type of Link! Recursive!
@@ -58,12 +62,26 @@ impl<T> List<T> {
     pub fn into_iter(self) -> IntoIter<T> {
         IntoIter(self)
     }
+
+    pub fn iter<'a>(&'a self) -> Iter<'a, T> {
+        Iter { next: self.head.as_ref().map(|node| &**node) }
+    }
 }
 
 impl<T> Iterator for IntoIter<T> {
     type Item = T;
     fn next(&mut self) -> Option<Self::Item> {
         self.0.pop()
+    }
+}
+
+impl<'a, T> Iterator for Iter<'a, T> {
+    type Item = &'a T;
+    fn next(&mut self) -> Option<Self::Item> {
+        self.next.map(|node| {
+            self.next = node.next.as_ref().map(|node| &**node);
+            &node.elem
+        })
     }
 }
 
@@ -129,5 +147,19 @@ mod test {
         assert_eq!(iter.next(), Some(3));
         assert_eq!(iter.next(), Some(2));
         assert_eq!(iter.next(), Some(1));
+    }
+    #[test]
+    fn iter() {
+        let mut list = List::new();
+        for i in 1..4 {
+            list.push(i);
+        }
+        
+        
+        let mut iter = list.iter();
+        for i in list.iter() {
+            assert_eq!(iter.next(), Some(i));    
+        }
+        
     }
 }
