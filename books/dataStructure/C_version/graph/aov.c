@@ -39,5 +39,5 @@ Status TopologicalSort(GraphAdjList *GL) {
 }
 
 int main() {
-    
+    // TODO: initialize
 }
