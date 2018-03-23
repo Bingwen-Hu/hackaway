@@ -1,16 +1,16 @@
 /* extra points
- * function proper
+ * function property
  *
  */
 #include <iostream>
 using namespace std;
 
 
-auto show_proper() -> void 
+auto show_property() -> void 
 {
     cout << "Enter function: " << __func__ << endl;
 }
 
 int main(){
-    show_proper();    
+    show_property();    
 }
