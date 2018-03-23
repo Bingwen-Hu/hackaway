@@ -1,6 +1,7 @@
 CC=gcc
 CFLAGS=-g -Wall -std=c11
 OBJECTS=DFS_BFS_Matrix adjList prim_matrix kruskal dijkstra
+OBJECTS+=floyd
 
 clean:
 	rm -rf *.o
@@ -20,3 +21,6 @@ kruskal: kruskal.o
 
 dijkstra: dijkstra.o adjMatrix.o
 	$(CC) dijkstra.c adjMatrix.c $(CFLAGS) -o $@
+
+floyd: floyd.o adjMatrix.o
+	$(CC) floyd.c adjMatrix.c $(CFLAGS) -o $@
