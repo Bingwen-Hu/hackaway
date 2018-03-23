@@ -24,3 +24,6 @@ dijkstra: dijkstra.o adjMatrix.o
 
 floyd: floyd.o adjMatrix.o
 	$(CC) floyd.c adjMatrix.c $(CFLAGS) -o $@
+
+aov: aov.o adjList.o
+	$(CC) aov.c adjList.c $(CFLAGS) -o $@

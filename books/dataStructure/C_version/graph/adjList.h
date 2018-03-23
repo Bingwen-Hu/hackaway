@@ -13,6 +13,7 @@ typedef struct EdgeNode {
 } EdgeNode;
 
 typedef struct VertexNode {
+    int in;                     // in-degree
     VertexType data;            // point field
     EdgeNode *firstedge;        // head pointer of edgelist
 } VertexNode, AdjList[MAXVEX];
