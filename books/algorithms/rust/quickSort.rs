@@ -6,7 +6,7 @@
  * 
  */
 
-fn partition(a: &mut [u32; 12], p: usize, r: usize) -> (usize) {
+fn partition(a: &mut [u32; 12], p: usize, r: usize) -> usize {
     // Not the p is not the begin and r is not the length of A!
     // set the first element as a guard
     let x = a[p];
