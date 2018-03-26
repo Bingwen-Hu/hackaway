@@ -38,7 +38,13 @@ fn rect_area(rect: &Rectangle) -> f32 {
     (x1 - x2) * (y1 - y2)
 }
 
-
+fn square(point: &Point, width: f32) -> Rectangle {
+    let &Point { x: left, y: lower } = point;
+    Rectangle { 
+        p1: Point { x: left        , y: lower         },
+        p2: Point { x: left + width, y: lower + width },
+    }
+}
 
 
 fn main() {
@@ -86,5 +92,10 @@ fn main() {
     };
 
     let area = rect_area(&rect);
+    println!("area of rectangle is {}", area);
+
+    let point = Point { x: 4.0, y: 3.0 };
+    let my_square = square(&point, 4f32);
+    let area = rect_area(&my_square);
     println!("area of rectangle is {}", area);
 }
