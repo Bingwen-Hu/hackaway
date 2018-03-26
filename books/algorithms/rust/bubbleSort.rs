@@ -7,11 +7,8 @@
 
 fn main() {
     let mut a = [10, 34, 2, 45, 6, 8, 7, 4, 1, 3];
-    print!("{:10}", "Original:");
-    for i in a.iter() {
-        print!("{:<3}", i);
-    }
-    println!("");
+    println!("{:10} {:?}", "Original:", a);
+    
 
     let mut temp: i32; 
     for i in 1..a.len() {
@@ -24,9 +21,5 @@ fn main() {
         }
     }
 
-    print!("{:10}", "Sorted:");
-    for i in a.iter() {
-        print!("{:<3}", i);
-    }
-    println!("");
+    println!("{:10} {:?}", "Sorted:", a)
 }
