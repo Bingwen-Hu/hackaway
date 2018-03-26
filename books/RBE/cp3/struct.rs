@@ -28,6 +28,19 @@ struct Rectangle {
     p2: Point,
 }
 
+
+fn rect_area(rect: &Rectangle) -> f32 {
+    let &Rectangle { 
+        p1: Point { x: x1, y: y1 },
+        p2: Point { x: x2, y: y2 },
+    } = rect;
+
+    (x1 - x2) * (y1 - y2)
+}
+
+
+
+
 fn main() {
     let name = "Peter";
     let age = 28;
@@ -66,4 +79,12 @@ fn main() {
     let Pair(integer, decimal) = pair;
 
     println!("pair contains {:?} and {:?}", integer, decimal);   
+
+    let rect = Rectangle {
+        p1: Point { x: 3.0, y: 4.0 },
+        p2: Point { x: 5.0, y: 7.0 },
+    };
+
+    let area = rect_area(&rect);
+    println!("area of rectangle is {}", area);
 }
