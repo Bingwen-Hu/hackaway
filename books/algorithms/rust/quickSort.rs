@@ -6,16 +6,33 @@
  * 
  */
 
-fn partition(mut a: &[u32; 12], p: u32, r: u32) {
+fn partition(a: &mut [u32; 12], p: usize, r: usize) {
     // Not the p is not the begin and r is not the length of A!
     // set the first element as a guard
-    let x = a[p];
-
+    let x = a[r-1];
+    let mut i = p;
+    for j in p..r-1 {
+        if a[j] <= x {
+            swap(a, i, j);
+            i = i + 1;
+        }
+        println!("{:?}", a);
+    }
+    swap(a, i, r-1);
 }
 
+
+fn swap(a: &mut [u32; 12], i: usize, j: usize) {
+    let t = a[i];
+    a[i] = a[j];
+    a[j] = t;
+}
 
 fn main() {
     println!("QuickSort in Rust!");
     let mut a = [2, 8, 12, 7, 9, 14, 5, 6, 16, 1, 3, 10];
-    partition(&mut a, 0, a.len().count_ones());
+    let len = a.len();
+    println!("{:?}", a);
+    partition(&mut a, 0, len);
+    println!("{:?}", a);
 }
