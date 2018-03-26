@@ -6,7 +6,7 @@
  * 
  */
 
-fn partition(a: &mut [u32; 12], p: usize, r: usize) {
+fn partition(a: &mut [u32; 12], p: usize, r: usize) -> (usize) {
     // Not the p is not the begin and r is not the length of A!
     // set the first element as a guard
     let x = a[p];
@@ -16,9 +16,18 @@ fn partition(a: &mut [u32; 12], p: usize, r: usize) {
             swap(a, i, j);
             i = i + 1;
         }
-        println!("{:?}", a);
+        // println!("{:?}", a);
     }
     swap(a, p, i-1);
+    return i-1;
+}
+
+fn quicksort(a: &mut [u32; 12], p: usize, r: usize) {
+    if p < r {
+        let q = partition(a, p, r);
+        quicksort(a, p, q);
+        quicksort(a, q+1, r);
+    }
 }
 
 
@@ -33,6 +42,6 @@ fn main() {
     let mut a = [11, 8, 12, 7, 9, 14, 5, 6, 16, 1, 3, 10];
     let len = a.len();
     println!("{:?}", a);
-    partition(&mut a, 0, len);
+    quicksort(&mut a, 0, len);
     println!("{:?}", a);
 }
