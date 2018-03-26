@@ -5,7 +5,10 @@ fn reverse(pair: (i32, bool)) -> (bool, i32) {
     (boolean, integer)
 }
 
-
+fn transpose(matrix: Matrix) -> Matrix {
+    let (x1, x2, y1, y2) = (matrix.0, matrix.1, matrix.2, matrix.3);
+    Matrix(x1, y1, x2, y2)
+}
 
 #[derive(Debug)]
 struct Matrix(f32, f32, f32, f32);
@@ -28,6 +31,7 @@ fn main() {
 
     let matrix = Matrix(1.1, 1.2, 1.3, 1.4);
     println!("{}", matrix);
+    println!("{}", transpose(matrix));
 
     // reverse
     let pair = (1, true);
