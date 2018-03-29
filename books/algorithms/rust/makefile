@@ -1,4 +1,4 @@
-TARGETS=quickSort
+TARGETS=quickSort heapSort
 
 clean:
 	rm -rf *.exe *.pdb
@@ -6,4 +6,7 @@ clean:
 
 quickSort:
 	rustc quickSort.rs
+
+heapSort:
+	rustc heapSort.rs
 	
