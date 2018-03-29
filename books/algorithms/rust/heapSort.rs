@@ -53,6 +53,14 @@ fn build_max_heap(mut heap: &mut Heap) {
     }
 }
 
+fn heapsort(mut heap: &mut Heap) {
+    build_max_heap(&mut heap);
+    for i in (1 .. heap.heapsize).rev() {
+        swap(&mut heap, 0, i);
+        heap.heapsize = heap.heapsize-1;
+        max_heapify(&mut heap, 0);
+    }
+}
 
 fn main() {
     let mut heap = Heap {
@@ -61,6 +69,7 @@ fn main() {
         heapsize: 0,
     };
     println!("Heap {:?}", heap);
-    build_max_heap(&mut heap);
+    heapsort(&mut heap);
     println!("Heap {:?}", heap);
+    
 }
