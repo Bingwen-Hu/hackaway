@@ -1,10 +1,11 @@
 // heapSort in Rust
 // reference to C/heapSort.c
 
-pub struct Heap {
-    data: [u32; 100],
-    length: u32,
-    heapsize: u32,
+#[derive(Debug)]
+ struct Heap {
+    data: [u32; 10],
+    length: usize,
+    heapsize: usize,
 }
 
 
@@ -26,10 +27,10 @@ fn swap(heap: &mut Heap, i: usize, j: usize) {
     heap.data[j] = t;
 }
 
-fn max_heapify(heap: &mut Heap, i: usize) {
+fn max_heapify(mut heap: &mut Heap, i: usize) {
     let l = left(i);
     let r = right(i);
-    let largest: usize;
+    let mut largest: usize;
     if l < heap.heapsize && heap.data[l] > heap.data[i] {
         largest = l;
     } else {
@@ -45,8 +46,8 @@ fn max_heapify(heap: &mut Heap, i: usize) {
     }
 }
 
-fn build_max_heap(heap: &mut Heap) {
-    heap.heapsize = heap.length
+fn build_max_heap(mut heap: &mut Heap) {
+    heap.heapsize = heap.length;
     for i in (0 .. heap.length/2-1).rev() {
         max_heapify(&mut heap, i);
     }
@@ -54,5 +55,12 @@ fn build_max_heap(heap: &mut Heap) {
 
 
 fn main() {
-    
+    let mut heap = Heap {
+        data: [4, 1, 3, 2, 16, 9, 10, 14, 8, 7],
+        length: 10,
+        heapsize: 0,
+    };
+    println!("Heap {:?}", heap);
+    build_max_heap(&mut heap);
+    println!("Heap {:?}", heap);
 }
