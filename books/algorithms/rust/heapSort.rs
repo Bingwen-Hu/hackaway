@@ -31,13 +31,13 @@ fn max_heapify(mut heap: &mut Heap, i: usize) {
     let l = left(i);
     let r = right(i);
     let mut largest: usize;
-    if l < heap.heapsize && heap.data[l] > heap.data[i] {
+    if (l < heap.heapsize) && (heap.data[l] > heap.data[i]) {
         largest = l;
     } else {
         largest = i;
     }
 
-    if r < heap.heapsize && heap.data[r] > heap.data[i] {
+    if (r < heap.heapsize) && (heap.data[r] > heap.data[i]) {
         largest = r;
     }
     if largest != i {
@@ -48,7 +48,7 @@ fn max_heapify(mut heap: &mut Heap, i: usize) {
 
 fn build_max_heap(mut heap: &mut Heap) {
     heap.heapsize = heap.length;
-    for i in (0 .. heap.length/2-1).rev() {
+    for i in (0 .. heap.length/2).rev() {
         max_heapify(&mut heap, i);
     }
 }
@@ -71,5 +71,5 @@ fn main() {
     println!("Heap {:?}", heap);
     heapsort(&mut heap);
     println!("Heap {:?}", heap);
-    
+
 }
