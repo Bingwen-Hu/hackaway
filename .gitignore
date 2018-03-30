@@ -44,3 +44,4 @@ AirQualityUCI.csv
 build
 *.so
 .vscode
+face_model.xml
