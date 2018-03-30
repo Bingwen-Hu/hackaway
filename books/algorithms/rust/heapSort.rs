@@ -2,7 +2,7 @@
 // reference to C/heapSort.c
 
 #[derive(Debug)]
- struct Heap {
+struct Heap {
     data: [u32; 10],
     length: usize,
     heapsize: usize,
