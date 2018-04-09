@@ -41,6 +41,15 @@ fn value_in_cents(coin: Coin) -> i32 {
     }
 }
 
+
+// if let, execute some code only when condition is met.
+fn if_let() {
+    let some_value = Some(3u8);
+    if let Some(3) = some_value {
+        println!("three");
+    }
+}
+
 fn main() {
     let coin = Coin::Penny;
     let v = value_in_cents(coin);
@@ -51,4 +60,5 @@ fn main() {
     println!("{}", v);
 
     placeholder();
+    if_let();
 }
