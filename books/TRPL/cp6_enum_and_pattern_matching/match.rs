@@ -17,6 +17,15 @@ enum Coin {
 }
 
 
+fn placeholder() {
+    let some_value = 9u8;
+    match some_value {
+        1 => println!("One"),
+        3 => println!("Three"),
+        _ => println!("Not One or three"),
+    }
+}
+
 fn value_in_cents(coin: Coin) -> i32 {
     match coin {
         Coin::Penny => {
@@ -41,4 +50,5 @@ fn main() {
     let v = value_in_cents(coin);
     println!("{}", v);
 
+    placeholder();
 }
