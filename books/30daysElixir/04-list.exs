@@ -7,10 +7,12 @@ defmodule ListTest do
     ["Tim", "Jen", "Mac", "Kai"]
   end
 
+  # list literal
   test "sigil" do
     assert sample == ~w(Tim Jen Mac Kai)
   end
 
+  # desconstruct
   test "head" do
     [head | _] = sample
     assert head == "Tim"
@@ -65,7 +67,7 @@ defmodule ListTest do
 
   # reverse list
   test "manual reverse speed" do
-    {microsec, reversed} = :timer.tc fn ->
+    {microsec, reversed} = :timer.tc fn -> # erlang function
       Enum.reduce 1..1_000_000, [], fn (i, l) -> List.insert_at(l, 0, i) end
     end
     assert reversed == Enum.to_list(1_000_000..1)
@@ -88,6 +90,5 @@ defmodule ListTest do
     assert reversed == Enum.to_list(1_000_000..1)
     IO.puts "Enum.reverse took #{microsec} microsecs"
   end
-
 
 end
