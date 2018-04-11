@@ -17,23 +17,26 @@ defmodule CowInterrogator do
   end
 
   def interrogate do
+    # function call
     name = get_name
+    # match expression
     case String.downcase(get_cow_lover) |> String.trim do
       "yes" ->
-        IO.puts "Great! Here's a cow for you #{name}:"
+        IO.puts "Great! Here's a cow for you #{name}:"  # like f-string in Python
         IO.puts cow_art
       "no" ->
         IO.puts "That's a shame, #{name}."
       _ ->
-        IO.puts "You should have entered 'y' or 'n'."
+        IO.puts "You should have entered 'yes' or 'no'."
     end
   end
 
   def cow_art do
     path = Path.expand("cow.txt", __DIR__)
+    # open file
     case File.read(path) do
       {:ok, art} -> art
-      {:error, _} -> IO.puts "Error: cow.txt file not found"; System.halt(1)
+      {:error, _} -> IO.puts "Error: cow.txt file not found"; System.halt(1) # exit
     end
   end
 end
@@ -42,7 +45,7 @@ ExUnit.start
 
 defmodule InputOutputTest do
   use ExUnit.Case
-  import String
+  import String # like `include` in Clang
 
   test "checks if cow_art returns string from support/cow.txt" do
     # this call checks if cow_art function returns art from txt file
