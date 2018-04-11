@@ -4,4 +4,4 @@
 // mod client 
 // Just like
 // import client in Python!
-fn connect() {}
+pub fn connect() {}
