@@ -1,7 +1,9 @@
+mod client;
+
 mod network {
     fn connect() {}
     // inside module
-    mod client {
+    mod server {
         fn connect() {}
     }
 }
