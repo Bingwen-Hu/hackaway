@@ -1,24 +1,28 @@
 defmodule CowInterrogator do
 
+  # docstring
   @doc """
   Get name from standard IO
   """
+
+  # input function
   def get_name do
-    IO.gets("what  is your name? ")
+    IO.gets("what is your name? ")
     |> String.trim
   end
 
+  # specifi input length I think!
   def get_cow_lover do
-    IO.getn("Do you like cows? [y|n] ", 1)
+    IO.getn("Do you like cows? [yes|no] ", 3)
   end
 
   def interrogate do
     name = get_name
-    case String.downcase(get_cow_lover) do
-      "y" ->
+    case String.downcase(get_cow_lover) |> String.trim do
+      "yes" ->
         IO.puts "Great! Here's a cow for you #{name}:"
         IO.puts cow_art
-      "n" ->
+      "no" ->
         IO.puts "That's a shame, #{name}."
       _ ->
         IO.puts "You should have entered 'y' or 'n'."
