@@ -1,5 +1,5 @@
 // vector can only store same type
-
+// but enum can tackle it
 
 fn construct() {
     let v: Vec<i32> = Vec::new();
@@ -25,8 +25,27 @@ fn vget() {
     }
 }
 
+fn multitype() {
+    #[derive(Debug)]
+    enum SpreadSheetCell {
+        Int(i32),
+        Float(f64),
+        Text(String),
+    }
+    let row = vec![
+        SpreadSheetCell::Int(3),
+        SpreadSheetCell::Text(String::from("blue")),
+        SpreadSheetCell::Float(10.12),
+    ];
+
+    for i in row.iter() {
+        println!("{:?}", i);
+    }
+}
+
 fn main() {
     construct();
     vpush();
     vget();
+    multitype();
 }
