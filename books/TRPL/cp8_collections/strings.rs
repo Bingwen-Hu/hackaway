@@ -34,9 +34,34 @@ fn format() {
     println!("{}\n{}-{}-{}", s, s1, s2, s3);
 }
 
+// important part
+// indexing is not support
+// string is wrapper of vector
+fn strlen() {
+    let len = String::from("Hola").len();
+    println!("len of `hola` {}", len);
+    let len = String::from("Здравствуйте").len();
+    println!("len of `Здравствуйте` {}", len);
+}
+
+// in Rust, string bytes is stored and interpretted by program
+fn deeper() {
+    let s = "नमस्ते";
+    for c in s.chars() {
+        println!("{}", c);
+    }
+
+    for b in s.bytes() {
+        println!("{}", b);
+    }
+}
+
+
 fn main() {
     construct();
     update();
     update_move();
     format();
+    strlen();
+    deeper();
 }
