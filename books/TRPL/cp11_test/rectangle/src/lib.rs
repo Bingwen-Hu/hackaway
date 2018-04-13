@@ -20,6 +20,23 @@ pub fn greeting(name: &str) -> String {
     format!("Hello {}", name)
 }
 
+// should_panic guide
+pub struct Guess {
+    value: u32,
+}
+
+impl Guess {
+    pub fn new(value: u32) -> Guess {
+        if value < 1 {
+            panic!("Guess value must be greater than or equal to 1, get {}", value);
+        } else if value > 100 {
+            panic!("Guess value must be less than or equal to 100, get {}", value);
+        }
+        Guess {
+            value
+        }
+    }
+}
 
 #[cfg(test)]
 mod tests {
@@ -53,5 +70,11 @@ mod tests {
             result.contains("carol"),
             "Greeting did not contains name, value was `{}`", "carol"
         );
+    }
+
+    #[test]
+    #[should_panic]
+    fn greater_than_100() {
+        Guess::new(211);
     }
 }
