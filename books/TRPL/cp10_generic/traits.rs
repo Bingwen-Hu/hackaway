@@ -45,6 +45,12 @@ pub fn notify<T: Summarizable>(item: &T) {
     println!("Breaking news! {}", item.summary());
 }
 
+pub fn yanotify<T>(item: &T) 
+    where T: Summarizable
+{
+    println!("Breaking news! {}", item.summary());
+}
+
 fn main() {
     let tweet = Tweet {
         username: String::from("Mory"),
@@ -59,4 +65,5 @@ fn main() {
     println!("{}", surpasser.summary());
 
     notify(&surpasser);
+    yanotify(&surpasser);
 }
