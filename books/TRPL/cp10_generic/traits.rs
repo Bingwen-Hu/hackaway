@@ -1,5 +1,9 @@
+// trait function can have a default implementation  and can be 
+// override by concrete type implement it.
 pub trait Summarizable {
-    fn summary(&self) -> String;
+    fn summary(&self) -> String {
+        String::from("(Read more...)")
+    }
 }
 
 pub struct NewsArticle {
@@ -29,6 +33,11 @@ impl Summarizable for Tweet {
     }
 }
 
+pub struct Surpasser {
+    pub name: String,
+}
+
+impl Summarizable for Surpasser {}
 
 fn main() {
     let tweet = Tweet {
@@ -39,4 +48,7 @@ fn main() {
     };
 
     println!("1 new tweet: {}", tweet.summary());
+
+    let surpasser = Surpasser { name: "Ann".to_string() };
+    println!("{}", surpasser.summary());
 }
