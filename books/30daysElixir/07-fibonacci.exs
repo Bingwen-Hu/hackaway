@@ -39,6 +39,7 @@ defmodule Fib2 do
     fib2(@seed, n - 2)
   end
 
+  # shortcut
   def fib2(acc, 0), do: Enum.reverse(acc)
 
   def fib2([first, second | _] = lst, n) do
