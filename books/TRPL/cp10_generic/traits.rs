@@ -39,6 +39,12 @@ pub struct Surpasser {
 
 impl Summarizable for Surpasser {}
 
+// trait bounds: when we call a function on a generic type, we can using train bounds
+// to ensure that the generic type implement a specific traits
+pub fn notify<T: Summarizable>(item: &T) {
+    println!("Breaking news! {}", item.summary());
+}
+
 fn main() {
     let tweet = Tweet {
         username: String::from("Mory"),
@@ -51,4 +57,6 @@ fn main() {
 
     let surpasser = Surpasser { name: "Ann".to_string() };
     println!("{}", surpasser.summary());
+
+    notify(&surpasser);
 }
