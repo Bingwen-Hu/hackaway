@@ -21,8 +21,20 @@ fn with_type() {
     assert_eq!(2, add_one(1));
 } 
 
+// capture in other language
+fn refer_env() {
+    let x = 4;
+
+    let equal_to_x = |z| z == x;
+
+    let y = 4;
+
+    assert!(equal_to_x(y));
+}
+
 fn main() {
     basic();
     basic2(); // with two parameters
     with_type();
+    refer_env();
 }
