@@ -32,9 +32,21 @@ fn refer_env() {
     assert!(equal_to_x(y));
 }
 
+fn as_parameter() {
+    let answer = call_with_one(|x| x + 2);
+    assert_eq!(answer, 3);
+}
+
+fn call_with_one<F>(some_closure: F) -> i32 
+    where F: Fn(i32) -> i32 
+{
+    some_closure(1)
+}
+
 fn main() {
     basic();
     basic2(); // with two parameters
     with_type();
     refer_env();
+    as_parameter();
 }
