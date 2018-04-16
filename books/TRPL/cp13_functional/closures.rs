@@ -15,7 +15,14 @@ fn basic2() {
     assert_eq!(13, calculate(4, 5));
 }
 
+fn with_type() {
+    let add_one = |x: i32| -> i32 { x + 1 };
+
+    assert_eq!(2, add_one(1));
+} 
+
 fn main() {
     basic();
     basic2(); // with two parameters
+    with_type();
 }
