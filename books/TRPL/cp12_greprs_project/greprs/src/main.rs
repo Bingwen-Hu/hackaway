@@ -2,6 +2,7 @@ extern crate greprs;
 
 use std::env;
 use std::process;
+use std::io::Write;
 
 use greprs::Config;
 
