@@ -1,5 +1,5 @@
 // demostrate  reference cycle
-
+// reference cycle will cause memmory leak
 #[derive(Debug)]
 enum List {
     Cons(i32, RefCell<Rc<List>>),
