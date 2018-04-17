@@ -3,6 +3,8 @@ struct CustomSmartPointer {
     data: String,
 }
 
+
+// drop will be called when object out of scope
 impl Drop for CustomSmartPointer {
     fn drop(&mut self) {
         println!("Dropping customSmartPointer!");
