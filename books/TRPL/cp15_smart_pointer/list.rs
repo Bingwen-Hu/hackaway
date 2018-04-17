@@ -1,3 +1,6 @@
+// using Box to allocate space on the heap
+// box itself is allocated on the stack
+
 #[derive(Debug)]
 enum List {
     Cons(i32, Box<List>),
