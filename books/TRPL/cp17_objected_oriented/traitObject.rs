@@ -1,3 +1,6 @@
+/* a trait that requires Self to be Sized is not allowed to be a trait object.
+*/
+
 // define a public trait
 pub trait Draw {
     fn draw(&self);
@@ -19,7 +22,11 @@ impl Screen {
     }
 }
 
-
+/* here, both Button and SelectBox implement draw 
+   this is duck type in Rust!
+   duck type needs dynamic dispatch and have a 
+   runtime cost
+*/
 
 pub struct Button {
     pub width: u32,
