@@ -46,6 +46,7 @@ checkpoint
 # vscode 
 .vscode
 
+
 # data
 ml-100k
 MNIST_data
