@@ -1,32 +1,75 @@
+# python
 __pycache__
-ml-100k
-metastore_db
-derby.log
+.ipynb_*
+LD_250.npy
+
+# cython
+*.so
+
+# django
+*.db
+
+# java
 *.class
+
+# C
 a.out
-MNIST_data
 *.bat
-log.txt
+*.o
+
+# tensorflow
 *.index
 *.meta
 *.data-00000-of-00001
-target
-*.exe
-*.pdb
 checkpoint
-*~
-*.dat
-*.o
-*.db
-.idea
-.ipynb_*
-*.stackdump
-*.log
 *pbtxt
 *tfevent*
+
+# rust
+*.exe
+*.pdb
+
+# emacs
+*~
+*.dat
+
+# idea IDE
+.idea
+
+*.stackdump
+*.log
+
+
+# hdf5
+*.h5
+
+# vscode 
+.vscode
+
+# data
+ml-100k
+MNIST_data
+face_model.xml
+housing.csv
+AirQualityUCI.csv
+test_data.txt
+train_data.txt
+LD2011_2014.txt
+alice_in_wonderland.txt
+
+# log
+metastore_db
+derby.log
+log.txt
+
+# commons
+build
+_build
+target
+
+# other
 data
 books/masteringPython/cp09/*.html
-_build
 text8.zip
 .cache
 .coverage
@@ -34,15 +77,3 @@ htmlcov
 *.lprof
 *.mp4
 *.lnk
-*.h5
-alice_in_wonderland.txt
-test_data.txt
-train_data.txt
-LD2011_2014.txt
-LD_250.npy
-AirQualityUCI.csv
-build
-*.so
-.vscode
-face_model.xml
-housing.csv

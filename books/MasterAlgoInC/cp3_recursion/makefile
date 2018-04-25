@@ -1,6 +1,6 @@
 CC=gcc
 CFLAGS=-g -Wall -std=c11
-OBJECTS=
+OBJECTS=fact
 
 clean:
 	rm -rf *.o *.exe
