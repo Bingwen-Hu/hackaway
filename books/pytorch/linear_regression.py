@@ -27,7 +27,7 @@ model = Model()
 # construct our loss function and an Optimizer. The call to model.parameters()
 # in the SGD constructor will contain the learnable parameters of the two
 # nn.Linear modules which are members of the model.
-critierion = torch.nn.MSELoss(size_average=False)
+criterion = torch.nn.MSELoss(size_average=False)
 optimizer = torch.optim.SGD(model.parameters(), lr=0.01)
 
 # training loop
@@ -35,11 +35,11 @@ for epoch in range(500):
     y_pred = model(x_data)
 
     # compute and print loss
-    loss = critierion(y_pred, y_data)
+    loss = criterion(y_pred, y_data)
     print(epoch, loss.data[0])
 
     # zero gradients, perform a backward pass, and update the weights
-    optimizer.zero_grad()
+    optimizer.zero_grad() # mini-batch training
     loss.backward()
     optimizer.step()
 
