@@ -26,6 +26,7 @@ test_loader = torch.utils.data.DataLoader(dataset=test_dataset,
 
 class Net(nn.Module):
 
+    # full connection network
     def __init__(self):
         super(Net, self).__init__()
         self.l1 = nn.Linear(784, 520)
