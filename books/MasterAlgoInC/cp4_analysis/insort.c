@@ -1,4 +1,5 @@
 // insert sort
+// warning: buggy
 #include <stdlib.h>
 #include <string.h>
 
