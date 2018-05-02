@@ -4,7 +4,7 @@ OBJECTS=fact
 
 clean:
 	rm -rf *.o *.exe
-	rm $(OBJECTS)
+	rm -rf $(OBJECTS)
 
 fact: fact.o fact_test.o
-	$(CC) fact.c fact_test.o $(CFLAGS) -o $@
+	$(CC) fact.c fact_test.c $(CFLAGS) -o $@
