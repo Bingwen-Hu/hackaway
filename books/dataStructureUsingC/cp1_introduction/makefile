@@ -1,10 +1,10 @@
 CC=gcc 
 CFLAGS=-g -Wall -std=c11
-OBJECTS=first
+OBJECTS=printf
 
 clean:
 	rm -rf *.exe *.o
 	rm -rf $(OBJECTS)
 
-first:first.o
-	$(CC) first.c $(CFLAGS) -o $@
+printf:printf.o
+	$(CC) printf.c $(CFLAGS) -o $@
