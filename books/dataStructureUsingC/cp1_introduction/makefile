@@ -1,6 +1,6 @@
 CC=gcc 
 CFLAGS=-g -Wall -std=c11
-OBJECTS=printf scanf
+OBJECTS=printf scanf generic_pointer
 
 clean:
 	rm -rf *.exe *.o
@@ -12,3 +12,6 @@ printf: printf.o
 
 scanf: scanf.o
 	$(CC) scanf.c $(CFLAGS) -o $@
+
+generic_pointer: generic_pointer.o
+	$(CC) generic_pointer.c $(CFLAGS) -o $@
