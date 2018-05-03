@@ -1,6 +1,6 @@
 CC=gcc 
 CFLAGS=-g -Wall -std=c11
-OBJECTS=printf scanf generic_pointer mory_dec2bin
+OBJECTS=printf scanf generic_pointer mory_dec2bin pointer
 
 clean:
 	rm -rf *.exe *.o
@@ -18,3 +18,6 @@ generic_pointer: generic_pointer.o
 
 mory_dec2bin: mory_dec2bin.o
 	$(CC) mory_dec2bin.c $(CFLAGS) -o $@
+
+pointer: pointer.o
+	$(CC) pointer.c $(CFLAGS) -o $@
