@@ -36,7 +36,7 @@ void split(char *str, char sep, char ***result) {
     head = tail = 0;
     for (int i = 0; i < count; i++) {
         char *p = &str[head];
-        while (*p != sep) {
+        while (*p != sep && *p != '\0') {
             tail++;
             p++;
         }
