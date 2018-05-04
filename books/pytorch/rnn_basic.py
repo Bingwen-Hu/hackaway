@@ -20,7 +20,7 @@ inputs = Variable(torch.Tensor([h, e, l, l, o]))
 for one in inputs:
     one = one.view(1, 1, -1)
     # input: (batch, seq_len, input_size) when batch_first=True
-    out, hidden = cell(one,hidden)
+    out, hidden = cell(one, hidden)
     print("one input size", one.size(), "out size", out.size())
 
 # we can do the whole at once
@@ -34,3 +34,18 @@ print('sequence input size', inputs.size(), "out size", out.size())
 # hidden: (num_layers * num_directions, batch, hidden_size) whether batch_first=True or False
 hidden = Variable(torch.randn(1, 3, 2))
 
+inputs = Variable(torch.Tensor([[h, e, l, l, o],
+                                [e, o, l, l, l],
+                                [l, l, e, e, l]]))
+
+out, hidden = cell(inputs, hidden)
+print("batch input size", inputs.size(), "out size", out.size())
+
+
+cell = nn.RNN(input_size=4, hidden_size=2)
+
+# the given dimensions dim0 and dim1 are swapped
+inputs = inputs.transpose(dim0=0, dim1=1)
+
+out, hidden = cell(inputs, hidden)
+print('batch input size', inputs.size(), 'out size', out.size())
