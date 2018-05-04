@@ -23,9 +23,10 @@ int insort(void* data, int size, int esize, int (*compare)(const void *key1, con
             memcpy(&a[(i + 1) * esize], &a[i * esize], esize);
             i--;
         }
+        memcpy(&a[(i + 1) * esize], key, esize);
     }
 
-    memcpy(&a[(i + 1) * esize], key, esize);
+    
     
     // free storage
     free(key);
