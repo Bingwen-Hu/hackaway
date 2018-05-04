@@ -1,6 +1,6 @@
 CC=gcc
 CFLAGS=-g -Wall -std=c11
-OBEJCTS=matrix
+OBJECTS=matrix merge
 
 clean: 
 	rm -rf *.o *.exe
@@ -8,3 +8,6 @@ clean:
 
 matrix: matrix.o
 	$(CC) matrix.c $(CFLAGS) -o $@
+
+merge: merge.o
+	$(CC) merge.c $(CFLAGS) -o $@
