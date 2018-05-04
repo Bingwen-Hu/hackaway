@@ -13,6 +13,20 @@ int test_append() {
     return 0;
 }
 
+int test_split() {
+    char *str = "Jenny met mory ten years ago.";
+    char **result;
+    split(str, ' ', &result);
+
+    char **p = result;
+    while (*p != NULL) {
+        printf("%s\n", *p++);
+    }
+    return 0;
+}
+
+
 int main() {
     test_append();
+    test_split();
 }

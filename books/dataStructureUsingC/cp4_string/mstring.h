@@ -2,5 +2,5 @@
 #pragma once
 
 void append(char *str1, char *str2, char **result);
-void split(char *str, char sep, char **result);
+void split(char *str, char sep, char ***result);
 

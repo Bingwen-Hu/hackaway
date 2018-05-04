@@ -1,6 +1,7 @@
 #include "mstring.h"
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 void append(char *str1, char *str2, char **result) {
     int len1 = strlen(str1);
@@ -17,19 +18,39 @@ void append(char *str1, char *str2, char **result) {
 }
 
 
-void split(char *str, char sep, char **result) {
+void split(char *str, char sep, char ***result) {
     char *p = str;
     int count = 1;
-    while ((*p) != '\0'){
+    while (*p != '\0'){
         if (*p == sep){
             count++;
         }
+        p++;
     } // end while
+
+    // number of parts
+    char **parts = malloc((count+1) * sizeof(char *));
+    *(parts + count) = NULL;
 
     int head, tail;
     head = tail = 0;
     for (int i = 0; i < count; i++) {
+        char *p = &str[head];
+        while (*p != sep) {
+            tail++;
+            p++;
+        }
+        int len = tail - head;
+        
+        char *tmpstr = malloc(len + 1);
+        for (int i = 0; i < len; i++) {
+            tmpstr[i] = str[i+head];
+        }
+        tmpstr[len] = '\0';
+        head = tail + 1;  tail = head;
+        *(parts + i) = tmpstr;
         
     }
+    *result = parts;
 }
 
