@@ -1,6 +1,6 @@
 CC=gcc
 CFLAGS=-g -Wall -std=c11
-OBJECTS=matrix merge array_and_pointer
+OBJECTS=matrix merge array_and_pointer pascal_triangle
 
 clean: 
 	rm -rf *.o *.exe
@@ -14,3 +14,6 @@ merge: merge.o
 
 array_and_pointer: array_and_pointer.o
 	$(CC) array_and_pointer.c $(CFLAGS) -o $@
+
+pascal_triangle: pascal_triangle.o
+	$(CC) pascal_triangle.c $(CFLAGS) -o $@
