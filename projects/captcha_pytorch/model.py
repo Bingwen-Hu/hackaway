@@ -2,21 +2,21 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from config import args
 
 
 
 class Net(nn.Module):
     
-    def __init__(self):
+    def __init__(self, output):
         super(Net, self).__init__()
-        self.conv1 = nn.Conv2d(1, 32, kernel_size=3)
-        self.conv2 = nn.Conv2d(32, 64, kernel_size=3)
-        self.conv3 = nn.Conv2d(64, 128, kernel_size=3)
-        self.conv4 = nn.Conv2d(128, 256, kernel_size=3)
+        self.conv1 = nn.Conv2d(1, 32, 5)
+        self.conv2 = nn.Conv2d(32, 64, 5)
+        self.conv3 = nn.Conv2d(64, 128, 3)
+        self.conv4 = nn.Conv2d(128, 256, 3)
         self.mp = nn.MaxPool2d(2)
         self.dropout = nn.Dropout2d(0.5)
-        self.fc = nn.Linear(320, 10)
+        self.fc = nn.Linear(512, output)
+        
 
     def forward(self, x):
         in_size = x.size(0)

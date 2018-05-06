@@ -2,7 +2,7 @@ import os
 import torch.utils.data as data
 import numpy as np
 from PIL import Image
-
+import torch
 
 class Captcha(data.Dataset):
 
@@ -35,12 +35,12 @@ class Captcha(data.Dataset):
         img = Image.open(self.path[index])
         img = img.resize([self.width, self.height])
         img = img.convert('L')
-        img = np.array(img).flatten() / 255
+        img = np.array(img) / 255
         return img
     
     def text2vec(self, text):
         def char2vec(c):
-            y = np.zeros(self.charset)
+            y = np.zeros(len(self.charset))
             y[self.charset.index(c)] = 1.0
             return y
         vec = np.vstack([char2vec(c) for c in text])

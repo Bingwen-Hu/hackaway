@@ -1,25 +1,31 @@
+import torch.utils.data as data
 import torch.optim as optim
 import torch.nn.functional as F
 from torch.autograd import Variable
 
 
 
-import models
-from config import args
+import model
+from config import parse_args
+from datasets import Captcha
 
-
-
-model = models.Net()
+args = parse_args()
+model = model.Net(len(args.charset) * args.captcha_size)
 optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.5)
 
-train_loader = {}
-test_loader = {}
+train_dataset = Captcha(args, train=True)
+test_dataset = Captcha(args, train=False)
+
+train_loader = data.DataLoader(train_dataset, shuffle=True, batch_size=args.batch_size)
+test_loader = data.DataLoader(test_dataset, shuffle=False, batch_size=args.batch_size)
+
 
 
 def train(epoch):
     model.train()
     for batch_idx, (data, target) in enumerate(train_loader):
         data, target = Variable(data), Variable(target)
+        print(data.size(), target.size())
         optimizer.zero_grad()
         output = model(data)
         loss = F.nll_loss(output, target)
@@ -54,4 +60,5 @@ def test():
 
 
 if __name__ == '__main__':
-    print(args.test_data_dir, args.batch_size, args.train_data_dir)
+    train(args.epoch)
+    test()
