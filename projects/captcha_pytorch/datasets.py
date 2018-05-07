@@ -36,7 +36,7 @@ class Captcha(data.Dataset):
         img = img.resize([self.width, self.height])
         img = img.convert('L')
         img = np.array(img) / 255
-        return img
+        return torch.FloatTensor(img).view(-1, self.height, self.width)
     
     def text2vec(self, text):
         def char2vec(c):
@@ -45,6 +45,6 @@ class Captcha(data.Dataset):
             return y
         vec = np.vstack([char2vec(c) for c in text])
         vec = vec.flatten()
-        return vec
+        return torch.FloatTensor(vec)
 
 

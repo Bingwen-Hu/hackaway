@@ -2,7 +2,7 @@ import torch.utils.data as data
 import torch.optim as optim
 import torch.nn.functional as F
 from torch.autograd import Variable
-
+import torch
 
 
 import model
@@ -28,7 +28,7 @@ def train(epoch):
         print(data.size(), target.size())
         optimizer.zero_grad()
         output = model(data)
-        loss = F.nll_loss(output, target)
+        loss = torch.sum(F.pairwise_distance(output, target))
         loss.backward()
         optimizer.step()
         if batch_idx % 10 == 0:
@@ -45,7 +45,8 @@ def test():
         data, target = Variable(data, volatile=True), Variable(target)
         output = model(data)
         # sum up batch loss
-        test_loss += F.nll_loss(output, target, size_average=False).data[0]
+        output = torch.np.argmax(output.view(args.captcha_size, -1), axis=0)
+        loss = F.pairwise_distance(output, target).data[0]
         # get the index of the max log-probability
         pred = output.data.max(1, keepdim=True)[1]
         correct += pred.eq(target.data.view_as(pred)).cpu().sum()
