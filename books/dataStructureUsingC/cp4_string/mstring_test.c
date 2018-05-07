@@ -26,8 +26,20 @@ int test_split() {
     return 0;
 }
 
+void test_equal() {
+    char *p = "ann";
+    char *q = "ann";
+
+    char *r = "mory";
+
+    int same = equal(p, q);
+    printf("%s and %s is same? %s\n", p, q, same > 0 ? "Yes" : "No");
+    same = equal(p, r);
+    printf("%s and %s is same? %s\n", p, r, same > 0 ? "Yes" : "No");
+}
 
 int main() {
     test_append();
     test_split();
+    test_equal();
 }

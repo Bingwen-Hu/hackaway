@@ -65,3 +65,28 @@ void free_split(char **result){
     }
     free(result);
 }
+
+
+void replace(char *str, char *pattern, char **result){
+
+}
+
+void free_replace(char *result){
+    free(result);
+}
+
+
+int equal(char *str1, char *str2){
+
+    while (*str1 != '\0' && *str2 !='\0') {
+        if (*str1 != *str2) {
+            return 0;
+        } else {
+            str1++; str2++;
+        }
+    }
+    if (*str1 == '\0' && *str2 == '\0')
+        return 1;
+    else
+        return 0;
+}
