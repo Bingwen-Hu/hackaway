@@ -11,6 +11,7 @@ from datasets import Captcha
 
 args = parse_args()
 model = model.Net(len(args.charset) * args.captcha_size)
+# model.cuda()
 optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.5)
 
 train_dataset = Captcha(args, train=True)
