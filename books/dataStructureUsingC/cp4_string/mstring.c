@@ -17,6 +17,10 @@ void append(char *str1, char *str2, char **result) {
     (*result)[len1+len2] = '\0';
 }
 
+void free_append(char *result) {
+    free(result);
+}
+
 
 void split(char *str, char sep, char ***result) {
     char *p = str;
@@ -54,3 +58,10 @@ void split(char *str, char sep, char ***result) {
     *result = parts;
 }
 
+void free_split(char **result){
+    char **p = result;
+    while (*p != NULL) {
+        free(*p++);
+    }
+    free(result);
+}

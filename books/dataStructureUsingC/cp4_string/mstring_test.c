@@ -9,7 +9,7 @@ int test_append() {
     char *result;
     append(str1, str2, &result);
     printf("append string is: %s\n", result);
-    free(result);
+    free_append(result);
     return 0;
 }
 
@@ -22,6 +22,7 @@ int test_split() {
     while (*p != NULL) {
         printf("%s\n", *p++);
     }
+    free_split(result);
     return 0;
 }
 
