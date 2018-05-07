@@ -68,7 +68,7 @@ void free_split(char **result){
 
 
 void replace(char *str, char *pattern, char **result){
-
+    // wait for implement
 }
 
 void free_replace(char *result){
@@ -89,4 +89,21 @@ int equal(char *str1, char *str2){
         return 1;
     else
         return 0;
+}
+
+
+
+void join(char **strlist, char *sep, char **result) {
+    // wait for implement
+}
+void free_join(char *result) {
+    free(result);
+}
+
+
+void substr(char *str, char *substr, int ***xys) {
+    // wait for implement
+}
+void free_substr(int **xys) {
+    // wait for implement
 }
