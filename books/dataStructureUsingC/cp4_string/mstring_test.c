@@ -38,8 +38,34 @@ void test_equal() {
     printf("%s and %s is same? %s\n", p, r, same > 0 ? "Yes" : "No");
 }
 
+void test_strip() {
+    char *s = "  mory  is evil ";
+    char *result;
+    strip(s, &result);
+    int eq = equal(result, "mory  is evil");
+    free_strip(result);
+    printf("test strip ... %s \n", eq > 0 ? "Ok" : "Not ok.");
+
+    
+    char *s2 = "  mory  is evil";
+    char *result2;
+    strip(s2, &result2);
+    int eq2 = equal(result2, "mory  is evil");
+    free_strip(result2);
+    printf("test strip ... %s \n", eq2 > 0 ? "Ok" : "Not ok.");
+
+
+    char *s3 = "mory  is evil  ";
+    char *result3;
+    strip(s3, &result3);
+    int eq3 = equal(result3, "mory  is evil");
+    free_strip(result3);
+    printf("test strip ... %s \n", eq3 > 0 ? "Ok" : "Not ok.");
+}
+
 int main() {
     test_append();
     test_split();
     test_equal();
+    test_strip();
 }

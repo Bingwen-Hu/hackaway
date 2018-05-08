@@ -17,3 +17,6 @@ void free_join(char *result);
 
 void substr(char *str, char *substr, int ***xys);
 void free_substr(int **xys);
+
+void strip(char *str, char **result);
+void free_strip(char *result);
