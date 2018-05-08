@@ -107,3 +107,36 @@ void substr(char *str, char *substr, int ***xys) {
 void free_substr(int **xys) {
     // wait for implement
 }
+
+void strip(char *str, char **result) {
+    int start = 0, end;
+    int i = 0;
+    // find the start index
+    while (str[i] != '\0') {
+        if (str[i] != ' ') {
+            break;
+        }
+        i++;
+        start++;
+    }
+    // find the end index
+    end = start + 1;
+    i++;
+    while (str[i] != '\0') {
+        if (str[i] != ' ') {
+            end = i + 1;
+        }
+        i++;
+    }
+    // copy to new string.
+    int len = end - start;
+    *result = malloc(len + 1);
+    for (int i = 0; i < len; i++) {
+        (*result)[i] = str[i+start]; 
+    }
+    (*result)[len] = '\0';
+}
+
+void free_strip(char *result) {
+    free(result);
+}
