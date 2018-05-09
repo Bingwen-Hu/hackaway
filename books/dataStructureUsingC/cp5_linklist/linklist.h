@@ -17,4 +17,4 @@ linklist delete_end(linklist list);
 linklist delete_at(linklist list, int index);
 
 void destroy(linklist list);
-linklist sort(linklist list, int incr);
+linklist sort(linklist list);

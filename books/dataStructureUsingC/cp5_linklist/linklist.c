@@ -107,11 +107,23 @@ void destroy(linklist list) {
     free(p);
 }
 
-linklist sort(linklist list, int incr) {
-    if (incr > 0) {
-        // incre sort
-    } else {
-        // descr sort
+// insert sort seems reasonable
+linklist sort(linklist list) {
+    linklist p, q;
+    int temp;
+
+    p = list->next;
+    while (p != NULL) {
+        q = p->next;
+        while (q != NULL) {
+            if (q->data > p->data) {
+                temp = q->data;
+                q->data = p->data;
+                p->data = temp;
+            }
+            q = q->next;
+        }
+        p = p->next;
     }
     return list;
 }

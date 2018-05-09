@@ -35,6 +35,11 @@ int main() {
     display(list);
 
 
+    puts("\ntest sort");
+    list = insert_at(list, 3, 99);
+    list = insert_at(list, 5, 49);
+    list = sort(list);
+    display(list);
 
     destroy(list);
 }
