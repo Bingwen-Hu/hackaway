@@ -18,5 +18,23 @@ int main() {
     list = insert_at(list, 2, 42);
     display(list);
 
+    puts("\ntest delete begin");
+    list = delete_begin(list);
+    display(list);
+
+    puts("\ntest delete end");
+    list = delete_end(list);
+    display(list);
+
+    puts("\ntest delete at");
+    list = delete_at(list, 1);
+    display(list);
+
+    puts("\ntest delete at");
+    list = delete_at(list, 0);
+    display(list);
+
+
+
     destroy(list);
 }

@@ -60,6 +60,43 @@ linklist insert_at(linklist list, int index, int value) {
     return list;
 }
 
+linklist delete_begin(linklist list) {
+    linklist p = list->next;
+    list->next = p->next;
+    list->data--;
+    free(p);
+    return list;
+}
+
+linklist delete_end(linklist list) {
+    linklist p, q;
+    p = q = list;
+    while (q->next != NULL) {
+        p = q;
+        q = q->next;
+    }
+    free(q);
+    p->next = NULL;
+    list->data--;
+    return list;
+}
+
+linklist delete_at(linklist list, int index) {
+    linklist p, q;
+    p = q = list;
+
+    for (int i = 0; i <= index; i++) {
+        p = q;
+        q = q->next;
+    }
+    p->next = q->next;
+    list->data--;
+    free(q);
+    return list;
+}
+
+
+
 void destroy(linklist list) {
     linklist p = list;
     while (p->next != NULL) {
