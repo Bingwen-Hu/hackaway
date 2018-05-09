@@ -10,5 +10,5 @@ int main() {
         insert_begin(list, i);
     }
     display(list);
-
+    destroy(list);
 }

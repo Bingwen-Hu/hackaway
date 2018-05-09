@@ -35,4 +35,14 @@ void display(circularlist list) {
     }
     puts("\n");
 }
-void destroy(circularlist list);
+void destroy(circularlist list) {
+    circularlist p, q;
+    p = list->next;
+    while (p->next != list->next) {
+        q = p;
+        p = p->next;
+        free(q);
+    }
+    free(p);
+    free(list);
+}
