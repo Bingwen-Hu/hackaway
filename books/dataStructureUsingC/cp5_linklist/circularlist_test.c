@@ -17,5 +17,15 @@ int main() {
     display(list);
 
 
+    puts("test delete begin");
+    delete_begin(list);
+    delete_begin(list);
+    display(list);
+
+    puts("test delete end");
+    delete_end(list);
+    delete_end(list);
+    display(list);
+
     destroy(list);
 }

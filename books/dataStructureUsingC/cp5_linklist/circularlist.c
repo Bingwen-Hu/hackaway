@@ -49,8 +49,30 @@ circularlist insert_end(circularlist list, int value) {
 }
 
 
-circularlist delete_begin(circularlist list);
-circularlist delete_end(circularlist list);
+circularlist delete_begin(circularlist list) {
+    circularlist q = list->next;
+    circularlist p = list->next;
+    while (p != NULL && p->next != list->next) {
+        p = p->next;
+    }
+    p->next = q->next;
+    list->next = q->next;
+    list->data--;
+    free(q);
+    return list;
+}
+circularlist delete_end(circularlist list) {
+    circularlist q = list->next;
+    circularlist p = list->next;
+    while (p != NULL && p->next != list->next) {
+        q = p;
+        p = p->next;
+    }
+    q->next = p->next;
+    free(p);
+    list->data--;
+    return list;
+}
 
 void display(circularlist list) {
     circularlist p = list->next;
