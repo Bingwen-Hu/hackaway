@@ -10,5 +10,12 @@ int main() {
         insert_begin(list, i);
     }
     display(list);
+
+    puts("test insert end");
+    insert_end(list, 12);
+    insert_end(list, 25);
+    display(list);
+
+
     destroy(list);
 }

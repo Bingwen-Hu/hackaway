@@ -8,6 +8,10 @@ typedef struct node {
 
 circularlist make();
 circularlist insert_begin(circularlist list, int value);
+circularlist insert_end(circularlist list, int value);
+circularlist delete_begin(circularlist list);
+circularlist delete_end(circularlist list);
+
 void display(circularlist list);
 void destroy(circularlist list);
 

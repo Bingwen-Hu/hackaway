@@ -27,13 +27,38 @@ circularlist insert_begin(circularlist list, int value) {
     list->data++;
     return list;
 }
+
+circularlist insert_end(circularlist list, int value) {
+    node *new = malloc(sizeof(node));
+    new->data = value;
+    
+    circularlist p = list->next;
+    while (p != NULL && p->next != list->next) {
+        p = p->next;
+    }
+    if (p == NULL) {
+        p = new;
+        new->next = new;
+        list->next = new;
+    } else {
+        new->next = p->next;
+        p->next = new;
+    } 
+    list->data++;
+    return list;
+}
+
+
+circularlist delete_begin(circularlist list);
+circularlist delete_end(circularlist list);
+
 void display(circularlist list) {
     circularlist p = list->next;
     while (p->next != list->next) {
         printf("%-4d", p->data);
         p = p->next;
     }
-    puts("\n");
+    printf("%-4d\n", p->data);
 }
 void destroy(circularlist list) {
     circularlist p, q;
