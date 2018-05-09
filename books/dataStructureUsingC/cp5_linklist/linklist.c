@@ -16,6 +16,7 @@ void display(linklist list) {
         list = list->next;
         printf("%-4d", list->data);
     }
+    printf("\n");
 }
 
 linklist insert_begin(linklist list, int value) {
@@ -36,6 +37,24 @@ linklist insert_end(linklist list, int value) {
     while (p->next != NULL) {
         p = p->next;
     }
+    p->next = new;
+    list->data++;
+    return list;
+}
+
+linklist insert_at(linklist list, int index, int value) {
+    node *new = malloc(sizeof(node));
+    new->data = value;
+
+    if (index < 0 || index > list->data) {
+        printf("index out of scope! length of list is %d, index is %d\n", list->data, index);
+        return list;
+    }
+    linklist p = list;
+    for (int i = 0; i < index; i++) {
+        p = p->next;
+    } // p just at the index
+    new->next = p->next;
     p->next = new;
     list->data++;
     return list;

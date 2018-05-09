@@ -14,6 +14,9 @@ int main() {
     list = insert_end(list, 201);
     display(list);
 
+    puts("\ntest insert at");
+    list = insert_at(list, 2, 42);
+    display(list);
 
     destroy(list);
 }
