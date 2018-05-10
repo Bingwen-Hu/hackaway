@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 
+int eval_postfix(char *post);
 
 void reverse_list() {
     int list[] = {1, 2, 3, 4, 5, 7};
@@ -53,7 +54,7 @@ int parenthese_checker(char *str) {
 
 
 void infix2postfix() {
-    char *infix = "5 + 2 * 9 - 1 + 3 / (2 + 1)";
+    char *infix = "5 + 2 * 9 - 1 + 4 * (3 + 2) - 1 * 7";
     char *str = infix;
     char post[200];
     int i = 0;
@@ -96,6 +97,30 @@ void infix2postfix() {
     post[i-1] = '\0';  // override the '('
     printf("infix: %s\n", infix);
     printf("postfix: %s\n", post);
+    printf("value of postfix: %d\n", eval_postfix(post));
+}
+
+int eval_postfix(char *post) {
+    stack s = make();
+    char *p = post;
+    int result;
+    while (*p != '\0') {
+        if ('0' <= *p && *p <= '9') {
+            push(&s, *p - '0');
+        } else {
+            int op2 = pop(&s);
+            int op1 = pop(&s);
+            switch (*p) {
+                case '+': result = op1 + op2; break;
+                case '-': result = op1 - op2; break;
+                case '*': result = op1 * op2; break;
+                case '/': result = op1 / op2; break;
+            }
+            push(&s, result);
+        }
+        p++;
+    }
+    return result;
 }
 
 int main(int argc, char const *argv[])
