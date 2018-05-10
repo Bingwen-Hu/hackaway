@@ -53,7 +53,8 @@ int parenthese_checker(char *str) {
 
 
 void infix2postfix() {
-    char *str = "5 + 2 * 9 - 1 + 3 / 2";
+    char *infix = "5 + 2 * 9 - 1 + 3 / (2 + 1)";
+    char *str = infix;
     char post[200];
     int i = 0;
     stack s = make();
@@ -87,13 +88,13 @@ void infix2postfix() {
             }
             push(&s, *str);
         }
-        
+        str++;
     }
     while (s.top >= 0) {
         post[i++] = pop(&s);
     }
-    post[i] = '\0';
-    printf("infix: %s\n", str);
+    post[i-1] = '\0';  // override the '('
+    printf("infix: %s\n", infix);
     printf("postfix: %s\n", post);
 }
 
