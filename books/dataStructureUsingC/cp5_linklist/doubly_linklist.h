@@ -10,5 +10,5 @@ typedef struct node {
 // lets try a different space.
 doublelinklist insert_dl(doublelinklist list, int index, int value);
 doublelinklist remove_dl(doublelinklist list, int index);
-doublelinklist destroy_dl(doublelinklist list);
-doublelinklist display_dl(doublelinklist list);
+void destroy_dl(doublelinklist list);
+void display_dl(doublelinklist list);

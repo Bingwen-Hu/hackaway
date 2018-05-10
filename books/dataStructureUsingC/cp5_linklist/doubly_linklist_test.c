@@ -8,4 +8,5 @@ int main() {
         list = insert_dl(list, i, i*i);
     }
     display_dl(list);
+    destroy_dl(list);
 }

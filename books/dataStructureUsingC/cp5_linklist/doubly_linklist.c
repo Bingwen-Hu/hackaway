@@ -15,13 +15,13 @@ doublelinklist insert_dl(doublelinklist list, int index, int value) {
     } 
 
     doublelinklist p = list;
-    for (int i = 0; i < index; i++) {
+    for (int i = 0; i < index-1; i++) {
         p = p->next;
-    } // p is just at the list[index]
+    } // p is just previous to  the list[index]
     
-    new->prev = p->prev;
-    new->next = p;
-    p->prev = new;
+    new->prev = p;
+    new->next = p->next;
+    p->next = new;
     return list;
 }
 
@@ -31,13 +31,17 @@ doublelinklist remove_dl(doublelinklist list, int index) {
 }
 
 
-doublelinklist destroy_dl(doublelinklist list) {
-
-
+void destroy_dl(doublelinklist list) {
+    doublelinklist p = list;
+    while (list != NULL) {
+        p = list;
+        list = list->next;
+        free(p);
+    }
 }
 
 
-doublelinklist display_dl(doublelinklist list) {
+void display_dl(doublelinklist list) {
     while (list != NULL) {
         printf("%-4d", list->data);
         list = list->next;
