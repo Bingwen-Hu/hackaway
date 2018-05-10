@@ -8,5 +8,9 @@ int main() {
         list = insert_dl(list, i, i*i);
     }
     display_dl(list);
+    
+    puts("test remove_dl");
+    list = remove_dl(list, 4);
+    display_dl(list);
     destroy_dl(list);
 }

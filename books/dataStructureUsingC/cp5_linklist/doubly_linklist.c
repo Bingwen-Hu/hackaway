@@ -27,7 +27,15 @@ doublelinklist insert_dl(doublelinklist list, int index, int value) {
 
 
 doublelinklist remove_dl(doublelinklist list, int index) {
-
+    doublelinklist p = list;
+    for (int i = 0; i < index-1; i++) {
+        p = p->next;
+    } // p is just previous to  the list[index]
+    doublelinklist q = p->next;
+    p->next = q->next;
+    q->next->prev = p;
+    free(q);
+    return list;
 }
 
 
