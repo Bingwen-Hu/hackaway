@@ -1,6 +1,6 @@
 CC=gcc
 CFLAGS=-g -Wall -std=c11
-OBJECTS=stack lstack mstack
+OBJECTS=stack lstack mstack application
 
 clean: 
 	rm -rf *.o *.exe
@@ -14,3 +14,6 @@ lstack: lstack.o lstack_test.o
 
 mstack: multistack.o multistack_test.o
 	$(CC) multistack.c multistack_test.c $(CFLAGS) -o $@
+
+application: applications.o stack.o
+	$(CC) applications.c stack.c $(CFLAGS) -o $@
