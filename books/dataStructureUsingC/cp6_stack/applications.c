@@ -2,6 +2,8 @@
 
 #include "stack.h"
 #include <stdio.h>
+#include <string.h>
+
 
 void reverse_list() {
     int list[] = {1, 2, 3, 4, 5, 7};
@@ -50,6 +52,51 @@ int parenthese_checker(char *str) {
 }
 
 
+void infix2postfix() {
+    char *str = "5 + 2 * 9 - 1 + 3 / 2";
+    char post[200];
+    int i = 0;
+    stack s = make();
+    push(&s, '(');
+    while (*str != '\0') {
+        if (*str == '(') {
+            push(&s, *str);
+        }
+        if ('0' <= *str && *str <= '9') {
+            post[i++] = *str;
+        }
+        if (*str == ')') {
+            char c;
+            while ((c = pop(&s)) != '(') {
+                post[i++] = c;
+            }
+        }
+        if (*str == '*' || *str == '/') {
+            char c = peek(&s);
+            while (c == '*' || c == '/') {
+                post[i++] = pop(&s);
+                c = peek(&s);
+            }
+            push(&s, *str);
+        }
+        if (*str == '+' || *str == '-') {
+            char c = peek(&s);
+            while (c == '*' || c == '/' || c == '+' || c == '-') {
+                post[i++] = pop(&s);
+                c = peek(&s);
+            }
+            push(&s, *str);
+        }
+        
+    }
+    while (s.top >= 0) {
+        post[i++] = pop(&s);
+    }
+    post[i] = '\0';
+    printf("infix: %s\n", str);
+    printf("postfix: %s\n", post);
+}
+
 int main(int argc, char const *argv[])
 {
     reverse_list();
@@ -61,5 +108,7 @@ int main(int argc, char const *argv[])
     int bad = parenthese_checker(invalid);
     printf("%s is %s\n", invalid, bad > 0 ? "valid" : "invalid");
 
+
+    infix2postfix();
     return 0;
 }
