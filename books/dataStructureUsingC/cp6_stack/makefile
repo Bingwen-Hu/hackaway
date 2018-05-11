@@ -1,6 +1,6 @@
 CC=gcc
 CFLAGS=-g -Wall -std=c11
-OBJECTS=stack lstack mstack application
+OBJECTS=stack lstack mstack application hanoi_tower
 
 clean: 
 	rm -rf *.o *.exe
@@ -17,3 +17,6 @@ mstack: multistack.o multistack_test.o
 
 application: applications.o stack.o
 	$(CC) applications.c stack.c $(CFLAGS) -o $@
+
+hanoi_tower: hanoi_tower.o
+	$(CC) hanoi_tower.c $(CFLAGS) -o $@
