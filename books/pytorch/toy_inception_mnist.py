@@ -66,13 +66,13 @@ class Net(nn.Module):
         self.fc = nn.Linear(1408, 10)
 
     def forward(self, x):
-        in_size = x.size(0)
-        x = F.relu(self.mp(self.conv1(x)))
-        x = self.incept1(x)
-        x = F.relu(self.mp(self.conv2(x)))
-        x = self.incept2(x)
+        in_size = x.size(0)                     # 28 x 28 
+        x = F.relu(self.mp(self.conv1(x)))      # 24 x 24 -> 12 x 12
+        x = self.incept1(x)                     # 12 x 12
+        x = F.relu(self.mp(self.conv2(x)))      # 8 x 8 -> 4 x 4
+        x = self.incept2(x)                     # 4 x 4
         x = x.view(in_size, -1) # flatten the tensor
-        x = self.fc(x)
+        x = self.fc(x)                          # 4 x 4 x 88
         return F.log_softmax(x)
 
 
@@ -85,6 +85,7 @@ def train(epoch):
     model.train()
     for batch_idx, (data, target) in enumerate(train_loader):
         data, target = Variable(data), Variable(target)
+        print(data.size(), target.size())
         optimizer.zero_grad()
         output = model(data)
         loss = F.nll_loss(output, target)
