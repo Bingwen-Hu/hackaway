@@ -46,8 +46,7 @@ def test():
         data, target = Variable(data, volatile=True), Variable(target)
         output = model(data)
         # sum up batch loss
-        output = torch.np.argmax(output.view(args.captcha_size, -1), axis=0)
-        loss = F.pairwise_distance(output, target).data[0]
+        loss = torch.sum(F.pairwise_distance(output, target))
         # get the index of the max log-probability
         pred = output.data.max(1, keepdim=True)[1]
         correct += pred.eq(target.data.view_as(pred)).cpu().sum()
