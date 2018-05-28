@@ -37,3 +37,13 @@ loss2 = sigmoid_cross_entropy_loss(logits=input, labels=target)
 
 print("loss compute by Tensorflow: \n", loss1)
 print("loss compute by Mory: \n", loss2)
+
+
+
+# test in pytorch
+import torch
+input = torch.from_numpy(input)
+target = torch.from_numpy(target)
+loss_fn = torch.nn.BCEWithLogitsLoss(reduce=False)
+loss3 = loss_fn(input, target)
+print(loss3)
