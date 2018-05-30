@@ -1,19 +1,21 @@
 #include "tree.h"
 #include <stdio.h>
 
-/**                         10
- *                        /    \
- *                      3       31
- *                    /  \      /\
- *                   2    4   29  48
- *                         \     / \
- *                          8   43  76
- * 
+/** --------- structure ---------------------
+ *                  10
+ *                /    \
+ *               3      31
+ *             /  \     / \
+ *            2    4  29   48
+ *                  \     /  \
+ *                   8   43   76
+ * ---------- traversal ---------------------
  *  pre-order: 10 3 2 4 8 31 29 48 43 76
  *   in-order: 2 3 4 8 10 29 31 43 48 76
  * post-order: 2 8 4 3 29 43 76 48 31 10
-*/
-
+ * 
+ * 
+ */
 
 
 int main(int argc, char const *argv[])
@@ -30,5 +32,9 @@ int main(int argc, char const *argv[])
     in_order_traversal(tree);
     puts("");
     post_order_traversal(tree);
+
+    printf("delete node from tree");
+    tree = delete_bstree(tree, 31);
+    pre_order_traversal(tree);
     return 0;
 }

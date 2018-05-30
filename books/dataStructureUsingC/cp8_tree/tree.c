@@ -27,7 +27,56 @@ bstree *insert_bstree(bstree *tree, int value) {
     return tree;
 }
 
-bstree *delete_bstree(bstree *tree, int *value);
+/* ----------- delete -----------------------
+ * 1. delete a leaf node (node 2)
+ * Just delete it!
+ * 2. delete a node with one child (node 4)
+ * The Child go up!
+ * 3. delete a node with two children
+ * like node 48, lift its right child
+ * but node 31? two ways.
+ * largest value in left subtree or smallest
+ * value in right subtree.
+ */ 
+bstree *delete_bstree(bstree *tree, int value) {
+    if (tree == NULL) {
+        return tree;
+    }
+    if (value == tree->data) {
+        if (tree->left == NULL && tree->right == NULL) {             // leaf
+            free(tree);
+            return NULL;
+        } else if (tree->left == NULL) {         // right child
+            bstree *child = tree->right;
+            free(tree);
+            return child;
+        } else if (tree->right == NULL) {        // left child
+            bstree *child = tree->left;
+            free(tree);
+            return child;
+        } else {
+            // two ways left subtree largest or right subtree smallest
+            // adopt finding the left subtree largest value
+            bstree *left_largest_parent = tree->left;
+            bstree *left_largest = left_largest_parent->right;
+            while (left_largest->right != NULL) {
+                left_largest_parent = left_largest;
+                left_largest = left_largest_parent->right;
+            }
+            tree->data = left_largest->data;
+            free(left_largest);
+            left_largest_parent->right = NULL;
+            return tree;
+        }
+    } else if (value < tree->data) {
+        bstree *left = delete_bstree(tree->left, value);
+        tree->left = left;
+    } else {
+        bstree *right = delete_bstree(tree->right, value);
+        tree->right = right;
+    }
+    return tree;
+}
 bstree mirror_image_bstree(bstree *tree);
 
 int height_bstree(bstree *tree);
