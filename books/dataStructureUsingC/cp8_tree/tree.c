@@ -33,7 +33,20 @@ bstree mirror_image_bstree(bstree *tree);
 int height_bstree(bstree *tree);
 int internal_nodes_bstree(bstree *tree);
 int external_nodes_bstree(bstree *tree);
-int search_bstree(bstree *tree, int value);
+
+int search_bstree(bstree *tree, int value) {
+    if (tree == NULL) {
+        return 0;  // buggy allowed
+    }
+    if (value == tree->data) {
+        return 1;
+    } else if (value < tree->data) {
+        return search_bstree(tree->left, value);
+    } else {
+        return search_bstree(tree->right, value);
+    }
+}
+
 int find_smallest_bstree(bstree *tree);
 int find_largest_bstree(bstree *tree);
 

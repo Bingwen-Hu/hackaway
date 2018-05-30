@@ -8,6 +8,8 @@ int main(int argc, char const *argv[])
     for (int i = 0; i < 10; i++) {
         tree = insert_bstree(tree, list[i]);
     }
+    printf("3 is in the tree? %s\n", search_bstree(tree, 3) ? "Yes" : "No");
+    printf("42 is in the tree? %s\n", search_bstree(tree, 42) ? "Yes" : "No");
     display_bstree(tree);
     return 0;
 }
