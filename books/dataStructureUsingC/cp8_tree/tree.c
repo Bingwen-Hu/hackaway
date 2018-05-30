@@ -50,11 +50,28 @@ int search_bstree(bstree *tree, int value) {
 int find_smallest_bstree(bstree *tree);
 int find_largest_bstree(bstree *tree);
 
-void display_bstree(bstree *tree) {
+void pre_order_traversal(bstree *tree) {
     if (tree != NULL) {
         printf("%-3d", tree->data);
-        display_bstree(tree->left);
-        display_bstree(tree->right);
+        pre_order_traversal(tree->left);
+        pre_order_traversal(tree->right);
     }
 }
+
+void in_order_traversal(bstree *tree) {
+    if (tree != NULL) {
+        in_order_traversal(tree->left);
+        printf("%-3d", tree->data);
+        in_order_traversal(tree->right);
+    }
+}
+
+void post_order_traversal(bstree *tree) {
+    if (tree != NULL) {
+        post_order_traversal(tree->left);
+        post_order_traversal(tree->right);
+        printf("%-3d", tree->data);
+    }
+}
+
 int destroy_bstree(bstree *tree);

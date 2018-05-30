@@ -43,5 +43,7 @@ int search_bstree(bstree *tree, int value);
 int find_smallest_bstree(bstree *tree);
 int find_largest_bstree(bstree *tree);
 
-void display_bstree(bstree *tree);
+void pre_order_traversal(bstree *tree);
+void in_order_traversal(bstree *tree);
+void post_order_traversal(bstree *tree);
 int destroy_bstree(bstree *tree);
