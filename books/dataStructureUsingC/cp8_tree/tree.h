@@ -32,7 +32,7 @@ typedef struct node {
     struct node *right;
 } bstree;
 
-void insert_bstree(bstree **tree, int value);
+bstree *insert_bstree(bstree *tree, int value);
 bstree *delete_bstree(bstree *tree, int *value);
 bstree mirror_image_bstree(bstree *tree);
 

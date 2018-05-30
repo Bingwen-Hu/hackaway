@@ -3,22 +3,28 @@
 #include <stdio.h>
 
 
-void insert_bstree(bstree **tree, int value) {
-    if (*tree == NULL) {
-        *tree = malloc(sizeof(bstree));
-        (*tree)->left = NULL;
-        (*tree)->right = NULL;
-        (*tree)->data = value;
+bstree *insert_bstree(bstree *tree, int value) {
+    if (tree == NULL) {
+        tree = malloc(sizeof(bstree));
+        tree->left = NULL;
+        tree->right = NULL;
+        tree->data = value;
+        return tree;
     }
 
-    if (value < (*tree)->data) {
-        // go to left
-        insert_bstree(&(*tree)->left, value);
-    } else  if (value > (*tree)->data) {
-        insert_bstree(&(*tree)->right, value);
-    } else {
-        printf("value %d already exists!\n", value);
+    if (tree->data == value) {
+        return tree;
     }
+
+    bstree *branch;
+    if (value < tree->data) {
+        branch = insert_bstree(tree->left, value);
+        tree->left = branch;
+    } else {
+        branch = insert_bstree(tree->right, value);
+        tree->right = branch;
+    }
+    return tree;
 }
 
 bstree *delete_bstree(bstree *tree, int *value);
