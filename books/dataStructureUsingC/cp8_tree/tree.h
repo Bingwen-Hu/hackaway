@@ -26,3 +26,22 @@
 // all left node is less than root node
 // all right node is larger than root node.
 
+typedef struct node {
+    int data;
+    struct node *left;
+    struct node *right;
+} bstree;
+
+void insert_bstree(bstree **tree, int value);
+bstree *delete_bstree(bstree *tree, int *value);
+bstree mirror_image_bstree(bstree *tree);
+
+int height_bstree(bstree *tree);
+int internal_nodes_bstree(bstree *tree);
+int external_nodes_bstree(bstree *tree);
+int search_bstree(bstree *tree, int value);
+int find_smallest_bstree(bstree *tree);
+int find_largest_bstree(bstree *tree);
+
+void display_bstree(bstree *tree);
+int destroy_bstree(bstree *tree);
