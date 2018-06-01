@@ -102,8 +102,18 @@ int search_bstree(bstree *tree, int value) {
     }
 }
 
-int find_smallest_bstree(bstree *tree);
-int find_largest_bstree(bstree *tree);
+int find_smallest_bstree(bstree *tree) {
+    if (tree->left != NULL) {
+        return find_smallest_bstree(tree->left);
+    } 
+    return tree->data;
+}
+int find_largest_bstree(bstree *tree) {
+    if (tree->right != NULL) {
+        return find_largest_bstree(tree->right);
+    }
+    return tree->data;
+}
 
 void pre_order_traversal(bstree *tree) {
     if (tree != NULL) {

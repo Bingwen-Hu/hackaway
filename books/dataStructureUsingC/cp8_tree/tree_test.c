@@ -25,6 +25,8 @@ int main(int argc, char const *argv[])
     for (int i = 0; i < 10; i++) {
         tree = insert_bstree(tree, list[i]);
     }
+
+    puts("------------ test search -----------------");
     printf("3 is in the tree? %s\n", search_bstree(tree, 3) ? "Yes" : "No");
     printf("42 is in the tree? %s\n", search_bstree(tree, 42) ? "Yes" : "No");
     pre_order_traversal(tree);
@@ -32,13 +34,17 @@ int main(int argc, char const *argv[])
     in_order_traversal(tree);
     puts("");
     post_order_traversal(tree);
-
-    printf("\ndelete node from tree\n");
+    puts("");
+    
+    puts("------------ test delete -----------------");
     tree = delete_bstree(tree, 10);
     pre_order_traversal(tree);
     puts("");
 
+    puts("--------test largest and smallest---------");
+    printf("largest function ok? %s\n", find_largest_bstree(tree) == 76 ? "Yes" : "No");
+    printf("smallest function ok? %s\n", find_smallest_bstree(tree) == 2 ? "Yes" : "No");
+
     destroy_bstree(tree);
-    
     return 0;
 }
