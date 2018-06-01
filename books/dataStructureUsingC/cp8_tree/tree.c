@@ -57,15 +57,16 @@ bstree *delete_bstree(bstree *tree, int value) {
         } else {
             // two ways left subtree largest or right subtree smallest
             // adopt finding the left subtree largest value
-            bstree *left_largest_parent = tree->left;
-            bstree *left_largest = left_largest_parent->right;
+            bstree *left_largest = tree->left;
+            bstree *left_largest_parent = tree;
             while (left_largest->right != NULL) {
                 left_largest_parent = left_largest;
-                left_largest = left_largest_parent->right;
+                left_largest = left_largest->right;
+
             }
             tree->data = left_largest->data;
+            left_largest_parent->right = left_largest->left;
             free(left_largest);
-            left_largest_parent->right = NULL;
             return tree;
         }
     } else if (value < tree->data) {
