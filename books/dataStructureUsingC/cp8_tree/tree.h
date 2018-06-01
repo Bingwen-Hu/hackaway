@@ -46,4 +46,4 @@ int find_largest_bstree(bstree *tree);
 void pre_order_traversal(bstree *tree);
 void in_order_traversal(bstree *tree);
 void post_order_traversal(bstree *tree);
-int destroy_bstree(bstree *tree);
+void destroy_bstree(bstree *tree);

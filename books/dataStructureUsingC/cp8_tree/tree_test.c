@@ -34,8 +34,11 @@ int main(int argc, char const *argv[])
     post_order_traversal(tree);
 
     printf("\ndelete node from tree\n");
-    tree = delete_bstree(tree, 4);
+    tree = delete_bstree(tree, 10);
     pre_order_traversal(tree);
     puts("");
+
+    destroy_bstree(tree);
+    
     return 0;
 }

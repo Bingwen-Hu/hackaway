@@ -65,7 +65,12 @@ bstree *delete_bstree(bstree *tree, int value) {
 
             }
             tree->data = left_largest->data;
-            left_largest_parent->right = left_largest->left;
+            if (tree->left == left_largest) {
+                left_largest_parent->left = left_largest->left;
+            } else {
+                left_largest_parent->right = left_largest->left;
+            }
+            
             free(left_largest);
             return tree;
         }
@@ -124,4 +129,10 @@ void post_order_traversal(bstree *tree) {
     }
 }
 
-int destroy_bstree(bstree *tree);
+void destroy_bstree(bstree *tree) {
+    if (tree != NULL) {
+        destroy_bstree(tree->left);
+        destroy_bstree(tree->right);
+        free(tree);
+    }
+}
