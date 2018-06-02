@@ -38,7 +38,7 @@ plt.plot(x, y)
 
 # ----------------------- tan x ------------------------
 # y = tan(x) D = (-oo, +oo) x-> pi/2 y->+oo, x->-pi/2 y->-oo
-x = list(range(-157, 158, 1))
+x = list(range(-1570, 1580, 1))
 x = np.array(x)/100
 y = np.tan(x)
 plt.subplot(236)
@@ -47,12 +47,23 @@ plt.plot(x, y)
 
 
 
-# ----------------------- tan x ------------------------
+# --------------------y = x / (1 + x^2) --------------------
 # y = tan(x) D = (-oo, +oo) x-> pi/2 y->+oo, x->-pi/2 y->-oo
 x = list(range(-157, 158, 1))
 x = np.array(x)/100
 y = x / (1 + np.power(x, 2))
 plt.subplot(234)
 plt.title('y = x / (1 + x^2)')
+plt.plot(x, y)
+
+
+
+
+# y = tan(x) D = (-oo, +oo) x-> pi/2 y->+oo, x->-pi/2 y->-oo
+x = list(range(0, 3140, 1))
+x = np.array(x)/100
+y = 1 / np.cos(x)
+plt.subplot(235)
+plt.title('y = 1 / cos x')
 plt.plot(x, y)
 plt.show()
