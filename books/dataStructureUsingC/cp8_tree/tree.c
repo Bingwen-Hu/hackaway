@@ -115,7 +115,16 @@ int internal_nodes_bstree(bstree *tree) {
     int right = internal_nodes_bstree(tree->right);
     return left + right + 1;
 }
-int external_nodes_bstree(bstree *tree);
+
+int external_nodes_bstree(bstree *tree) {
+    if (tree == NULL) {
+        return 0;
+    } 
+    if (tree->left == NULL && tree->right == NULL) {
+        return 1;
+    }
+    return (external_nodes_bstree(tree->left) + external_nodes_bstree(tree->right));
+}
 
 int search_bstree(bstree *tree, int value) {
     if (tree == NULL) {
