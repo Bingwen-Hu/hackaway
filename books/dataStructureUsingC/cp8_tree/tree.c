@@ -103,6 +103,16 @@ int height_bstree(bstree *tree) {
     int height = left_height > right_height ? left_height + 1 : right_height + 1;
     return height;
 }
+
+int total_nodes_tree(bstree *tree) {
+    if (tree == NULL) {
+        return 0;
+    }
+    int left = total_nodes_tree(tree->left);
+    int right = total_nodes_tree(tree->right);
+    return left + right + 1;
+}
+
 int internal_nodes_bstree(bstree *tree) {
     if (tree == NULL) {
         return 0;

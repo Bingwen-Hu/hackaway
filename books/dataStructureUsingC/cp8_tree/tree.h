@@ -37,6 +37,7 @@ bstree *delete_bstree(bstree *tree, int value);
 bstree *mirror_image_bstree(bstree *tree);
 
 int height_bstree(bstree *tree);
+int total_nodes_tree(bstree *tree);
 int internal_nodes_bstree(bstree *tree);
 int external_nodes_bstree(bstree *tree);
 int search_bstree(bstree *tree, int value);

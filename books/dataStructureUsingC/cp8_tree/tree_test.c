@@ -59,13 +59,17 @@ int main(int argc, char const *argv[])
     tree = mirror_image_bstree(tree);
     pre_order_traversal(tree);
     puts("");
-    destroy_bstree(tree);
+    
 
     puts("-------height of a bstree-------");
     int height = height_bstree(tree);
     printf("height of bstree is %d\n", height);
 
-    
+    puts("-------total nodes of bstree-----");
+    int total_nodes = total_nodes_tree(tree);
+    printf("nodes of bstree is %d\n", total_nodes);
 
+
+    destroy_bstree(tree);
     return 0;
 }
