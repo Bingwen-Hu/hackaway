@@ -25,6 +25,10 @@ int main(int argc, char const *argv[])
     for (int i = 0; i < 10; i++) {
         tree = insert_bstree(tree, list[i]);
     }
+    
+    puts("--------node of a tree----------");
+    int internal_node = internal_nodes_bstree(tree);
+    printf("number of internal node is %d\n", internal_node);
 
     puts("------------ test search -----------------");
     printf("3 is in the tree? %s\n", search_bstree(tree, 3) ? "Yes" : "No");
@@ -58,6 +62,8 @@ int main(int argc, char const *argv[])
     puts("-------height of a bstree-------");
     int height = height_bstree(tree);
     printf("height of bstree is %d\n", height);
+
+    
 
     return 0;
 }
