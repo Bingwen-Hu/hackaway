@@ -45,6 +45,19 @@ int main(int argc, char const *argv[])
     printf("largest function ok? %s\n", find_largest_bstree(tree) == 76 ? "Yes" : "No");
     printf("smallest function ok? %s\n", find_smallest_bstree(tree) == 2 ? "Yes" : "No");
 
+
+    puts("--------mirror a bstree---------");
+    tree = mirror_image_bstree(tree);
+    pre_order_traversal(tree);
+    puts("");
+    tree = mirror_image_bstree(tree);
+    pre_order_traversal(tree);
+    puts("");
     destroy_bstree(tree);
+
+    puts("-------height of a bstree-------");
+    int height = height_bstree(tree);
+    printf("height of bstree is %d\n", height);
+
     return 0;
 }

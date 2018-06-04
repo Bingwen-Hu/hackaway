@@ -34,7 +34,7 @@ typedef struct node {
 
 bstree *insert_bstree(bstree *tree, int value);
 bstree *delete_bstree(bstree *tree, int value);
-bstree mirror_image_bstree(bstree *tree);
+bstree *mirror_image_bstree(bstree *tree);
 
 int height_bstree(bstree *tree);
 int internal_nodes_bstree(bstree *tree);
@@ -46,4 +46,5 @@ int find_largest_bstree(bstree *tree);
 void pre_order_traversal(bstree *tree);
 void in_order_traversal(bstree *tree);
 void post_order_traversal(bstree *tree);
+void layer_order_traversal(bstree *tree);
 void destroy_bstree(bstree *tree);

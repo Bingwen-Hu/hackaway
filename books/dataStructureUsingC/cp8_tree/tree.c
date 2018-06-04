@@ -83,9 +83,26 @@ bstree *delete_bstree(bstree *tree, int value) {
     }
     return tree;
 }
-bstree mirror_image_bstree(bstree *tree);
 
-int height_bstree(bstree *tree);
+bstree *mirror_image_bstree(bstree *tree) {
+    if (tree != NULL) {
+        bstree *left = mirror_image_bstree(tree->left);
+        bstree *right = mirror_image_bstree(tree->right);
+        tree->right = left;
+        tree->left = right;
+    }
+    return tree;
+}   
+
+int height_bstree(bstree *tree) {
+    if (tree == NULL) {
+        return 0;
+    }
+    int left_height = height_bstree(tree->left);
+    int right_height = height_bstree(tree->right);
+    int height = left_height > right_height ? left_height + 1 : right_height + 1;
+    return height;
+}
 int internal_nodes_bstree(bstree *tree);
 int external_nodes_bstree(bstree *tree);
 
@@ -137,6 +154,10 @@ void post_order_traversal(bstree *tree) {
         post_order_traversal(tree->right);
         printf("%-3d", tree->data);
     }
+}
+
+void layer_order_traversal(bstree *tree) {
+    // BFS algorithms
 }
 
 void destroy_bstree(bstree *tree) {
