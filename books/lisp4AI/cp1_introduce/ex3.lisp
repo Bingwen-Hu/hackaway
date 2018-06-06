@@ -1,3 +1,8 @@
+;; Write a function that counts the number of atoms in an expression.
+;; For example: ( count - a toms ' ( a ( b ) c ) ) = 3. Notice that there is something of an
+;; ambiguity in this: should ( a n i 1 c ) count as three atoms, or as two, because it is
+;; equivalent to ( a ( 1 c ) ? 
+
 (defun count-number (lst)
   "count number in a list"
   (if (null lst)

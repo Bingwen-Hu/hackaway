@@ -1,3 +1,4 @@
+;; Write a function to exponentiate, or raise a number to an integer power
 (defun power (num exp) 
   (labels ((power-helper (num exp res)
 	     (if (= exp 0)
