@@ -13,7 +13,7 @@ import json
 app = Flask(__name__)
 
 SERVER_PARAMS = {
-    'host': "0.0.0.0",
+    'host': "localhost",
     'port': 27702,
     'user': 'like_jian',
     'password': 'worldcup2018',
@@ -42,13 +42,18 @@ def predict_parser(result):
         'GPid': result[0],
         'host': result[1],
         'guest': result[2],
-        'points': result[3] if result[3] else result[8],
-        'rate': result[4] if result[4] else result[7],
-        'bloger': result[5] if result[5] else result[9],
-        'portrait': result[6] if result[6] else "",
+        'points': result[3] if result[3] else result[6],
+        'rate': result[4] if result[4] else result[5],
     }
 
-
+@app.route("/reply/<gpid>", methods=['POST', 'GET'])
+def reply(gpid):
+    if request.method == 'POST':
+        parameters = request.form
+        print(parameters)
+        return json.dumps(parameters)
+    elif request.method == 'GET':
+        return json.dumps({"good": "Mory"})
 
 
 if __name__ == '__main__':
