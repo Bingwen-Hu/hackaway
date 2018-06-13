@@ -48,13 +48,69 @@ def predict_parser(result):
 
 @app.route("/reply/<gpid>", methods=['POST', 'GET'])
 def reply(gpid):
+    host_guest_points = reply_search(gpid)
     if request.method == 'POST':
-        parameters = request.form
-        print(parameters)
-        return json.dumps(parameters)
-    elif request.method == 'GET':
-        return json.dumps({"good": "Mory"})
+        msg = request.form.get("msg")
+        # print(parameters)
+        ans = reply_msg_post(msg, host_guest_points)
+    else:
+        ans = reply_msg_get(host_guest_points)
 
+    res = {
+        "code": 0,
+        "msg": "获取成功",
+        "list": [
+            {
+                "headingurl": "",
+                "nickname": "",
+                "image": "",
+                "text": ans,
+                "video": "",
+                "videoposter": "",
+            }
+        ]
+    }    
+    return json.dumps(res)
+
+
+
+def reply_search(gpid):
+    sqls = "select Host, Guest, Points, DPoints from Predict where GPid=%s"
+    params = [gpid]
+    if not server.open:
+        server.connect()
+    with server.cursor() as cursor:
+        cursor.execute(sqls, params)
+        res = cursor.fetchone()
+    return {
+        'host': res[0],
+        'guest': res[1],
+        'points': res[2] if res[2] else res[3],
+    }
+
+
+def reply_msg_post(msg, host_guest_points):
+    host = host_guest_points['host']
+    guest = host_guest_points['guest']
+    points = host_guest_points['points']
+    if host in msg:
+        msg = msg.replace(host, guest)
+    elif guest in msg:
+        msg = msg.replace(guest, host)
+    else:
+        msg = f"我认为{host}会赢"
+    return msg
+
+def reply_msg_get(host_guest_points):
+    host = host_guest_points['host']
+    guest = host_guest_points['guest']
+    score_h, score_g = host_guest_points['points'].split('-')
+    score_h, score_g = int(score_h), int(score_g)
+    if score_h > score_g:
+        msg = f"我认为{host}会羸，比分{score_h}:{score_g}"
+    else:
+        msg = f"我认为{guest}会羸多1~2分"
+    return msg
 
 if __name__ == '__main__':
     from werkzeug.contrib.fixers import ProxyFix
