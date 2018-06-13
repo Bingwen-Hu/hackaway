@@ -13,7 +13,7 @@ import random
 app = Flask(__name__)
 
 SERVER_PARAMS = {
-    'host': "localhost",
+    'host': "119.84.122.135",
     'port': 27702,
     'user': 'like_jian',
     'password': 'worldcup2018',
@@ -70,10 +70,13 @@ def predict_parser(result):
 def reply(gpid):
     """
     1. 根据场次检索出预测值，比赛双方 -- reply_search
-    2. 如果有用户输入，则分析用户输入，返回一句回答；否则随机返回回答
+    2. 如果有用户输入，则分析用户输入，作出相应的回答；否则随机返回回答
        reply_msg_post | reply_msg_get
     3. 构造出前端需要的格式，头像采用随机头像，昵称均用专家
        reply_format
+
+    ps: 名字长于4的作为反方，小于4的作为正方，根据实际的情况调整
+    也可以在库中的stand字段中标识，0为正方，1为反方
     """
     sqldict = reply_search(gpid)
     if request.method == 'POST':
@@ -172,7 +175,14 @@ def reply_msg_get(sqldict):
         msg = f"我认为{guest}会羸多1~2分"
     return msg
 
+
+def reply_wise(sqldict, msg=None):
+    if msg is None:
+        # Get 请求
+    else 
+        # Post 请求
+
 if __name__ == '__main__':
     from werkzeug.contrib.fixers import ProxyFix
     app.wsgi_app = ProxyFix(app.wsgi_app)
-    app.run(host='localhost', port=8013, debug=True)
+    app.run(host='localhost', port=38018, debug=True)
