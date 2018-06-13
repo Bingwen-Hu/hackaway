@@ -22,7 +22,6 @@ SERVER_PARAMS = {
 }
 
 server = pymysql.Connection(**SERVER_PARAMS)
-
 @app.route('/predict/<gpid>')
 def predict(gpid):
     if not server.open:
@@ -31,13 +30,16 @@ def predict(gpid):
         sqls = "select * from Predict where GPid=%s" % gpid
         cursor.execute(sqls)
         result = cursor.fetchone()
-        sqldict = predict_parser(result)
+        if result is not None:
+            sqldict = predict_parser(result)
+        else:
+            sqldict = {'code': 1, "msg": "场次必须为1-62（包括62）之间的数"}
     jsondata = json.dumps(sqldict)
     return jsondata
 
 
 def predict_parser(result):
-    return {
+    temp = {
         'code': 0,
         'GPid': result[0],
         'host': result[1],
@@ -45,6 +47,24 @@ def predict_parser(result):
         'points': result[3] if result[3] else result[6],
         'rate': result[4] if result[4] else result[5],
     }
+    score_h, score_g = temp['points'].split('-')
+    res = {
+        "code": 0,
+        "msg": "获取成功",
+        "basedata":{
+            "teams":[
+                {
+                    "teamname": temp['guest'],
+                    "score": int(score_g),
+                },
+                {
+                    "teamname": temp["host"],
+                    "score": int(score_h)
+                }
+            ]
+        }
+    }
+    return res
 
 @app.route("/reply/<gpid>", methods=['POST', 'GET'])
 def reply(gpid):
