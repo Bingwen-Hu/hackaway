@@ -13,7 +13,7 @@ import random
 app = Flask(__name__)
 
 SERVER_PARAMS = {
-    'host': "119.84.122.135",
+    'host': "localhost",
     'port': 27702,
     'user': 'like_jian',
     'password': 'worldcup2018',
@@ -119,7 +119,7 @@ def reply_format(answer):
         "msg": "获取成功",
         "list": [
             {
-                "headingurl": portrait,
+                "headimgurl": portrait,
                 "nickname": "专家",
                 "image": "",
                 "text": answer,
@@ -157,4 +157,4 @@ def reply_msg_get(sqldict):
 if __name__ == '__main__':
     from werkzeug.contrib.fixers import ProxyFix
     app.wsgi_app = ProxyFix(app.wsgi_app)
-    app.run(host='localhost', port=38016, debug=True)
+    app.run(host='localhost', port=8013, debug=True)
