@@ -13,7 +13,7 @@ import random
 app = Flask(__name__)
 
 SERVER_PARAMS = {
-    'host': "localhost",
+    'host': "119.84.122.135",
     'port': 27702,
     'user': 'like_jian',
     'password': 'worldcup2018',
@@ -113,18 +113,36 @@ def reply_format(answer):
         cursor.execute(sqls)
         portraits = cursor.fetchall()
         portraits = [p[0] for p in portraits]
-        portrait = random.choice(portraits)
     res = {
         "code": 0,
         "msg": "获取成功",
         "list": [
             {
-                "headimgurl": portrait,
+                "headimgurl": random.choices(portraits),
                 "nickname": "专家",
                 "image": "",
                 "text": answer,
                 "video": "",
                 "videoposter": "",
+                "isreverse": False,
+            },
+            {
+                "headimgurl": random.choices(portraits),
+                "nickname": "专家",
+                "image": "",
+                "text": "我不认同你的观点",
+                "video": "",
+                "videoposter": "",
+                "isreverse": True,
+            },
+            {
+                "headimgurl": random.choices(portraits),
+                "nickname": "专家",
+                "image": "",
+                "text": "我觉得俄罗斯必赢",
+                "video": "",
+                "videoposter": "",
+                "isreverse": True,
             }
         ]
     }
