@@ -1,7 +1,7 @@
 # thanks for Lisp
 from random import choice, randint
 
-def construct(host, guest, flag=0):
+def complete_answer(host, guest, flag=0):
     """
     flag=0 代表生成的句子应该是host正向
     反之，生成的是host负向
@@ -34,7 +34,7 @@ def teams(host, guest):
 def adv_verb():
     ad = choice([
         "会赢", "必定赢", "可能会赢", "很可能赢", "肯定会赢", "肯定赢",
-        "是不可能会输的", "应该能赢",
+        "是不可能会输的", "应该能赢", "会取胜",
     ])
     return ad
 
@@ -46,3 +46,36 @@ def pre_subject(answer):
     if pre:
         answer = f"{pre}{answer}"
     return answer
+
+
+def vote_answer(flag=0):
+    if flag == 0:
+        msg = "我赞成小新的观点"
+    msg = "我不赞成小新的观点"
+    return msg
+
+def analysis_stand(answer, host, guest):
+    host_in = host in answer
+    pos_in = "不" not in answer
+    win_in = "赢" in answer or "胜" in answer
+    
+    if host_in:
+        if pos_in == win_in:
+            flag = 0
+        else:
+            flag = 1
+    else:
+        if pos_in == win_in:
+            flag = 1
+        else:
+            flag = 0
+    return flag
+
+    # host_in + pos_in + win_in ==> 0  主赢
+    # host_in + !pos_in + win_in ==> 1 主不赢
+    # host_in + pos_in + !win_in ==> 1 主不赢
+    # host_in + !pos_in + !win_in ==> 0 主不输
+    # !host_in + pos_in + win_in ==> 1 客赢
+    # !host_in + !pos_in + win_in ==> 0 客不赢
+    # !host_in + !pos_in + !win_in ==> 1 客不输
+    # !host_in + pos_in + !win_in ==> 0 客输
