@@ -13,7 +13,7 @@ import random
 app = Flask(__name__)
 
 SERVER_PARAMS = {
-    'host': "localhost",
+    'host': "119.84.122.135",
     'port': 27702,
     'user': 'like_jian',
     'password': 'worldcup2018',
@@ -77,8 +77,10 @@ def reply(gpid):
     """
     sqldict = reply_search(gpid)
     if request.method == 'POST':
-        msg = request.form.get("msg")
+        # msg = request.form.get("msg")
         # print(parameters)
+        data = json.loads(request.get_data())
+        msg = data.get('msg')
         answer = reply_msg_post(msg, sqldict)
     else:
         answer = reply_msg_get(sqldict)
