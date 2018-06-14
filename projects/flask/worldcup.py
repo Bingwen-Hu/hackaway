@@ -164,13 +164,13 @@ def reply_format(sqldict, msg):
         # image
         # import base64
         i = 2
-        portrait, stand = "wait", origin_stand
+        portrait, stand = "http://119.84.122.134:27701/13.png", origin_stand
         # imgdata = open("test.jpg", "rb").read()
         # imgdata = base64.b64encode(imgdata)
         resultlist[i] = {
                 "headimgurl": portrait,
                 "nickname": "小新",
-                "image": 'http://119.84.122.134:10058/wxapp/12.png',
+                "image": 'http://119.84.122.134:27701/12.png',
                 "text": "",
                 "video": "",
                 "videoposter": "",
