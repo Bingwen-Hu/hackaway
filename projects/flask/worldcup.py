@@ -15,7 +15,7 @@ from answer_generative import complete_answer, vote_answer, analysis_stand
 app = Flask(__name__)
 
 SERVER_PARAMS = {
-    'host': "119.84.122.135",
+    'host': "localhost",
     'port': 27702,
     'user': 'like_jian',
     'password': 'worldcup2018',
