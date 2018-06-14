@@ -15,7 +15,7 @@ from answer_generative import complete_answer, vote_answer, analysis_stand
 app = Flask(__name__)
 
 SERVER_PARAMS = {
-    'host': "localhost",
+    'host': "119.84.122.135",
     'port': 27702,
     'user': 'like_jian',
     'password': 'worldcup2018',
@@ -125,21 +125,27 @@ def reply_format(sqldict, msg):
         authors = [p[1] for p in results]
         
     stand = 2 # 无正负
-    count = 6
+    count = 20
+    if origin_stand == 0:
+        flags = [0] * 17 + [1] * 3
+    else:
+        flags = [1] * 17 + [0] * 3
+    random.shuffle(flags)
+
     if msg is not None:
         stand = analysis_stand(msg, host, guest)
 
     # closure
     def reply_format_helper():
         resultlist = []
+        random.shuffle(portraits)
         random.shuffle(authors)
-        for i in range(count):
-            flag = len(authors[i]) > 4 # 大于4为反方
+        for i, flag in zip(range(count), flags):            
             resultlist.append({
                 "headimgurl": portraits[i],
                 "nickname": "专家",
                 "image": "",
-                "text": complete_answer(sqldict['host'], sqldict['guest'], flag),
+                "text": complete_answer(host, guest, flag),
                 "video": "",
                 "videoposter": "",
                 "isreverse": flag != origin_stand,
@@ -147,12 +153,13 @@ def reply_format(sqldict, msg):
         # image
         # import base64
         i = 2
+        flag = flags[i]
         # imgdata = open("test.jpg", "rb").read()
         # imgdata = base64.b64encode(imgdata)
         resultlist[i] = {
                 "headimgurl": portraits[i],
                 "nickname": "专家",
-                "image": 'http://b.hiphotos.baidu.com/image/pic/item/b21bb051f81986187f9f6d0146ed2e738ad4e65f.jpg',
+                "image": 'http://119.84.122.134:10058/wxapp/12.png',
                 "text": "",
                 "video": "",
                 "videoposter": "",
@@ -162,7 +169,7 @@ def reply_format(sqldict, msg):
                 "headimgurl": portraits[i],
                 "nickname": "专家",
                 "image": "",
-                "text": complete_answer(sqldict['host'], sqldict['guest'], flag),
+                "text": complete_answer(host, guest, flag),
                 "video": "",
                 "videoposter": "",
                 "isreverse": flag != origin_stand,
@@ -204,4 +211,6 @@ def reply_msg_get(sqldict):
 if __name__ == '__main__':
     from werkzeug.contrib.fixers import ProxyFix
     app.wsgi_app = ProxyFix(app.wsgi_app)
-    app.run(host='localhost', port=38018, debug=True)
+    app.run(host='localhost', port=8013, debug=True)
+
+# MoryAbsUrun2017!@3$%^QWE
