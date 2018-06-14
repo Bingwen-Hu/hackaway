@@ -117,62 +117,73 @@ def reply_format(sqldict, msg):
     score_h, score_g = int(score_h), int(score_g)
     origin_stand = score_h < score_g # 0 正 1 负
 
-    sqls = "select ImgPath, Author from Bloger"
+    sqls = "select ImgPath, Stand from Bloger where Stand = 1 or Stand = 0"
     with server.cursor() as cursor:
         cursor.execute(sqls)
-        results = cursor.fetchall()
-        portraits = [p[0] for p in results]
-        authors = [p[1] for p in results]
+        authors = cursor.fetchall()
+        # note that authors[i][0] => ImgPath, [1] => Stand
         
-    stand = 2 # 无正负
-    count = 20
-    if origin_stand == 0:
-        flags = [0] * 17 + [1] * 3
-    else:
-        flags = [1] * 17 + [0] * 3
-    random.shuffle(flags)
+    user_stand = 2 # 无正负
+    count = 6
+
+    # 使与原观点一致的多一些
+    same = [author for author in authors if author[1] == origin_stand]
+    index = list(range(len(same)))
+    random.shuffle(index)
+    index = index[:4]
+    same = same[:4]
+
+    diff = [author for author in authors if author[1] != origin_stand]
+    index = list(range(len(diff)))
+    random.shuffle(index)
+    index = index[:2]
+    diff = diff[:2]
+
+    same.extend(diff)
+    index = list(range(count))
+    random.shuffle(index)
+    authors = [same[i] for i in index]
+    
+
 
     if msg is not None:
-        stand = analysis_stand(msg, host, guest)
-
+        user_stand = analysis_stand(msg, host, guest)
     # closure
     def reply_format_helper():
         resultlist = []
-        random.shuffle(portraits)
-        random.shuffle(authors)
-        for i, flag in zip(range(count), flags):            
+        for i, (portrait, stand) in enumerate(authors):
             resultlist.append({
-                "headimgurl": portraits[i],
+                "headimgurl": portrait,
                 "nickname": "专家",
                 "image": "",
-                "text": complete_answer(host, guest, flag),
+                "text": complete_answer(host, guest, stand),
                 "video": "",
                 "videoposter": "",
-                "isreverse": flag != origin_stand,
+                "isreverse": stand != origin_stand,
             })
         # image
         # import base64
         i = 2
-        flag = flags[i]
+        portrait, stand = "wait", origin_stand
         # imgdata = open("test.jpg", "rb").read()
         # imgdata = base64.b64encode(imgdata)
         resultlist[i] = {
-                "headimgurl": portraits[i],
-                "nickname": "专家",
+                "headimgurl": portrait,
+                "nickname": "小新",
                 "image": 'http://119.84.122.134:10058/wxapp/12.png',
                 "text": "",
                 "video": "",
                 "videoposter": "",
-                "isreverse": flag != origin_stand,
+                "isreverse": stand != origin_stand,
         }
         resultlist[i+1] = {
-                "headimgurl": portraits[i],
-                "nickname": "专家",
+                "headimgurl": portrait,
+                "nickname": "小新",
                 "image": "",
-                "text": complete_answer(host, guest, flag),
+                "text": complete_answer(host, guest, stand),
                 "video": "",
                 "videoposter": "",
-                "isreverse": flag != origin_stand,
+                "isreverse": stand != origin_stand,
         }
         return resultlist
 
@@ -183,34 +194,7 @@ def reply_format(sqldict, msg):
     }
     return res
 
-# deprecated
-def reply_msg_post(msg, sqldict):
-    host = sqldict['host']
-    guest = sqldict['guest']
-    points = sqldict['points']
-    if host in msg:
-        msg = msg.replace(host, guest)
-    elif guest in msg:
-        msg = msg.replace(guest, host)
-    else:
-        msg = f"我认为{host}会赢"
-    return msg
-
-# deprecated
-def reply_msg_get(sqldict):
-    host = sqldict['host']
-    guest = sqldict['guest']
-    score_h, score_g = sqldict['points'].split('-')
-    score_h, score_g = int(score_h), int(score_g)
-    if score_h > score_g:
-        msg = f"我认为{host}会羸，比分{score_h}:{score_g}"
-    else:
-        msg = f"我认为{guest}会羸多1~2分"
-    return msg
-
 if __name__ == '__main__':
     from werkzeug.contrib.fixers import ProxyFix
     app.wsgi_app = ProxyFix(app.wsgi_app)
     app.run(host='localhost', port=8013, debug=True)
-
-# MoryAbsUrun2017!@3$%^QWE

@@ -34,13 +34,13 @@ def teams(host, guest):
 
 def adv_verb():
     ad = choice([
-        "会赢", "必定赢", "可能会赢", "很可能赢", "肯定会赢", "赢定了",
-        "是不可能会输的", "应该能赢1-2分", "会取胜",
+        "会赢", "必定赢", "赢！", "肯定会赢", "赢定了",
+        "是不可能会输的", "能赢1-2分",
     ])
     return ad
 
 def iadv_verb():
-    return choice(["不可能赢", "是赢不了的", "会输", "赢不了", "怎么可能赢"])
+    return choice(["不可能赢", "是赢不了的", "会输", "赢不了"])
 
 def pre_subject(answer):
     pre = choice(['', "我认为", "", "", "", "", "", "", "", "", "", "", "", ""])
@@ -71,12 +71,3 @@ def analysis_stand(answer, host, guest):
         else:
             flag = 0
     return flag
-
-    # host_in + pos_in + win_in ==> 0  主赢
-    # host_in + !pos_in + win_in ==> 1 主不赢
-    # host_in + pos_in + !win_in ==> 1 主不赢
-    # host_in + !pos_in + !win_in ==> 0 主不输
-    # !host_in + pos_in + win_in ==> 1 客赢
-    # !host_in + !pos_in + win_in ==> 0 客不赢
-    # !host_in + !pos_in + !win_in ==> 1 客不输
-    # !host_in + pos_in + !win_in ==> 0 客输
