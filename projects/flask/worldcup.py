@@ -145,10 +145,10 @@ def reply_format(sqldict, msg):
                 "isreverse": flag != origin_stand,
             })
         # image
-        import base64
+        # import base64
         i = 2
-        imgdata = open("test.jpg", "rb").read()
-        imgdata = base64.b64encode(imgdata)
+        # imgdata = open("test.jpg", "rb").read()
+        # imgdata = base64.b64encode(imgdata)
         resultlist[i] = {
                 "headimgurl": portraits[i],
                 "nickname": "专家",
