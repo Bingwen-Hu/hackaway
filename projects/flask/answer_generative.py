@@ -1,6 +1,7 @@
 # thanks for Lisp
 from random import choice, randint
 
+
 def complete_answer(host, guest, flag=0):
     """
     flag=0 代表生成的句子应该是host正向
@@ -39,10 +40,10 @@ def adv_verb():
     return ad
 
 def iadv_verb():
-    return choice(["不可能赢", "是赢不了的", "估计会输", "可能赢不了"])
+    return choice(["不可能赢", "是赢不了的", "估计会输", "赢不了"])
 
 def pre_subject(answer):
-    pre = choice(['我认为', "", "我觉得", "在我看来，", "我认为", "", "", "", "", "", ""])
+    pre = choice(['我认为', "", "我觉得", "你要问我的话，我认为", "我认为", "", "", "", "", "", ""])
     if pre:
         answer = f"{pre}{answer}"
     return answer
