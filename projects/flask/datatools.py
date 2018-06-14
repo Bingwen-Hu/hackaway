@@ -2,6 +2,7 @@ import pymysql
 import json
 import re
 
+
 SERVER_PARAMS = {
     'host': "119.84.122.135",
     'port': 27702,
@@ -64,8 +65,15 @@ teams = [
     [48, '塞内加尔', '哥伦比亚'],
 ]
 
+def get_content():
+    sqls = "select Blogerid, Content from Data where  Addon >= NOW() - interval 1 day"
+    with server.cursor() as cursor:
+        cursor.execute(sqls)
+        content = cursor.fetchall()
+    return content
 
-
+content = get_content()
+print(len(content))
 
 def gen_rate_patterns(host, guest):
     patterns = [
@@ -93,5 +101,6 @@ def test_gen_rate_patterns():
                 print(res.group(), group)
 
 
-if __name__ == "__main__":
-    pass
+server.close()
+
+    
