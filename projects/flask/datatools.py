@@ -15,7 +15,7 @@ SERVER_PARAMS = {
 server = pymysql.Connection(**SERVER_PARAMS)
 
 teams = [
-    [1, '俄罗斯', '沙特阿拉伯'],
+    [1, '俄罗斯', '沙特'],
     [2, '埃及', '乌拉圭'],
     [3, '葡萄牙', '西班牙'],
     [4, '摩洛哥', '伊朗'],
@@ -32,7 +32,7 @@ teams = [
     [15, '哥伦比亚', '日本'],
     [16, '波兰', '塞内加尔'],
     [17, '俄罗斯', '埃及'],
-    [18, '乌拉圭', '沙特阿拉伯'],
+    [18, '乌拉圭', '沙特'],
     [19, '葡萄牙', '摩洛哥'],
     [20, '法国', '秘鲁'],
     [21, '伊朗', '西班牙'],
@@ -48,7 +48,7 @@ teams = [
     [31, '波兰', '哥伦比亚'],
     [32, '日本', '塞内加尔'],
     [33, '乌拉圭', '俄罗斯'],
-    [34, '沙特阿拉伯', '埃及'],
+    [34, '沙特', '埃及'],
     [35, '伊朗', '葡萄牙'],
     [36, '西班牙', '摩洛哥'],
     [37, '丹麦', '法国'],
@@ -73,26 +73,28 @@ def get_content():
     return content
 
 content = get_content()
-print(len(content))
+# print(len(content))
 
 def gen_rate_patterns(host, guest):
     patterns = [
-        f'{host}[打对完胜比：:]+{guest}(?P<Points>\d[：:\-比]\d)',
-        f'{host}(?P<Points>\d[：:\-比]\d).*?{guest}',
+        f'.*?(?P<Points>{host}[打对完胜比：:]+{guest}\d[：:\-比]\d).*?',
+        f'.*?(?P<Points>{host}\d[：:\-比]\d).*?{guest}.*?',
+        f'.*?(?P<Points>{host}.*?[输|赢]?.*?).*?',
+        f'.*?(?P<Points>{guest}.*?[输|赢]?.*?).*?',
+        f'.*?(?P<Points>{guest}.*?[输|赢]?).*?',
     ]
     return patterns
 
-def test_gen_rate_patterns():
-    import re
-    host = "英格兰"
-    guest = "德国"
+def get_host_and_guest(gpid):
+    team = teams[gpid-1]
+    return team[1], team[2]
+
+
+def test_gen_rate_patterns(gpid):
+    host, guest = get_host_and_guest(gpid)
     patterns = gen_rate_patterns(host, guest)
-    text = [
-        "英格兰3:0完胜德国",
-        "英格兰完胜德国3:0",
-        "英格兰8-1狂胜德国",
-        "英格兰9比8小胜德国",
-    ]
+    text = [c for (id, c) in content]
+    print("in")
     for p in patterns:
         for t in text:
             res = re.search(p, t)
@@ -100,7 +102,5 @@ def test_gen_rate_patterns():
                 group = res.group("Points")
                 print(res.group(), group)
 
-
+test_gen_rate_patterns(1)
 server.close()
-
-    
