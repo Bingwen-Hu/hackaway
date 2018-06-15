@@ -1,10 +1,18 @@
 import pymysql
 import json
 import re
+import os
+import time
+from email.mime.text import MIMEText
+import smtplib
 
+mailto_list = [os.environ.get('RECEIVER')]
+mail_host = 'smtp.163.com'
+mail_user = os.environ.get('SENDER')
+mail_pass = os.environ.get('SENDER_PASS')
 
 SERVER_PARAMS = {
-    'host': "119.84.122.135",
+    'host': "localhost",
     'port': 27702,
     'user': 'like_jian',
     'password': 'worldcup2018',
@@ -65,42 +73,71 @@ teams = [
     [48, '塞内加尔', '哥伦比亚'],
 ]
 
-def get_content():
-    sqls = "select Blogerid, Content from Data where  Addon >= NOW() - interval 1 day"
+def get_contents(num=12):
+    sqls = f"select Blogerid, Content from Data where  Addon >= NOW() - interval {num} hour"
     with server.cursor() as cursor:
         cursor.execute(sqls)
         content = cursor.fetchall()
     return content
-
-content = get_content()
-print(len(content))
-
-def gen_rate_patterns(host, guest):
-    patterns = [
-        f'.*?(?P<Points>{host}[打对完胜比：:]+{guest}\d[：:\-比]\d).*?',
-        f'.*?(?P<Points>{host}\d[：:\-比]\d).*?{guest}.*?',
-        f'.*?(?P<Points>{host}.*?[输|赢]?.*?).*?',
-        f'.*?(?P<Points>{guest}.*?[输|赢]?.*?).*?',
-        f'.*?(?P<Points>{guest}.*?[输|赢]?).*?',
-    ]
-    return patterns
 
 def get_host_and_guest(gpid):
     team = teams[gpid-1]
     return team[1], team[2]
 
 
-def test_gen_rate_patterns(gpid):
-    host, guest = get_host_and_guest(gpid)
-    patterns = gen_rate_patterns(host, guest)
-    text = [c for (id, c) in content]
-    print("in")
-    for p in patterns:
-        for t in text:
-            res = re.search(p, t)
-            if res:
-                group = res.group("Points")
-                print(res.group(), group)
+def insert_newdata(gpid, host, guest, dpoints):
+    sqls = "insert into Predict (GPid, Host, Guest, DPoints) values (%s, %s, %s, %s)"
+    with server.cursor() as cursor:
+        params = [gpid, host, guest, dpoints]
+        cursor.execute(sqls, params)
+    server.commit()
+    print("Insert GPid: %s, Host: %s, Guest: %s, DPoints: %s" % (gpid, host, guest, dpoints))
 
-test_gen_rate_patterns(2)
-server.close()
+
+def match_data_helper(contents, pattern):
+    for (blogerid, content) in contents:
+        res = pattern.search(content)
+        if res is not None:
+            start, end = res.start(), res.end()
+            cup = content[start-10: end+10]
+            yield cup
+
+
+def match_data(contents, pattern):
+    lst = list(match_data_helper(contents, pattern))
+    lst = list(set(lst))
+    return lst
+
+
+
+
+def send_mail(to_list, subject, content):
+    me = f"LogServer<{mail_user}>"
+    msg = MIMEText(content, _subtype='plain', _charset='utf-8')
+    msg['Subject'] = subject
+    msg['From'] = me
+    msg['To'] = ";".join(to_list)
+
+    try:
+        server = smtplib.SMTP()
+        server.connect(mail_host)
+        server.login(mail_user, mail_pass)
+        server.sendmail(me, to_list, msg.as_string())
+        server.close()
+        return True
+    except Exception as e:
+        print(e)
+        return False
+
+
+pattern = re.compile(r'\D\d[：:\-比]\d\D')
+
+if __name__ == '__main__':
+    while(True):
+        server.connect()
+        contents = get_contents(12)
+        data = match_data(contents, pattern)
+        text = "\n".join(data)
+        send_mail(mailto_list, "worldcup data explore", text)
+        server.close()
+        time.sleep(12 * 3600)
