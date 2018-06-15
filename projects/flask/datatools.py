@@ -73,7 +73,7 @@ def get_content():
     return content
 
 content = get_content()
-# print(len(content))
+print(len(content))
 
 def gen_rate_patterns(host, guest):
     patterns = [
@@ -102,5 +102,5 @@ def test_gen_rate_patterns(gpid):
                 group = res.group("Points")
                 print(res.group(), group)
 
-test_gen_rate_patterns(1)
+test_gen_rate_patterns(2)
 server.close()
