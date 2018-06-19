@@ -11,3 +11,33 @@
   "The grammar used by generate. Initially, this is *simple-grammar*,
 but we can switch to other grammars.")
 
+
+(defun rule-lhs (rule)
+  "the left-hand side of a rule."
+  (first rule))
+
+(defun rule-rhs (rule)
+  "the right-hand side of a rule."
+  (rest (rest rule)))
+
+(defun rewrites (category)
+  "return a list of the possible rewrites for this category."
+  (rule-rhs (assoc category *grammar*)))
+
+
+(defun mappend (fn lst)
+  (reduce #'append (mapcar fn lst)))
+
+(defun random-elt (lst)
+  (elt lst (random (length lst))))
+
+(defun generate (phrase)
+  "Generate a random sentence or phrase"
+  (cond 
+    ((listp phrase)
+     (mappend #'generate phrase))
+    ((rewrites phrase)
+     (generate (random-elt (rewrites phrase))))
+    (t (list phrase))))
+	
+
