@@ -57,3 +57,11 @@ but we can switch to other grammars.")
     (Pronoun -> he she it these those that)))
 
 (setf *grammar* *bigger-grammar*)
+
+
+;; exercise
+(defun cross-product (fn xlist ylist)
+  (mappend #'(lambda (y)
+	       (mapcar #'(lambda (x) (funcall fn x y))
+		       xlist))
+	   ylist))
