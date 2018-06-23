@@ -25,11 +25,19 @@ int insert_q(queue *q, int value) {
 }
 
 int remove_q(queue *q) {
-    if (q->front == -1 || q->front > q->rear) {
+    if (empty_q(q)) {
         printf("Remove Error! Queue is empty!");
         return -1;
     } 
     int value = q->data[q->front];
     q->front++;
     return value;
+}
+
+
+int empty_q(queue *q) {
+    if (q->front == -1 || q->front > q->rear) {
+        return 1;
+    }
+    return 0;
 }

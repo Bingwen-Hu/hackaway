@@ -13,6 +13,6 @@ void init(queue *q);
 int peek(queue *q);
 int insert_q(queue *q, int value);
 int remove_q(queue *q);
-
+int empty_q(queue *q);
 
 #endif // QUEUE_H_
