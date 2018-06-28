@@ -27,16 +27,13 @@
     (mapcar #'rest adj)))
 
 (defun nearest-node (graph node exclude)
-  "")
-
-
-
-
-
-
-
-
-
+  "return nearest node except node in exclude"
+  (let ((adj (adjacent graph node)))
+    (labels ((helper (min-adj adj)
+               (cond ((null adj) (first min-adj))
+                     ((< (rest min-adj) (rest (first adj)))
+                      (helper min-adj (rest adj)))
+                     (t (helper (first adj) (rest adj)))))))))
 
 ; step 1: choose a start node add to tree queue
 ; step 2: add adjacent nodes of 'the newest added tree node' to fringe queue
@@ -49,4 +46,5 @@
                  (when mininum 
                    (push mininum tree)
                    (helper mininum tree)))))
-      (helper start tree))))
+      (helper start tree))
+    tree))
