@@ -26,3 +26,27 @@
   (let ((adj (adjacent graph node)))
     (mapcar #'rest adj)))
 
+(defun nearest-node (graph node exclude)
+  "")
+
+
+
+
+
+
+
+
+
+
+; step 1: choose a start node add to tree queue
+; step 2: add adjacent nodes of 'the newest added tree node' to fringe queue
+; step 3: choose the nearest node add to tree queue
+; step 4: if all node in tree end else goto step 2
+(defun prim (graph start)
+  (let ((tree nil))
+    (labels ((helper (current tree)
+               (let ((mininum (nearest-node graph current tree)))
+                 (when mininum 
+                   (push mininum tree)
+                   (helper mininum tree)))))
+      (helper start tree))))
