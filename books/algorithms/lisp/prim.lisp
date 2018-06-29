@@ -26,33 +26,14 @@
   (let ((adj (adjacent graph node)))
     (mapcar #'rest adj)))
 
-;; this implement is useless
-(defun nearest-node (graph node exclude)
-  "return nearest node except node in exclude"
-  (let* ((adj (adjacent graph node))
-	 (adj-ex (remove-if #'(lambda (pair)
-				(member (first pair) exclude))
-			    adj)))
-    (labels ((helper (min-adj adj)
-               (cond ((null adj) (first min-adj))
-                     ((< (rest min-adj) (rest (first adj)))
-                      (helper min-adj (rest adj)))
-                     (t (helper (first adj) (rest adj))))))
-      (helper (first adj-ex) (rest adj-ex)))))
+
+(defun find-nearest-node (min-adj adj)
+  (cond ((null adj) (first min-adj))
+	((< (rest min-adj) (rest (first adj)))
+	 (find-nearest-node min-adj (rest adj)))
+	(t (find-nearest-node (first adj) (rest adj)))))
 
 ; step 1: choose a start node add to tree queue
 ; step 2: add adjacent nodes of 'the newest added tree node' to fringe queue
 ; step 3: choose the nearest node in the fringe queue and add to tree queue
 ; step 4: if all node in tree end else goto step 2
-
-;;; this implement is wrong
-(defun prim (graph start)
-  (let ((tree nil))
-    (labels ((helper (current)
-               (let ((mininum (nearest-node graph current tree)))
-                 (when mininum 
-		   (push mininum tree)
-		   (helper mininum)))))
-      (push start tree)
-      (helper start))
-    (nreverse tree)))
