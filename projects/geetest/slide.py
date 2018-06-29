@@ -24,9 +24,9 @@ email.send_keys("test@163.com")
 
 radar = wait.until(Expect.presence_of_element_located((By.CLASS_NAME, 'geetest_radar_tip')))
 radar.click()
-time.sleep(3)
+time.sleep(1.5)
 org = wait.until(Expect.presence_of_element_located((By.CLASS_NAME, 'geetest_canvas_img')))
-time.sleep(2)
+time.sleep(1)
 location = org.location
 size = org.size
 top = location['y']
@@ -40,9 +40,9 @@ org_crop.save("./org_crop.png")
 
 slider = wait.until(Expect.presence_of_element_located((By.CLASS_NAME, 'geetest_slider_button')))
 slider.click()
-time.sleep(3)
+time.sleep(1.5)
 new = wait.until(Expect.presence_of_element_located((By.CLASS_NAME, 'geetest_canvas_img')))
-time.sleep(2)
+time.sleep(1)
 location = new.location
 size = new.size
 top = location['y']
@@ -62,7 +62,7 @@ def distance():
     new_np = np.array(new)
     diff = np.abs(new_np - org_np)
     ero = erosion(diff)
-    ero = np.where(ero > 220, 0, ero)
+    ero = np.where(ero > 210, 0, ero)
     img = Image.fromarray(ero)
     img.save("diff.png")
 
@@ -84,8 +84,11 @@ def detect_v():
             elif vsums[i+1] < 500:
                 result.append(i)
 
-    assert len(result) == 2
-    return result[1] - result[0] + 7
+    if len(result) == 2:
+        return result[1] - result[0] + 5
+    else:
+        return result[0]/2 + 5
+
 
 move = detect_v()
 
@@ -96,7 +99,11 @@ slider = wait.until(Expect.presence_of_element_located((By.CLASS_NAME, 'geetest_
 ActionChains(driver).click_and_hold(slider).perform()
 for step in steps:
     ActionChains(driver).move_by_offset(xoffset=step, yoffset=0).perform()
-    time.sleep(0.5)
+    ActionChains(driver).move_by_offset(xoffset=3, yoffset=0).perform()
+    time.sleep(0.6)
+else:
+    ActionChains(driver).move_by_offset(xoffset=-3, yoffset=0).perform()
+    ActionChains(driver).move_by_offset(xoffset=-3, yoffset=0).perform()
 
 ActionChains(driver).release().perform()
 
