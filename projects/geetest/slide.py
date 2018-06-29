@@ -21,38 +21,38 @@ email = driver.find_element_by_id('email')
 email.send_keys("test@163.com")
 
 
+def get_snap():
+    radar = wait.until(Expect.presence_of_element_located((By.CLASS_NAME, 'geetest_radar_tip')))
+    radar.click()
+    time.sleep(1.5)
+    org = wait.until(Expect.presence_of_element_located((By.CLASS_NAME, 'geetest_canvas_img')))
+    time.sleep(1)
+    location = org.location
+    size = org.size
+    top = location['y']
+    bottom = location['y'] + size['height']
+    left = location['x']
+    right = location['x'] + size['width']
+    driver.save_screenshot('./org.png')
+    org = Image.open('./org.png')
+    org_crop = org.crop((left, top, right, bottom))
+    org_crop.save("./org_crop.png")
 
-radar = wait.until(Expect.presence_of_element_located((By.CLASS_NAME, 'geetest_radar_tip')))
-radar.click()
-time.sleep(1.5)
-org = wait.until(Expect.presence_of_element_located((By.CLASS_NAME, 'geetest_canvas_img')))
-time.sleep(1)
-location = org.location
-size = org.size
-top = location['y']
-bottom = location['y'] + size['height']
-left = location['x']
-right = location['x'] + size['width']
-driver.save_screenshot('./org.png')
-org = Image.open('./org.png')
-org_crop = org.crop((left, top, right, bottom))
-org_crop.save("./org_crop.png")
-
-slider = wait.until(Expect.presence_of_element_located((By.CLASS_NAME, 'geetest_slider_button')))
-slider.click()
-time.sleep(1.5)
-new = wait.until(Expect.presence_of_element_located((By.CLASS_NAME, 'geetest_canvas_img')))
-time.sleep(1)
-location = new.location
-size = new.size
-top = location['y']
-bottom = location['y'] + size['height']
-left = location['x']
-right = location['x'] + size['width']
-driver.save_screenshot('./new.png')
-new = Image.open('./new.png')
-new_crop = new.crop((left, top, right, bottom))
-new_crop.save("./new_crop.png")
+    slider = wait.until(Expect.presence_of_element_located((By.CLASS_NAME, 'geetest_slider_button')))
+    slider.click()
+    time.sleep(1.5)
+    new = wait.until(Expect.presence_of_element_located((By.CLASS_NAME, 'geetest_canvas_img')))
+    time.sleep(1)
+    location = new.location
+    size = new.size
+    top = location['y']
+    bottom = location['y'] + size['height']
+    left = location['x']
+    right = location['x'] + size['width']
+    driver.save_screenshot('./new.png')
+    new = Image.open('./new.png')
+    new_crop = new.crop((left, top, right, bottom))
+    new_crop.save("./new_crop.png")
 
 
 def distance():
@@ -67,7 +67,7 @@ def distance():
     img.save("diff.png")
 
 
-
+get_snap()
 distance()
 
 def detect_v():
@@ -87,7 +87,7 @@ def detect_v():
     if len(result) == 2:
         return result[1] - result[0] + 5
     else:
-        return result[0]/2 + 5
+        return result[0]/2
 
 
 move = detect_v()
@@ -108,4 +108,23 @@ else:
 ActionChains(driver).release().perform()
 
 time.sleep(3)
+success = driver.find_element_by_class_name('geetest_success_radar_tip_content')
+if success.text == '':
+    get_snap()
+    distance()
+    move = detect_v()
+    steps = [move/2, move-move/2]
+
+    ActionChains(driver).click_and_hold(slider).perform()
+    for step in steps:
+        ActionChains(driver).move_by_offset(xoffset=step, yoffset=0).perform()
+        ActionChains(driver).move_by_offset(xoffset=3, yoffset=0).perform()
+        time.sleep(1.4)
+    else:
+        ActionChains(driver).move_by_offset(xoffset=-3, yoffset=0).perform()
+        ActionChains(driver).move_by_offset(xoffset=-3, yoffset=0).perform()
+
+    ActionChains(driver).release().perform()
+    time.sleep(2)
+    
 driver.close()
