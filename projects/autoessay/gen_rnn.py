@@ -8,62 +8,59 @@ from keras.utils import np_utils
 
 
 with open("os.txt", encoding='gbk') as f:
-    raw_texts = f.read()
+    text = f.read()
 
-chars = sorted(list(set(raw_texts)))
-char_to_int = dict((c, i) for i, c in enumerate(chars))
-int_to_char = dict((i, c) for i, c in enumerate(chars))
+characters = sorted(list(set(text)))
+n_to_char = {n:char for n, char in enumerate(characters)}
+char_to_n = {char:n for n, char in enumerate(characters)}
 
 
+X = []
+Y = []
+length = len(text)
 seq_length = 100
-x = []
-y = []
-for i in range(0, len(raw_texts)-seq_length, seq_length):
-    given = raw_texts[i:i+seq_length]
-    predict = raw_texts[i+seq_length]
-    x.append([char_to_int[char] for char in given])
-    y.append([char_to_int[predict]])
-print(x[3])
 
+for i in range(0, length-seq_length, 1):
+    sequence = text[i:i + seq_length]
+    label = text[i + seq_length]
+    X.append([char_to_n[char] for char in sequence])
+    Y.append(char_to_n[label])
 
-n_patterns = len(x)
-n_vocab = len(chars)
+X_modified = np.reshape(X, (len(X), seq_length, 1))
+X_modified = X_modified / float(len(characters))
+Y_modified = np_utils.to_categorical(Y)
 
-x = np.reshape(x, (n_patterns, seq_length, 1))
-x = x / float(n_vocab)
-y = np_utils.to_categorical(y)
 
 model = Sequential()
-model.add(LSTM(128, input_shape=(x.shape[1], x.shape[2])))
+model.add(LSTM(400, input_shape=((X_modified.shape[1], X_modified.shape[2])), return_sequences=True))
 model.add(Dropout(0.2))
-model.add(Dense(y.shape[1], activation='softmax'))
+model.add(LSTM(400))
+model.add(Dropout(0.2))
+model.add(Dense(Y_modified.shape[1], activation='softmax'))
 model.compile(loss='categorical_crossentropy', optimizer='adam')
-model.fit(x, y, nb_epoch=10, batch_size=32)
 
-def string_to_index(raw_inputs):
-    res = []
-    for e in raw_inputs[(len(raw_inputs) - seq_length):]:
-        res.append(char_to_int[e])
-    return res
+model.fit(X_modified, Y_modified, epochs=1, batch_size=100)
+model.save_weights("base_weight.h5")
+model.load_weights("base_weight.h5")
 
-def predict_next(input_array):
-    x = np.reshape(input_array, (1, seq_length, 1))
-    x = x / float(n_vocab)
-    y = model.predict(x)
-    return y
+# generate text
+string_mapped = X[99]
+full_string = [n_to_char[value] for value in string_mapped]
+for i in range(seq_length):
+    x = np.reshape(string_mapped, (1, len(string_mapped), 1))
+    x = x / float(len(characters))
 
-def y_to_char(y):
-    largest_index = y.argmax()
-    e = int_to_char[largest_index]
-    return e
+    pred_index = np.argmax(model.predict(x, verbose=0))
+    seq = [n_to_char[value] for value in string_mapped]
+    full_string.append(n_to_char[pred_index])
 
-def generate_article(init, rounds = 50):
-    in_string = init.lower()
-    for i in range(rounds):
-        n = y_to_char(predict_next(string_to_index(in_string)))
-        in_string += n
-    return in_string
+    string_mapped.append(pred_index)
+    string_mapped = string_mapped[1:len(string_mapped)]
 
-init = "操作系统" * 25
-article = generate_article(init)
-print(article)
+
+txt = " ".join(full_string)
+print(txt)
+
+
+
+
