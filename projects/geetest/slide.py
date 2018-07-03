@@ -90,7 +90,21 @@ def detect_v():
         return result[0]/2
 
 
-move = detect_v()
+def interface():
+    org = "org_crop.png"
+    new = "new_crop.png"
+    import requests
+    import json
+    files = {
+        'org': (org, open(org, 'rb'), 'image/png'),
+        'new': (new, open(new, 'rb'), 'image/png'),
+    }
+    r = requests.post('http://localhost:38016/slider', files=files)
+    res = json.loads(r.text)
+    return res['distance']
+
+# move = detect_v()
+move = interface()
 
 steps = [move/2, move-move/2]
 
