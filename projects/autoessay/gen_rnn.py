@@ -32,21 +32,21 @@ Y_modified = np_utils.to_categorical(Y)
 
 
 model = Sequential()
-model.add(LSTM(400, input_shape=((X_modified.shape[1], X_modified.shape[2])), return_sequences=True))
+model.add(LSTM(700, input_shape=((X_modified.shape[1], X_modified.shape[2])), return_sequences=True))
 model.add(Dropout(0.2))
-model.add(LSTM(400))
+model.add(LSTM(700))
 model.add(Dropout(0.2))
 model.add(Dense(Y_modified.shape[1], activation='softmax'))
 model.compile(loss='categorical_crossentropy', optimizer='adam')
 
-model.fit(X_modified, Y_modified, epochs=1, batch_size=100)
-model.save_weights("base_weight.h5")
-model.load_weights("base_weight.h5")
+model.fit(X_modified, Y_modified, epochs=100, batch_size=50)
+model.save_weights("wider_base_weight.h5")
+model.load_weights("wider_base_weight.h5")
 
 # generate text
 string_mapped = X[99]
 full_string = [n_to_char[value] for value in string_mapped]
-for i in range(seq_length):
+for i in range(400):
     x = np.reshape(string_mapped, (1, len(string_mapped), 1))
     x = x / float(len(characters))
 
@@ -58,7 +58,7 @@ for i in range(seq_length):
     string_mapped = string_mapped[1:len(string_mapped)]
 
 
-txt = " ".join(full_string)
+txt = "".join(full_string)
 print(txt)
 
 
