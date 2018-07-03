@@ -9,17 +9,10 @@ from selenium.webdriver.support.wait import WebDriverWait
 
 from PIL import Image
 import time
+import requests
+import json
 import numpy as np
 from skimage.morphology import erosion
-
-driver = webdriver.Firefox()
-driver.get("https://account.geetest.com/login")
-
-wait = WebDriverWait(driver, 10)
-
-email = driver.find_element_by_id('email')
-email.send_keys("test@163.com")
-
 
 def get_snap():
     radar = wait.until(Expect.presence_of_element_located((By.CLASS_NAME, 'geetest_radar_tip')))
@@ -55,77 +48,43 @@ def get_snap():
     new_crop.save("./new_crop.png")
 
 
-def distance():
-    org = Image.open("org_crop.png").convert("L")
-    new = Image.open("new_crop.png").convert("L")
-    org_np = np.array(org)
-    new_np = np.array(new)
-    diff = np.abs(new_np - org_np)
-    ero = erosion(diff)
-    ero = np.where(ero > 210, 0, ero)
-    img = Image.fromarray(ero)
-    img.save("diff.png")
+
+def interface():
+    org = "org_crop.png"
+    new = "new_crop.png"
+    
+    files = {
+        'old': (org, open(org, 'rb'), 'image/png'),
+        'new': (new, open(new, 'rb'), 'image/png'),
+    }
+    r = requests.post('http://119.84.122.135:27701/slider', files=files)
+    res = json.loads(r.text)
+    return res['distance']
 
 
-get_snap()
-distance()
+if __name__ == '__main__':
+    
+    driver = webdriver.Firefox()
+    driver.get("https://account.geetest.com/login")
 
-def detect_v():
-    img = Image.open('diff.png')
-    data = np.array(img)
-    x, y = data.shape
-    print("%d rows, %d columns" % (x, y))
-    vsums = np.sum(data, axis=0)
-    result = []
-    for i, s in enumerate(vsums):
-        if s > 500:
-            if i+1 == y:
-                result.append(i)
-            elif vsums[i+1] < 500:
-                result.append(i)
+    wait = WebDriverWait(driver, 10)
 
-    if len(result) == 2:
-        return result[1] - result[0] + 5
-    else:
-        return result[0]/2
-
-
-move = detect_v()
-
-
-steps = [move/2, move-move/2]
-
-
-slider = wait.until(Expect.presence_of_element_located((By.CLASS_NAME, 'geetest_slider_button')))
-ActionChains(driver).click_and_hold(slider).perform()
-for step in steps:
-    ActionChains(driver).move_by_offset(xoffset=step, yoffset=0).perform()
-    ActionChains(driver).move_by_offset(xoffset=3, yoffset=0).perform()
-    time.sleep(0.6)
-else:
-    ActionChains(driver).move_by_offset(xoffset=-3, yoffset=0).perform()
-    ActionChains(driver).move_by_offset(xoffset=-3, yoffset=0).perform()
-
-ActionChains(driver).release().perform()
-
-time.sleep(3)
-success = driver.find_element_by_class_name('geetest_success_radar_tip_content')
-if success.text == '':
+    email = driver.find_element_by_id('email')
+    email.send_keys("test@163.com")
     get_snap()
-    distance()
-    move = detect_v()
+    move = interface()
     steps = [move/2, move-move/2]
-
+    slider = wait.until(Expect.presence_of_element_located((By.CLASS_NAME, 'geetest_slider_button')))
     ActionChains(driver).click_and_hold(slider).perform()
     for step in steps:
         ActionChains(driver).move_by_offset(xoffset=step, yoffset=0).perform()
         ActionChains(driver).move_by_offset(xoffset=3, yoffset=0).perform()
-        time.sleep(1.4)
+        time.sleep(0.6)
     else:
         ActionChains(driver).move_by_offset(xoffset=-3, yoffset=0).perform()
         ActionChains(driver).move_by_offset(xoffset=-3, yoffset=0).perform()
 
     ActionChains(driver).release().perform()
-    time.sleep(2)
-    
-driver.close()
+
+    time.sleep(3)
+    driver.close()
