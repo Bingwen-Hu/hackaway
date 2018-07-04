@@ -1,5 +1,3 @@
-# http://www.bubuko.com/infodetail-2467118.html
-
 from selenium import webdriver
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
@@ -72,14 +70,17 @@ if __name__ == '__main__':
     email = driver.find_element_by_id('email')
     email.send_keys("test@163.com")
     get_snap()
+    start = time.time()
     move = interface()
+    end = time.time()
+    print(end - start)
     steps = [move/2, move-move/2]
     slider = wait.until(Expect.presence_of_element_located((By.CLASS_NAME, 'geetest_slider_button')))
     ActionChains(driver).click_and_hold(slider).perform()
     for step in steps:
         ActionChains(driver).move_by_offset(xoffset=step, yoffset=0).perform()
         ActionChains(driver).move_by_offset(xoffset=3, yoffset=0).perform()
-        time.sleep(0.6)
+        time.sleep(0.4)
     else:
         ActionChains(driver).move_by_offset(xoffset=-3, yoffset=0).perform()
         ActionChains(driver).move_by_offset(xoffset=-3, yoffset=0).perform()

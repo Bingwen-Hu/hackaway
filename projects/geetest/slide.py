@@ -78,10 +78,10 @@ def detect_v():
     vsums = np.sum(data, axis=0)
     result = []
     for i, s in enumerate(vsums):
-        if s > 500:
+        if s > 10:
             if i+1 == y:
                 result.append(i)
-            elif vsums[i+1] < 500:
+            elif vsums[i+1] < 10:
                 result.append(i)
 
     if len(result) == 2:
@@ -101,7 +101,7 @@ ActionChains(driver).click_and_hold(slider).perform()
 for step in steps:
     ActionChains(driver).move_by_offset(xoffset=step, yoffset=0).perform()
     ActionChains(driver).move_by_offset(xoffset=3, yoffset=0).perform()
-    time.sleep(0.6)
+    time.sleep(0.4)
 else:
     ActionChains(driver).move_by_offset(xoffset=-3, yoffset=0).perform()
     ActionChains(driver).move_by_offset(xoffset=-3, yoffset=0).perform()
