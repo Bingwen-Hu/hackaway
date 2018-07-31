@@ -40,4 +40,4 @@ if __name__ == '__main__':
     datalist = list(collect_images_numpy(imagepaths))
     r = merge_images(datalist)
     new = Image.fromarray(r)
-    new.save('new.jpg')
+    new.save(f'{imagedir}/new.jpg')
