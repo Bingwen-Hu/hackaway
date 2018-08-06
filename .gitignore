@@ -69,6 +69,7 @@ _build
 target
 
 # other
+temp
 data
 books/masteringPython/cp09/*.html
 text8.zip
