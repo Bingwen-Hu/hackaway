@@ -15,7 +15,7 @@ def collect_images_numpy(imagepaths):
         yield data
 
 
-def merge_images(datalist):
+def extract_images(datalist):
     d = datalist[0]
     try:
         row, col, channel = d.shape
@@ -38,6 +38,6 @@ def merge_images(datalist):
 
 if __name__ == '__main__':
     datalist = list(collect_images_numpy(imagepaths))
-    r = merge_images(datalist)
+    r = extract_images(datalist)
     new = Image.fromarray(r)
     new.save(f'{imagedir}/new.jpg')
