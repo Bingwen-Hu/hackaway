@@ -4,7 +4,7 @@ import random
 import numpy as np
 from uuid import uuid1
 
-def merge_char(charimg, img):
+def merge_char(charimg, img, color):
     width, height = img.size
     char_w, char_h = charimg.size
 
@@ -19,7 +19,7 @@ def merge_char(charimg, img):
             rgb = chardata[i][j]
             if np.sum(rgb) > 10:
                 org = imgdata[i+x][j+y]
-                imgdata[i+x][j+y] = np.abs(rgb - org)
+                imgdata[i+x][j+y] = color
     newimg = Image.fromarray(imgdata)
     return newimg, (x, y), (char_h, char_w)
 
@@ -27,8 +27,8 @@ def merge_char(charimg, img):
 def generate_char(char, size, font):
     OFFSET = {
         50: (0, -9),
-        40: (0, -5),
-        60: (0, -11),
+        45: (0, -7),
+        55: (0, -10),
     }
     xy = OFFSET[size]
     charimg = Image.new('RGB', size=(size, size), color=(0, 0, 0))
@@ -42,22 +42,27 @@ if __name__ == '__main__':
     with open('common.txt', encoding='utf-8') as f:
         chars = f.read().strip()
     
-    fonts = ['msyhbd', 'msyh']
+    fonts = ['msyhbd', 'msyh', 'E:/fonts/wallow.ttf']
     background_glob_dir = "E:/captcha-data/img500/org/*.jpg"
-    sizes = [40, 50, 60]
+    sizes = [45, 50, 55]
     background_imgs = glob.glob(background_glob_dir)
     angles = [45, 90, 180, 270, -45]
-
-    for i in range(100000):
+    fontcolors = [(0, 0, 0), (100, 220, 200), (50, 160, 255), (255, 130, 133), (200, 200, 100), (200, 130, 220), (100, 200, 255), (10, 40, 190), (130, 41, 41)]
+    
+    
+    for i in range(4):
         angle = random.choice(angles)
         char = random.choice(chars)
         font = random.choice(fonts)
         size = random.choice(sizes)
         bg = random.choice(background_imgs)
         bg_img = Image.open(bg)
+        color = random.choice(fontcolors)
         charimg = generate_char(char, size, font)
-        
+            
         charimg = charimg.rotate(angle, resample=Image.BICUBIC, expand=True)
-        newimg, (x, y), (height, width) = merge_char(charimg, bg_img)
+        newimg, (x, y), (height, width) = merge_char(charimg, bg_img, color)
+        
         crop = newimg.crop((y, x, y+width, x+height))
-        crop.save(f'E:/captcha-data/img500/genchars/{char}{uuid1()}.jpg')
+        # crop.save(f'E:/captcha-data/img500/genchars/{char}{uuid1()}.jpg')
+        crop.save(f'./{char}.jpg')
