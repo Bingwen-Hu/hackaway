@@ -26,9 +26,11 @@ def merge_char(charimg, img, color):
 
 def generate_char(char, size, font):
     OFFSET = {
+        40: (0, -5),
         50: (0, -9),
         45: (0, -7),
         55: (0, -10),
+        60: (0, -11),
     }
     xy = OFFSET[size]
     charimg = Image.new('RGB', size=(size, size), color=(0, 0, 0))
