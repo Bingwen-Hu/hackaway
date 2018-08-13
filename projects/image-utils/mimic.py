@@ -26,11 +26,11 @@ def merge_char(charimg, img, color):
 
 def generate_char(char, size, font):
     OFFSET = {
-        40: (0, -5),
-        50: (0, -9),
-        45: (0, -7),
-        55: (0, -10),
-        60: (0, -11),
+        40: (0, 0),
+        45: (0, 0),
+        50: (0, -2),
+        55: (0, -3),
+        60: (0, -5),
     }
     xy = OFFSET[size]
     charimg = Image.new('RGB', size=(size, size), color=(0, 0, 0))
@@ -44,15 +44,21 @@ if __name__ == '__main__':
     with open('common.txt', encoding='utf-8') as f:
         chars = f.read().strip()
     
-    fonts = ['msyhbd', 'msyh', 'E:/fonts/wallow.ttf']
+    fonts = [
+        # 'E:/fonts/sinaocr/feifei.ttf',
+        # 'E:/fonts/sinaocr/guanrong.ttf',
+        # 'E:/fonts/sinaocr/msyh.ttf',
+        # 'E:/fonts/sinaocr/simhei.ttf',
+        'E:/fonts/sinaocr/sf.TTF',
+    ]
     background_glob_dir = "E:/captcha-data/img500/org/*.jpg"
     sizes = [45, 50, 55]
     background_imgs = glob.glob(background_glob_dir)
-    angles = [45, 90, 180, 270, -45]
+    angles = list(range(0, 360, 10))
     fontcolors = [(0, 0, 0), (100, 220, 200), (50, 160, 255), (255, 130, 133), (200, 200, 100), (200, 130, 220), (100, 200, 255), (10, 40, 190), (130, 41, 41)]
     
     
-    for i in range(4):
+    for i in range(3000):
         angle = random.choice(angles)
         char = random.choice(chars)
         font = random.choice(fonts)
@@ -66,5 +72,5 @@ if __name__ == '__main__':
         newimg, (x, y), (height, width) = merge_char(charimg, bg_img, color)
         
         crop = newimg.crop((y, x, y+width, x+height))
-        # crop.save(f'E:/captcha-data/img500/genchars/{char}{uuid1()}.jpg')
-        crop.save(f'./{char}.jpg')
+        crop.save(f'E:/captcha-data/sinaocr/sf/{char}{uuid1()}.jpg')
+        # crop.save(f'./{char}.jpg')
