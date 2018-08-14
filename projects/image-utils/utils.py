@@ -40,3 +40,9 @@ def padding(img, size, RGB):
 def rotate(img, angle):
     img = img.rotate(angle, resample=Image.BICUBIC)
     return img
+
+
+from PIL import ImageFilter
+def blur(img):
+    return img.filter(ImageFilter.SMOOTH)
+    
