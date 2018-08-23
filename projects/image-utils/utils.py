@@ -2,7 +2,7 @@
 from PIL import Image
 import numpy as np
 
-img = Image.open('爱.jpg')
+
 
 def resize(img, size):
     img = img.resize(size, Image.BICUBIC)
