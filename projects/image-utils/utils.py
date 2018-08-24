@@ -9,6 +9,15 @@ def resize(img, size):
     return img
 
 def padding(img, size, RGB):
+    """
+    Args:
+        img: PIL.Image object
+        size: target  (height, width)
+        RGB: boolean, whether in RGB format or not
+    
+    Returns:
+        PIL.Image object with margin padding
+    """
     data = np.array(img)
 
     if RGB:
