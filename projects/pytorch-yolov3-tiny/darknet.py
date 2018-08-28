@@ -116,10 +116,8 @@ def create_modules(blocks):
             module.add_module('route_{}'.format(index), route)
             if end < 0:
                 filters = output_filters[index + start] + output_filters[index + end]
-                print('route_{}'.format(index), f"end is {end}" , filters)
             else: # not end
                 filters = output_filters[index + start]
-                print('route_{}'.format(index), f"end is {end}" , filters)
         
         elif x['type'] == 'shortcut':
             shortcut = EmptyLayer()
@@ -228,8 +226,6 @@ class Darknet(nn.Module):
 
 
 if __name__ == '__main__':
-    import numpy as np
-
     model = Darknet('./cfg/yolov3-tiny.cfg')
     inputs = get_test_input()
     pred = model(inputs, torch.cuda.is_available())
