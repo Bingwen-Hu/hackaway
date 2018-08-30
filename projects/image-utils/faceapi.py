@@ -37,7 +37,7 @@ def pastex25(img):
     width, height = img.size
     imgx9 = padding(img, (height*5, width*5), True)
     angles = [
-        -15, -30, -45, -60, -75, -90, -105, -120, -135, -150, -165, -180, 
+        -15, -30, -45, -60, -75, -90, -105, -120, -135, -150, -165, -180,
         15, 30, 45, 60, 75, 90, 105, 120, 135, 150, 165, 180,
     ]
     xys = [
@@ -79,9 +79,9 @@ def judge(clist, imgpath):
     if first_count and first_count > 1:
         return first_char, 1
     return None, 2
-    
 
-imagedirs = glob.glob("/home/mory/Pictures/crop/*.jpg") 
+
+imagedirs = glob.glob("/home/mory/Pictures/crop4/*.jpg")
 import random
 import pprint
 import time
