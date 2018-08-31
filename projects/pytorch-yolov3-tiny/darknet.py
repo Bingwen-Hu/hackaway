@@ -252,7 +252,6 @@ class Darknet(nn.Module):
         except:
             return 0
 
-            
     def load_weights(self, weightfile):
         fp = open(weightfile, "rb")
         header = np.fromfile(fp, dtype=np.int32, count=5)
