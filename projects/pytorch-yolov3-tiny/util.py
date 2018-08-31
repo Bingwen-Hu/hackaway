@@ -5,7 +5,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.autograd import Variable
 import numpy as np
-
+from PIL import Image
 
 def predict_transform(prediction, input_dim, anchors, num_classes, CUDA=True):
     batch_size = prediction.size(0)
@@ -150,3 +150,21 @@ def unique(tensor):
     tensor_res = tensor.new(unique_tensor.shape)
     tensor_res.copy_(unique_tensor)
     return tensor_res
+
+
+def letterbox_image(img, input_dim):
+    '''resize image with unchanged aspect ratio using padding'''
+    img_w, img_h = img.size
+    w, h = input_dim
+    new_w = int(img_w * min(w/img_w, h/img_h))
+    new_h = int(img_h * min(w/img_w, h/img_h))
+    resized_image = img.resize((new_w, new_h), Image.BICUBIC)
+    canvas = Image.new('RGB', (w, h), (128, 128, 128))
+    canvas.paste(resized_image, box=[(w-new_w)//2, (h-new_h)//2, (w-new_w)//2 + new_w, (h-new_h)//2 + new_h])
+    return canvas
+
+def prep_image(img, input_dim):
+    img = letterbox_image(img, (input_dim, input_dim))
+    imgdata = np.array(img).transpose((2, 0, 1)).copy()
+    imgdata = torch.from_numpy(imgdata).float().div(255.0).unsqueeze(0)
+    return imgdata

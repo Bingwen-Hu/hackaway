@@ -293,6 +293,7 @@ if __name__ == '__main__':
     
 
     from util import write_results
-    results = write_results(pred, 0.8, 80)
+    results = write_results(pred, 0.5, 80)
+    print(results)
     
     
