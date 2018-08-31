@@ -11,10 +11,8 @@ import os
 import os.path as osp
 from darknet import Darknet
 
-import pandas as pd
 import random 
 import pickle as pkl
-import itertools
 
 
 
@@ -29,6 +27,7 @@ def arg_parse():
     parser.add_argument("--weights", dest='weightsfile', help="weightsfile", default="yolov3.weights", type=str)
     parser.add_argument("--reso", dest='reso', help="Input resolution of the network. Increase to increase accuracy. Decrease to increase speed", default="416", type=str)
     parser.add_argument("--scales", dest="scales", help="Scales to use for detection", default="1,2,3", type=str)
+    parser.add_argument("--names", dest='names', help='names file', default='data/coco.names', type=str)
     return parser.parse_args()
 
 if __name__ ==  '__main__':
@@ -41,8 +40,8 @@ if __name__ ==  '__main__':
     start = 0
     CUDA = torch.cuda.is_available()
 
-    num_classes = 1
-    classes=load_classes('data/mory.names') 
+    classes = load_classes(args.names) 
+    num_classes = len(classes)
 
     #Set up the neural network
     print("Loading network.....")
@@ -124,9 +123,9 @@ if __name__ ==  '__main__':
         else:
             output=torch.cat((output,prediction))
 
-        for im_num, image in enumerate(imlist[i*batch_size: min((i +  1)*batch_size, len(imlist))]):
-            im_id=i*batch_size + im_num
-            objs=[classes[int(x[-1])] for x in output if int(x[0]) == im_id]
+        for im_num, image in enumerate(imlist[i*batch_size: min((i+1)*batch_size, len(imlist))]):
+            im_id = i*batch_size + im_num
+            objs = [classes[int(x[-1])] for x in output if int(x[0]) == im_id]
             print("{0:20s} predicted in {1:6.3f} seconds".format(image.split("/")[-1], (end - start)/batch_size))
             print("{0:20s} {1:s}".format("Objects Detected:", " ".join(objs)))
             print("----------------------------------------------------------")
@@ -189,5 +188,5 @@ if __name__ ==  '__main__':
     print("{:25s}: {:2.3f}".format("Drawing Boxes", end - draw))
     print("{:25s}: {:2.3f}".format("Average time_per_img", (end - load_batch)/len(imlist)))
     print("----------------------------------------------------------")
-    
+
     torch.cuda.empty_cache()
