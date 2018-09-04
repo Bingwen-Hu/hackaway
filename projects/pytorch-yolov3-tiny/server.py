@@ -26,6 +26,12 @@ def locate():
         return jsonify(coords)
     return render_template('locate.html')
 
+@app.route('/local/<name>', methods=['GET'])
+def local(name):
+    """This method using local file system to 
+    exchange image"""
+    coords = predict(f'{name}.jpg')
+    return jsonify(coords)
 
 
 if __name__ == '__main__':
