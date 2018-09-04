@@ -22,42 +22,39 @@ def arg_parse():
     return parser.parse_args()
 
 
-if __name__ ==  '__main__':
-    args = arg_parse()
-    scales = args.scales
-    image = args.image
-    batch_size = int(args.bs)
-    confidence = float(args.confidence)
-    nms_thesh = float(args.nms_thresh)
-    classes = load_classes(args.names) 
-    num_classes = len(classes)
+args = arg_parse()
+scales = args.scales
 
-    # Set up the neural network
-    print("Loading network.....")
-    model = Darknet(args.cfgfile)
-    model.load_weights(args.weightsfile)
-    print("Network successfully loaded")
-    
-    model.net_info["height"] = args.reso
-    inp_dim = int(model.net_info["height"])
-    assert inp_dim % 32 == 0 
-    assert inp_dim > 32
+batch_size = int(args.bs)
+confidence = float(args.confidence)
+nms_thesh = float(args.nms_thresh)
+classes = load_classes(args.names) 
+num_classes = len(classes)
 
-    # Set the model in evaluation mode
-    model.eval()
-    
-    imlist = [args.image]
+# Set up the neural network
+print("Loading network.....")
+model = Darknet(args.cfgfile)
+model.load_weights(args.weightsfile)
+print("Network successfully loaded")
+
+model.net_info["height"] = args.reso
+inp_dim = int(model.net_info["height"])
+assert inp_dim % 32 == 0 
+assert inp_dim > 32
+
+# Set the model in evaluation mode
+model.eval()
+
+def predict(image, testing=False):
+    imlist = [image]
     batches = list(map(prep_image, imlist, [inp_dim for x in range(len(imlist))]))
     im_batches = [x[0] for x in batches]
     orig_ims = [x[1] for x in batches]
     im_dim_list = [x[2] for x in batches]
     im_dim_list = torch.FloatTensor(im_dim_list).repeat(1, 2)
-    
-
     with torch.no_grad():
         prediction = model(Variable(im_batches[0]), False)
     prediction = write_results(prediction, confidence, num_classes, nms=True, nms_conf=nms_thesh)
-
     output = prediction
 
     im_dim_list = torch.index_select(im_dim_list, 0, output[:,0].long())
@@ -73,3 +70,17 @@ if __name__ ==  '__main__':
         output[i, [2,4]] = torch.clamp(output[i, [2,4]], 0.0, im_dim_list[i,1])
     
     coord = [output_[1:5].tolist() for output_ in output]
+
+    if testing is True:
+        from PIL import Image
+        img = Image.open(image)
+        for i, xy in enumerate(coord):
+            crop = img.crop(xy)
+            crop.save(f'{i}.jpg')
+            
+    return coord
+
+if __name__ ==  '__main__':
+    path = 'test.jpg'
+    coord = predict(path, testing=True)
+    print(coord)
