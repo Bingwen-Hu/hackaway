@@ -18,17 +18,14 @@ def int2text(index, wordset):
     return wordset[index]
 
 
-def get_X(path, size, CHW=True):
+def get_X(path, size):
     """resize, convert to gray, flatten and normalizes
     random_red: random change the image to red.
     """
     img = Image.open(path)
     img = img.resize(size).convert('L')
     img = np.array(img)
-    if CHW:
-        img = img[np.newaxis, :, :] / 255
-    else:
-        img = img[:, :, np.newaxis] / 255
+    img = img[np.newaxis, :, :] / 255
     return img
 
 
@@ -37,7 +34,7 @@ def get_Y(path, wordset):
     """
     basename = os.path.basename(path)
     text = basename[0]
-    vec = text2int(text, wordset)
+    vec = text2vec(text, wordset)
     return vec
 
 
@@ -63,7 +60,7 @@ def train_data_iterator():
     size = (args.image_size, args.image_size)
     data_iter = data_iterator(args.train_data_dir, args.batch_size, args.epochs)
     for data in data_iter:
-        X = [get_X(datum, size, CHW=False) for datum in data]
+        X = [get_X(datum, size) for datum in data]
         y = [get_Y(datum, args.wordset) for datum in data]
         yield X, y
 
@@ -76,6 +73,6 @@ def test_data_helper(batch_size=None):
     if batch_size is not None:
         np.random.shuffle(data)
         data = data[:batch_size]
-    X = [get_X(datum, size, CHW=False) for datum in data]
+    X = [get_X(datum, size) for datum in data]
     y = [get_Y(datum, args.wordset) for datum in data]
     return X, y

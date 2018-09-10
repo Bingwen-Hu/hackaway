@@ -26,7 +26,7 @@ class Net(nn.Module):
         self.bn5 = nn.BatchNorm2d(512)
         self.mp = nn.MaxPool2d(2)
         self.dropout = nn.Dropout2d(0.5)
-        self.fc1 = nn.Linear(512 * 4 * 4, 1024)
+        self.fc1 = nn.Linear(512, 1024)
         self.fc2 = nn.Linear(1024, output)
         
     
