@@ -14,7 +14,7 @@ def arg_parse():
     parser=argparse.ArgumentParser(description='Pytorch OCR')
     parser.add_argument("--wordset", dest="wordset", default=WORDSET)
     parser.add_argument("--wordset_size", dest="wordset_size", default=len(WORDSET))
-    parser.add_argument("--image_size", dest="image_size", default=28)
+    parser.add_argument("--image_size", dest="image_size", default=64)
     parser.add_argument("--batch_size", dest='batch_size', default=128)
     parser.add_argument("--epochs", dest="epochs", default=20)
     parser.add_argument("--train_data_dir", dest='train_data_dir', default="E:/captcha-data/dataset/train")
