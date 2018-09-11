@@ -12,8 +12,8 @@ from preprocess import train_data_iterator, test_data_helper
 if __name__ == '__main__':
     net = Net(args.wordset_size)
     net.train()
-    loss_fn = nn.BCEWithLogitsLoss(reduce=True)
-    optimizer = optim.Adam(net.parameters())
+    loss_fn = nn.CrossEntropyLoss()
+    optimizer = optim.RMSprop(net.parameters())
     
     for epoch_ in range(args.epochs):
         for batch_idx, (data, target) in enumerate(train_data_iterator()):
