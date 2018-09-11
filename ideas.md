@@ -1,11 +1,9 @@
 ### Ideas for projects
 
-- Mask-RCNN can do the recognize
-
-Plans:
-- Base on matterport repo Mask-RCNN, using Keras-API to build my own Mask-RCNN
-- using pytorch rewrite the captcha recognizer
-- write a music recognizer
-
-Note:
-- never forget your mission. To be an excellent hacker in Kaggle and Tianchi.
+- https://www.pyimagesearch.com/2018/05/07/multi-label-classification-with-keras/
+- https://github.com/thtrieu/darkflow
+- https://github.com/XifengGuo/CapsNet-Keras
+- https://github.com/ilovin/lstm_ctc_ocr
+- https://github.com/eragonruan/text-detection-ctpn
+- https://github.com/szagoruyko/diracnets
+- https://github.com/fizyr/keras-retinanet
