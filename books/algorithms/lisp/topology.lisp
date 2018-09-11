@@ -1,4 +1,4 @@
-;;; say we hava a graph
+;;; say we have a graph
 ;;; 
 ;;;         C 
 ;;;       /   \

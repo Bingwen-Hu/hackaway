@@ -7,7 +7,6 @@ with open('wordset/words.txt', encoding='utf-8') as fwords:
     words = fwords.read().strip()
 
 WORDSET = words
-WORDSET = "盛串民信剧房佳初用同原唐康鬼借店厨息临园国力往柜中品懂油生面"
 
 
 def arg_parse():
