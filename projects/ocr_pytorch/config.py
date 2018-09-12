@@ -17,7 +17,7 @@ def arg_parse():
     parser.add_argument("--batch_size", dest='batch_size', default=128)
     parser.add_argument("--epochs", dest="epochs", default=20)
     parser.add_argument("--train_data_dir", dest='train_data_dir', default="D:/Mory/ocr_sina/train/original")
-    parser.add_argument("--test_data_dir", dest='test_data_dir', default='D:/Mory/ocr_sina/train/test')
+    parser.add_argument("--test_data_dir", dest='test_data_dir', default='E:/captcha-data/dataset')
     parser.add_argument("--restore", dest='restore', default=False)
     parser.add_argument("--eval_steps", dest="eval_steps", default=100)
     parser.add_argument("--save_steps", dest="save_steps", default=1000)
