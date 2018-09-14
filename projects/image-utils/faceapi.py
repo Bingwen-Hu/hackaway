@@ -80,24 +80,6 @@ def judge(clist, imgpath):
         return first_char, 1
     return None, 2
 
-
-imagedirs = glob.glob("/home/mory/Pictures/crop4/*.jpg")
-import random
-import pprint
-import time
-# random.shuffle(imagedirs)
-for imgpath in imagedirs:
-    img = Image.open(imgpath)
-    imgx9 = pastex25(img)
-    imgx9.save('temp.jpg')
-    res = char_detect(api_key, api_secret, 'temp.jpg')
-    clist = get_result(res)
-    char, stage = judge(clist, imgpath)
-    if stage == 0:
-        os.rename(imgpath, f"/home/mory/Pictures/rec/{char}{uuid1()}.jpg")
-    elif stage == 1:
-        os.rename(imgpath, f"/home/mory/Pictures/rec2/{char}{uuid1()}.jpg")
-    else:
-        os.rename(imgpath, f"/home/mory/Pictures/difficult/{uuid1()}.jpg")
-    pprint.pprint(res)
-    time.sleep(1.5)
+if __name__ == '__main__':
+    img = 'E:/captcha-data/images/20/1M73AE.png'
+    r = char_detect(api_key, api_secret, img)
