@@ -1,5 +1,5 @@
 """ utility for image padding to a certain size, rotate or flip """
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFilter
 import numpy as np
 
 
@@ -50,15 +50,8 @@ def rotate(img, angle):
     img = img.rotate(angle, resample=Image.BICUBIC)
     return img
 
-
-from PIL import ImageFilter
 def blur(img):
     return img.filter(ImageFilter.SMOOTH)
-    
-
-import numpy as np
-from PIL import Image, ImageDraw
-
 
 def pixel_replace(image, threshold, replace, larger=False):
     """replace certain pixel
@@ -107,7 +100,6 @@ def rotate(image, resample=None, angle=None):
         resample = Image.BICUBIC
     image = image.rotate(angle, resample)
     return image
-
 
 
 def remove_dark(img):
