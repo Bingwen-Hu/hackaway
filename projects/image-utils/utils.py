@@ -1,7 +1,7 @@
 """ utility for image padding to a certain size, rotate or flip """
 from PIL import Image, ImageDraw, ImageFilter
 import numpy as np
-
+from random import choice
 
 
 def resize(img, size):
@@ -83,7 +83,12 @@ def add_spot(image, num, color):
         spotted_image PIL.Image object
     """
     data = np.array(image)
-    height, width = data.shape
+
+    try:
+        height, width, channels = data.shape
+    except:
+        height, width = data.shape
+
     all_pos = [[i, j] for i in range(height) for j in range(width)]
     np.random.shuffle(all_pos)
     use_pos = all_pos[:num]
@@ -102,21 +107,24 @@ def rotate(image, resample=None, angle=None):
     return image
 
 
-def remove_dark(img):
+def remove_dark(img, fill):
     data = np.array(img)
-    data_ = np.where(data==0, 255, data)
+    data_ = np.where(data==0, fill, data)
     img_ = Image.fromarray(data_)
     return img_
 
 def add_arc(img):
     dr = ImageDraw.Draw(img)
-    randint = np.random.randint(0, 4)
+    randint = np.random.randint(0, 2)
+    fillcolors = [(122, 64, 48), (116, 42, 31), (90, 86, 48), (92, 63, 33), (80, 60, 71)]
+    c = choice(fillcolors)
+    offset = np.random.randint(-10, 10)
     if randint == 0:
-        dr.arc(((3,3), (90, 35)), 50, -200, fill=118)
+        dr.arc([0, 0+offset, 140, 44], 50, -200, fill=c)
     elif randint == 1:
-        dr.arc(((3,3), (90, 35)), -120, -50, fill=118)
+        dr.line((0, 20+offset, 140, 20), width=2, fill=c)
     elif randint == 2:
-        dr.line(((0, 20), (100, 20)), width=2, fill=118)
+        dr.line((0, 20+offset, 100, 20), width=2, fill=c)
+        
     return img
-
 

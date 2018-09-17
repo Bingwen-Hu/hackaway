@@ -37,13 +37,13 @@ def generate(mode, text, font, imgsize, position, bgcolor, fgcolor):
     return image
 
 
-
+from utils import remove_dark, add_arc, add_spot
 def generate_chars(chars, fonts, font_sizes, imgsize, init_xy, bgcolor, fgcolors):
     """在图片上生起多个字符的验证码"""
     image = Image.new('RGB', imgsize, bgcolor)
     draw_handle = ImageDraw.Draw(image)
     xy = init_xy
-    
+    angle = 10
     for c in chars:
         font_size = choice(font_sizes)
         font = font_setup(choice(fonts), font_size)
@@ -51,17 +51,25 @@ def generate_chars(chars, fonts, font_sizes, imgsize, init_xy, bgcolor, fgcolors
         offset = choice([5, 7, 8, 9, 10])
         draw_handle.text(xy=xy, text=c, fill=fgcolor, font=font)
         xy = xy[0]+font_size//2+offset, xy[1]
+        image = image.rotate(angle, Image.BICUBIC)
+        image = remove_dark(image, 170)
+        angle = -angle
+        draw_handle = ImageDraw.Draw(image)
+    image = add_arc(image)
+    image = add_spot(image, 30, choice(fgcolors))
     return image
 
 if __name__ == '__main__':
+    from uuid import uuid1
     chars = string.ascii_uppercase + string.digits
     fonts = glob.glob('E:/fonts/sogou/*')
     imgsize = (140, 44)
     init_xys = [(1, 1), (4, 1), (10, 1)]
-    font_sizes = [18, 24, 32, 30]
+    font_sizes = [15, 18, 24, 32, 30]
     fgcolors = [(122, 64, 48), (116, 42, 31), (90, 86, 48), (92, 63, 33), (80, 60, 71)]
     num = 6
     
-    char6 = [choice(chars) for _ in range(num)]
-    img = generate_chars(char6, fonts, font_sizes, imgsize, init_xys[0], (170, 170, 170), fgcolors)
-    img.save('gen.png')
+    for i in range(100000):
+        char6 = ''.join([choice(chars) for _ in range(num)])
+        img = generate_chars(char6, fonts, font_sizes, imgsize, init_xys[0], (170, 170, 170), fgcolors)
+        img.save(f'E:/captcha-data/sogou/gen/{char6}{uuid1()}.png')
