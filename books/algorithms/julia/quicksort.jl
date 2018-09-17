@@ -28,14 +28,17 @@ function partition(lst, p, r, random=false)
     return i
 end
 
-lst = [8, 11, 2, 1, 4, 19, 9, 14, 13, 5, 6, 22, ]
-len = length(lst)
+
 function quicksort(lst, p, r, random=false)
     if p < r
         q = partition(lst, p, r, random)
-        println(q)
         quicksort(lst, p, q-1)
         quicksort(lst, q+1, r)
     end
 end
 
+lst = [8, 11, 2, 1, 4, 19, 9, 14, 13, 5, 6, 22, ]
+len = length(lst)
+println(lst)
+quicksort(lst, 1, len, true)
+println(lst)
