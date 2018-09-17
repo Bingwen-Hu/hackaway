@@ -1,12 +1,35 @@
-lst = [2, 3, 8, 1, 4, 9, 14, 13, 5, 6]
-len = length(lst)
-
 function randint(start, end_)
     r = rand() * (end_ - start)
     r = floor(r) + start
     r = Int(r)
 end
 
-function partition(lst)
-    
+function swap(lst, i, j)
+    t = lst[i]
+    lst[i] = lst[j]
+    lst[j] = t
+end
+
+
+function partition(lst, p, r)
+    x = lst[r]
+    i = p
+    for j in p:r-1
+        if lst[j] <= x
+            swap(lst, j, i)
+            i += 1
+        end
+    end
+    swap(lst, r, i)
+    return i
+end
+
+lst = [8, 11, 2, 1, 4, 19, 9, 14, 13, 5, 6, 22, ]
+len = length(lst)
+function quicksort(lst, p, r)
+    if p < r
+        q = partition(lst, p, r)
+        quicksort(lst, p, q-1)
+        quicksort(lst, q+1, r)
+    end
 end
