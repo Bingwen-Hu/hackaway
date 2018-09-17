@@ -34,7 +34,7 @@ def get_Y(path, wordset):
     """
     basename = os.path.basename(path)
     text = basename[0]
-    vec = text2vec(text, wordset)
+    vec = text2int(text, wordset)
     return vec
 
 

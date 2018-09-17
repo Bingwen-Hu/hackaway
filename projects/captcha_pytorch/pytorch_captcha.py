@@ -22,18 +22,20 @@ class Net(nn.Module):
         self.conv4 = nn.Conv2d(128, 256, 3, stride=1, padding=1)
         self.mp = nn.MaxPool2d(2)
         self.dropout = nn.Dropout2d(0.5)
-        self.fc = nn.Linear(256 * 2 * 6, output)
+        self.fc1 = nn.Linear(256 * 8 * 20, 1024)
+        self.fc2 = nn.Linear(1024, output)
         
     def forward(self, x):
-        in_size = x.size(0)                     # (bs,   1, 40, 100)
-        x = F.relu(self.mp(self.conv1(x)))      # (bs,  32, 20,  50)      
-        x = F.relu(self.mp(self.conv2(x)))      # (bs,  64, 10,  25)
-        x = F.relu(self.mp(self.conv3(x)))      # (bs, 128,  5,  12)
-        x = F.relu(self.mp(self.conv4(x)))      # (bs, 256,  2,   6)
+        in_size = x.size(0)                     
+        x = F.relu((self.conv1(x)))             
+        x = F.relu(self.mp(self.conv2(x)))      
+        x = F.relu(self.mp(self.conv3(x)))      
+        x = F.relu(self.mp(self.conv4(x)))      
         x = self.dropout(x)
         x = x.view(in_size, -1)
-        x = self.fc(x)
-        return F.logsigmoid(x)
+        x = self.fc1(x)
+        x = self.fc2(x)
+        return F.sigmoid(x)
 
 
 class Captcha(data.Dataset):
@@ -95,61 +97,22 @@ def train(net, epoch):
                     epoch_ + 1, batch_idx * len(data), len(train_loader.dataset),
                     100. * batch_idx / len(train_loader), loss.item()
                 ))
-        test(net)
-
-def test(net):
-    net.eval()
-    correct = 0
-    count = 0
-    with torch.no_grad():
-        for data, target in test_loader:
-            
-            data, target = Variable(data), Variable(target)
-            output = net(data)
-
-            pred = output.view(-1, 4, 26)
-            pred = torch.argmax(pred, dim=0)
-            target = target.view(-1, 4, 26)
-            target = torch.argmax(target, dim=0)
-
-            count += target.size()[0]
-            correct += (pred == target).sum().item()
-        accuracy = correct / count
         
-        
-        best_model_wts = net.state_dict()
-        torch.save(best_model_wts, "best_model_wts%.3f.pkl" % accuracy)
-    
-        print("total accuracy is {}".format(accuracy))
+
 
 
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--batch_size', help="batch size of model training", type=int, default=64)
-    parser.add_argument('--epoch', help="training epoch", type=int, default=10000)
-    parser.add_argument('--image_width', help='width of training image', type=int, default=100)
-    parser.add_argument('--image_height', help='height of training image', type=int, default=40)
-    parser.add_argument('--train_data_dir', help='directory of train data set', type=str, default='E:/captcha-data/dwnews/train/bigtrain')
-    parser.add_argument('--test_data_dir', help='directory of testing', type=str, default='E:/captcha-data/dwnews/test')
-    parser.add_argument('--captcha_size', help='number of captcha character', type=int, default=4)
+    parser.add_argument('--epoch', help="training epoch", type=int, default=200)
+    parser.add_argument('--image_width', help='width of training image', type=int, default=160)
+    parser.add_argument('--image_height', help='height of training image', type=int, default=60)
+    parser.add_argument('--train_data_dir', help='directory of train data set', type=str, default='E:/captcha-data/sogou/gen')
+    parser.add_argument('--test_data_dir', help='directory of testing', type=str, default='E:/captcha-data/images/test')
+    parser.add_argument('--captcha_size', help='number of captcha character', type=int, default=6)
     args = parser.parse_args()
-    args.charset = 'abcdefghijklmnopqrstuvwxyz'
+    args.charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
     return args
-
-
-def predict():
-    state_dict = torch.load("best_model_wts1.029.pkl")
-    net = Net(104)
-    net.load_state_dict(state_dict)
-    img = Image.open("E:/captcha-data/dwnews/test/kjru.jpg")
-    img = img.resize((100, 40))
-    img = np.array(img) / 255
-    data = Variable(torch.FloatTensor(img).view(-1, 1, 40, 100))
-    result = net(data)
-    result = result.view(4, 26)
-    pred = torch.argmax(result, dim=0)
-    print(pred)
-
 
     
 if __name__ == "__main__":
