@@ -30,7 +30,7 @@ def paste(mode, bgcolor, piecepaths, size, savepath=None):
 
     for c, p in zip(codes, pieces):            
         h_ = np.random.randint(0, 7)
-        v_ = np.random.randint(-3, 3)
+        v_ = np.random.randint(-1, 3)
         w, h = p.size
         image.paste(p, [h_offset, v_offset, w+h_offset, h+v_offset])
         h_offset = h_offset + w + h_
@@ -49,8 +49,10 @@ if __name__ == '__main__':
     import glob 
     piecepaths = glob.glob('E:/captcha-data/images/crop/*.png')
     
-    pieces = random_select_pieces(piecepaths, num=6)
+    
     size = (140, 44)
 
-    image = paste('RGB', (170, 170, 170), pieces, size, './')
+    for i in range(100000):
+        pieces = random_select_pieces(piecepaths, num=6)
+        image = paste('RGB', (170, 170, 170), pieces, size, 'E:/captcha-data/sogou/rgen/')
     
