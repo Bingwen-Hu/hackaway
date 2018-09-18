@@ -22,7 +22,7 @@ class Net(nn.Module):
         self.conv4 = nn.Conv2d(128, 256, 3, stride=1, padding=1)
         self.mp = nn.MaxPool2d(2)
         self.dropout = nn.Dropout2d(0.5)
-        self.fc1 = nn.Linear(256 * 8 * 20, 1024)
+        self.fc1 = nn.Linear(256 * 7 * 20, 1024)
         self.fc2 = nn.Linear(1024, output)
         
     def forward(self, x):
@@ -83,12 +83,12 @@ class Captcha(data.Dataset):
 
 def train(net, epoch):
     net.train()
+    loss_fn = torch.nn.BCEWithLogitsLoss(reduce=True)
     for epoch_ in range(epoch):
         for batch_idx, (data, target) in enumerate(train_loader):
             data, target = Variable(data), Variable(target)
             optimizer.zero_grad()
             output = net(data)
-            loss_fn = torch.nn.BCEWithLogitsLoss(reduce=True)
             loss = loss_fn(output, target)
             loss.backward()
             optimizer.step()
