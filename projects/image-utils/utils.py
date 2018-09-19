@@ -128,3 +128,30 @@ def add_arc(img):
         
     return img
 
+def add_triangle(imgdata, num=1, color=0):
+    """
+        y = (ax + theta) + A
+        x -- width
+        y -- height
+    """
+    height, width = imgdata.shape[:2]
+    A = height // 2
+    theta = np.random.randint(-90, 90)
+    w = 2 * np.pi * num / width
+    xs = list(range(width))
+    ys = [int(A * np.sin(x * w + theta)) for x in xs]
+    
+    for (x, y) in zip(xs, ys):
+        try:
+            imgdata[y][x-1:x+1] = color
+        except:
+            imgdata[y][x] = color
+    return imgdata
+
+
+if __name__ == '__main__':
+    img = Image.new('RGB', (100, 40), color=(255, 255, 255))
+    data = np.array(img)
+    data2 = add_triangle(data, num=3)
+    img2 = Image.fromarray(data2)
+    img2.save('test.png')
