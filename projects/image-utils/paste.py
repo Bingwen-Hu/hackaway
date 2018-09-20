@@ -44,15 +44,35 @@ def paste(mode, bgcolor, piecepaths, size, savepath=None):
     return image
 
 
+def sogou_paste(piecepaths, savepath=None):
+    image = Image.new('RGB', (140, 44), color=(170, 170, 170))
+    codes = [os.path.basename(path)[0] for path in piecepaths]
+    pieces = [Image.open(path) for path in piecepaths]
+
+    x = 0
+    for p in pieces:
+        w, _ = p.size
+        image.paste(p, [x, 0, x+w, 44])
+        x = x + w
+
+    if savepath is not None:
+        code = ''.join(codes)
+        savepath = os.path.join(savepath, f"{code}{uuid1()}.jpg")
+        image.save(savepath)
+
+    return image
+
 
 if __name__ == '__main__':
     import glob 
-    piecepaths = glob.glob('E:/captcha-data/images/crop/*.png')
+    import random
     
+    heads = glob.glob('E:/captcha-data/images/new500/crops/heads/*.png')
+    tails = glob.glob('E:/captcha-data/images/new500/crops/tails/*.png')
     
-    size = (140, 44)
-
     for i in range(100000):
-        pieces = random_select_pieces(piecepaths, num=6)
-        image = paste('RGB', (170, 170, 170), pieces, size, 'E:/captcha-data/sogou/rgen/')
-    
+        pieces = random_select_pieces(heads, 5)
+        tail = random.choice(tails)
+        pieces.append(tail)
+        random.shuffle(pieces)
+        image = sogou_paste(pieces, "E:/captcha-data/sogou/rgen4/")
