@@ -17,9 +17,12 @@ config.channel = 1
 # training/testing setting
 config.train_dir = ''
 config.test_dir = ''
-config.batch_size = 64
-config.eval_step = 100
+
 config.epochs = 100
+config.batch_size = 64
+
+config.eval_step = 100
 config.model_path = 'best.pth'
 config.baseline = 0.5
+config.restore = False
 
