@@ -25,4 +25,3 @@ config.eval_step = 100
 config.model_path = 'best.pth'
 config.baseline = 0.5
 config.restore = False
-
