@@ -119,4 +119,4 @@ if __name__ == '__main__':
         mode = modes[r]
         dictpaths = [(m, random.choice(lst)) for (m, lst) in zip(mode, combine)]
         random.shuffle(dictpaths)
-        image = sogou_paste2(dictpaths, "E:/captcha-data/sogou/rgen5/")
+        image = sogou_paste2(dictpaths, "E:/captcha-data/sogou/rgen6/")
