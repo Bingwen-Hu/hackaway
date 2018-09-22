@@ -154,3 +154,23 @@ class DenseNet(nn.Module):
         out = F.avg_pool2d(out, kernel_size=self.avgpool_size).view(features.size(0), -1)
         out = self.classifier(out)
         return out
+
+if __name__ == '__main__':
+    inputs = torch.randn([10, 3, 64, 64])
+    depth = 22
+    # Get densenet configuration
+    if (depth - 4) % 3:
+        raise Exception('Invalid depth')
+    block_config = [(depth - 4) // 6 for _ in range(3)]
+
+    model = DenseNet(
+        growth_rate=24,
+        block_config=block_config,
+        num_classes=10,
+        small_inputs=True,
+        efficient=True,
+    )
+    print(model)
+    model.train()
+    output = model(inputs)
+    print(output.size)
