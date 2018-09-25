@@ -71,7 +71,7 @@ def train_data_iterator():
     data_iter = data_iterator(config.train_dir, config.batch_size, config.epochs)
     for data in data_iter:
         X = [get_X(datum, size) for datum in data]
-        y = [get_Y(datum, config.charset) for datum in data]
+        y = [get_Y(datum, config.charset, config.charlen) for datum in data]
         yield X, y
 
 # most ugly function
@@ -84,5 +84,5 @@ def test_data_helper(batch_size=None):
         np.random.shuffle(data)
         data = data[:batch_size]
     X = [get_X(datum, size) for datum in data]
-    y = [get_Y(datum, config.charset) for datum in data]
+    y = [get_Y(datum, config.charset, config.charlen) for datum in data]
     return X, y
