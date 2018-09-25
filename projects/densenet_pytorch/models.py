@@ -91,7 +91,7 @@ class DenseNet(nn.Module):
     """
     def __init__(self, growth_rate=12, block_config=(16, 16, 16), compression=0.5,
                  num_init_features=24, bn_size=4, drop_rate=0,
-                 num_classes=10, small_inputs=True, efficient=False):
+                 num_classes=10, small_inputs=False, efficient=True):
 
         super(DenseNet, self).__init__()
         assert 0 < compression <= 1, 'compression of densenet should be between 0 and 1'
@@ -154,25 +154,3 @@ class DenseNet(nn.Module):
         out = F.avg_pool2d(out, kernel_size=self.avgpool_size).view(features.size(0), -1)
         out = self.classifier(out)
         return out
-
-if __name__ == '__main__':
-    from config import config
-    inputs = torch.randn([10, 3, 140, 140])
-    depth = 22
-    # Get densenet configuration
-    if (depth - 4) % 3:
-        raise Exception('Invalid depth')
-    block_config = [(depth - 4) // 6 for _ in range(3)]
-
-    model = DenseNet(
-        num_init_features=3,
-        growth_rate=24,
-        block_config=block_config,
-        num_classes=config.charlen,
-        small_inputs=False,
-        efficient=True,
-    )
-    print(model)
-    model.train()
-    output = model(inputs)
-    print(output.size())
