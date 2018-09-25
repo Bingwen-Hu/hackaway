@@ -6,13 +6,14 @@ class Config():
 config = Config()
 
 # captcha property settings
-config.charset = '12345678ABCDEFHIJKMPRSTvXY'
+config.charset = '12345678ABCDEFHIJKMPRSTVXY'
+config.charlen = len(config.charset)
 config.captlen = 6
 
 # network setting
 config.width = 140
-config.height = 44
-config.channel = 1
+config.height = 140
+config.channel = 3
 
 # training/testing setting
 config.train_dir = ''
