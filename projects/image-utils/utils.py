@@ -2,49 +2,26 @@
 from PIL import Image, ImageDraw, ImageFilter
 import numpy as np
 from random import choice
+import cv2
+import matplotlib.pyplot as plt
+
+
+
+def padding(img, size):
+    '''resize image with unchanged aspect ratio using padding'''
+    img_w, img_h = img.shape[1], img.shape[0]
+    w, h = size
+    new_w = int(img_w * min(w/img_w, h/img_h))
+    new_h = int(img_h * min(w/img_w, h/img_h))
+    resized_image = cv2.resize(img, (new_w, new_h), interpolation = cv2.INTER_CUBIC)
+    canvas = np.full((h, w, 3), 128)
+    canvas[(h-new_h)//2:(h-new_h)//2 + new_h,(w-new_w)//2:(w-new_w)//2 + new_w, :] = resized_image
+    return canvas
 
 
 def resize(img, size):
     img = img.resize(size, Image.BICUBIC)
     return img
-
-def padding(img, size, RGB):
-    """
-    Args:
-        img: PIL.Image object
-        size: target  (height, width)
-        RGB: boolean, whether in RGB format or not
-    
-    Returns:
-        PIL.Image object with margin padding
-    """
-    data = np.array(img)
-
-    if RGB:
-        rows, cols, _ = data.shape
-        const = (0, 0, 0)
-    else:
-        rows, cols = data.shape
-        const = 0
-    
-    height, width = size
-    assert height >= rows, "padding size must larger than original size"
-
-    top = (height - rows) / 2
-    left = (width - cols) / 2
-    right = int(left)
-    bottom = int(top)
-    if type(left) != type('int'):
-        left = right + 1
-    if type(top) != type('int'):
-        top = bottom + 1
-    if RGB:
-        padding_tuple = ((top, bottom), (left, right), (0, 0))
-    else:
-        padding_tuple = ((top, bottom), (left, right))
-    newdata = np.pad(data, padding_tuple, mode='constant')
-    return Image.fromarray(newdata)
-
 
 def rotate(img, angle):
     img = img.rotate(angle, resample=Image.BICUBIC)
