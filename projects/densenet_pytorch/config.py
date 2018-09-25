@@ -6,7 +6,7 @@ class Config():
 config = Config()
 
 # captcha property settings
-config.charset = '12345678ABCDEFHJKMPRSTXY'
+config.charset = '12345678ABCDEFHIJKMPRSTvXY'
 config.captlen = 6
 
 # network setting
