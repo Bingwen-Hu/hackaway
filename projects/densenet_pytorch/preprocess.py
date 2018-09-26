@@ -2,7 +2,7 @@ import numpy as np
 import os
 import cv2
 
-
+from config import config
 
 def padding(img, size):
     '''resize image with unchanged aspect ratio using padding'''
@@ -18,14 +18,25 @@ def padding(img, size):
 
 
 def text2vec(text, charset):
-    vec = np.zeros(len(charset))
-    index = charset.index(text)
-    vec[index] = 1
+    """Function used to transform text string to a numpy array vector.
+    :param text: namely the captcha code.
+    :param charset: charset used by the specific problem.
+    """
+    def char2vec(c):
+        y = np.zeros((len(charset),))
+        y[charset.index(c)] = 1.0
+        return y
+    try:
+        vec = np.vstack([char2vec(c) for c in text])
+    except:
+        print(text)
+    vec = vec.flatten()
     return vec
 
 
+
 def vec2text(vec, charset):
-    text = ''.join([charset[i] for i in index])
+    text = ''.join([charset[i] for i in vec])
     return text
 
 
@@ -39,16 +50,16 @@ def get_X(path, size):
     return img
 
 
-def get_Y(path, charset, charlen):
+def get_Y(path, charset, captlen):
     """assume captche text is at the beginning of path
     """
     basename = os.path.basename(path)
-    text = basename[0:charlen]
+    text = basename[0:captlen]
     vec = text2vec(text, charset)
     return vec
 
 
-def data_iterator(data_dir, batch_size, num_epochs):
+def data_iterator(data_dir, batch_size):
     """iterate around data
     data_dir: data directory, allow sub directory exists
     """
@@ -57,32 +68,32 @@ def data_iterator(data_dir, batch_size, num_epochs):
     data = np.array(data)
     data_size = len(data)
     num_batches_per_epoch = int((len(data)-1)/batch_size) + 1
-    for _ in range(num_epochs):
-        indices = np.random.permutation(len(data))
-        shuffled_data = data[indices]
-        for batch_idx in range(num_batches_per_epoch):
-            start_index = batch_idx * batch_size
-            end_index = min((batch_idx + 1) * batch_size, data_size)
-            yield shuffled_data[start_index:end_index]
+    
+    indices = np.random.permutation(len(data))
+    shuffled_data = data[indices]
+    for batch_idx in range(num_batches_per_epoch):
+        start_index = batch_idx * batch_size
+        end_index = min((batch_idx + 1) * batch_size, data_size)
+        yield shuffled_data[start_index:end_index]
 
 # most ugly function
 def train_data_iterator():
     size = (config.width, config.height)
-    data_iter = data_iterator(config.train_dir, config.batch_size, config.epochs)
+    data_iter = data_iterator(config.train_dir, config.batch_size)
     for data in data_iter:
         X = [get_X(datum, size) for datum in data]
-        y = [get_Y(datum, config.charset, config.charlen) for datum in data]
+        y = [get_Y(datum, config.charset, config.captlen) for datum in data]
         yield X, y
 
 # most ugly function
 def test_data_helper(batch_size=None):
     size = (config.width, config.height)
     data = [os.path.join(dir, f) for dir, _, files in
-            os.walk(config.test_data_dir) for f in files]
+            os.walk(config.test_dir) for f in files]
 
     if batch_size is not None:
         np.random.shuffle(data)
         data = data[:batch_size]
     X = [get_X(datum, size) for datum in data]
-    y = [get_Y(datum, config.charset, config.charlen) for datum in data]
+    y = [get_Y(datum, config.charset, config.captlen) for datum in data]
     return X, y

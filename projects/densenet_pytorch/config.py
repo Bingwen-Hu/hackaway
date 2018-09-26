@@ -16,10 +16,10 @@ config.height = 140
 config.channel = 3
 
 # training/testing setting
-config.train_dir = ''
-config.test_dir = ''
+config.train_dir = 'D:/Mory/sogou/train/'
+config.test_dir = 'D:/Mory/sogou/test/'
 
-config.epochs = 100
+config.epochs = 2
 config.batch_size = 64
 
 config.eval_step = 100
