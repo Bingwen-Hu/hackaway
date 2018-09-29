@@ -66,7 +66,10 @@ def sogou_paste2(piecepaths, savepath=None):
     image = Image.new('RGB', (140, 44), color=(170, 170, 170))
     codes = [os.path.basename(path)[:clen] for (clen, path) in piecepaths]
     pieces = [Image.open(path) for (clen, path) in piecepaths]
-
+    
+    angle = np.random.randint(-16, 16)
+    pieces = [p.rotate(angle, resample=Image.BICUBIC, fillcolor=(170, 170, 170)) for p in pieces]
+    
     x = 0
     for p in pieces:
         w, _ = p.size
@@ -107,7 +110,7 @@ if __name__ == '__main__':
         [1, 3, 2],
     ]
 
-    for i in range(100000):
+    for i in range(200000):
         r = np.random.randint(0, 10)
         if r <= 1:
             r = 0
@@ -119,4 +122,4 @@ if __name__ == '__main__':
         mode = modes[r]
         dictpaths = [(m, random.choice(lst)) for (m, lst) in zip(mode, combine)]
         random.shuffle(dictpaths)
-        image = sogou_paste2(dictpaths, "E:/captcha-data/sogou/rgen5/")
+        image = sogou_paste2(dictpaths, "E:/captcha-data/sogou/l20/")
