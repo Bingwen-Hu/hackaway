@@ -1,6 +1,6 @@
 import numpy as np
 
-
+# numpy demo: concatenate two array
 d1 = np.array([
     [1, 2, 3],
     [11, 12, 13],
@@ -14,3 +14,6 @@ dc = np.concatenate([d1, d2], axis=0)
 dc_ = np.hstack([d1, d2])
 dv = np.concatenate([d1, d2], axis=1)
 dv_ = np.vstack([d1, d2])
+
+
+# 
