@@ -130,10 +130,10 @@ with tf.Session(graph=tf_graph) as sess:
             if iteration % 2000 == 0:
                 similarity_ = word_similarity.eval()
                 for i in range(validation_cnt):
-                    validation_words = rev_dictionary_[validation_words[i]]
+                    validation_words_ = rev_dictionary_[validation_words[i]]
                     top_k = 8
                     nearest = (-similarity_[i, :]).argsort()[1:top_k+1]
-                    log = 'Nearest to %s:' % validation_words
+                    log = 'Nearest to %s:' % validation_words_
                     for k in range(top_k):
                         close_word = rev_dictionary_[nearest[k]]
                         log = '%s %s,' % (log, close_word)
