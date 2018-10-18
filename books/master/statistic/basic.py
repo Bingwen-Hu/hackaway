@@ -31,6 +31,12 @@ def mode(lst):
     return modes
 
 
+def range_(lst):
+    return max(lst) - min(lst)
+
+def standard_deviation(lst):
+    pass
+
 import unittest
 class BasicStatistic(unittest.TestCase):
 
@@ -49,3 +55,9 @@ class BasicStatistic(unittest.TestCase):
         self.assertEqual([2], mode(lst))
         lst = [1, 1, 2, 2, 3, 3]
         self.assertSetEqual(set([1, 2, 3]), set(mode(lst)))
+
+    def test_range(self):
+        lst = [1, 10, 2, 22, 21, 13, 3]
+        self.assertEqual(22-1, range_(lst))
+        
+    
