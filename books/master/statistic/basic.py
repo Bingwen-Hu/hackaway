@@ -1,3 +1,4 @@
+import math
 # medium mode and mean
 def median(lst):
     """ calculate the median in a list of data
@@ -35,7 +36,11 @@ def range_(lst):
     return max(lst) - min(lst)
 
 def standard_deviation(lst):
-    pass
+    mean_ = mean(lst)
+    residual_ = [i-mean_ for i in lst]
+    square_sum = sum([i*i for i in residual_])
+    sd_ = square_sum / (len(lst) - 1)   # unbiased estimate
+    return math.sqrt(sd_)
 
 import unittest
 class BasicStatistic(unittest.TestCase):
@@ -59,5 +64,10 @@ class BasicStatistic(unittest.TestCase):
     def test_range(self):
         lst = [1, 10, 2, 22, 21, 13, 3]
         self.assertEqual(22-1, range_(lst))
+
+    def test_standard_deviation(self):
+        lst = [8, 8, 8, 7, 6, 6, 5, 5, 4, 3]
+        std_ = standard_deviation(lst)
+        self.assertAlmostEqual(1.76, std_, delta=0.01)
         
     
