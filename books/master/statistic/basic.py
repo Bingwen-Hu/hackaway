@@ -84,3 +84,10 @@ class BasicStatistic(unittest.TestCase):
         d = variance(lst)
         self.assertAlmostEqual(3.11, d, delta=0.01)
         
+
+def testsuite():
+    suite = unittest.TestSuite()
+    result = unittest.TestResult()
+    suite.addTest(unittest.makeSuite(BasicStatistic))
+    runner = unittest.TextTestRunner()
+    print(runner.run(suite))
