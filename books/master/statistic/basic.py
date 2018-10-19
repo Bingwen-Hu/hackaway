@@ -42,7 +42,14 @@ def standard_deviation(lst):
     residual_ = [i-mean_ for i in lst]
     square_sum = sum([i*i for i in residual_])
     sd_ = square_sum / (len(lst) - 1)   
-    return math.sqrt(sd_)
+    return sd_ ** 0.5
+
+def variance(lst):
+    mean_ = mean(lst)
+    residual_ = [i-mean_ for i in lst]
+    square_sum = sum([i*i for i in residual_])
+    d = square_sum / (len(lst) - 1)   
+    return d
 
 import unittest
 class BasicStatistic(unittest.TestCase):
@@ -72,4 +79,8 @@ class BasicStatistic(unittest.TestCase):
         std_ = standard_deviation(lst)
         self.assertAlmostEqual(1.76, std_, delta=0.01)
         
-    
+    def test_variance(self):
+        lst = [8, 8, 8, 7, 6, 6, 5, 5, 4, 3]
+        d = variance(lst)
+        self.assertAlmostEqual(3.11, d, delta=0.01)
+        
