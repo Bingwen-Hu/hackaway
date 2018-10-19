@@ -1,4 +1,0 @@
-extract audio from mp4:
-```
-ffmpeg -i 99.mp4 -f mp3 -vn 99.mp3
-```
