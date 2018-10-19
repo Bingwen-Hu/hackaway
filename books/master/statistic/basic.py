@@ -35,11 +35,13 @@ def mode(lst):
 def range_(lst):
     return max(lst) - min(lst)
 
+# unbiased estimate
+# for the reason that scientist is conservative
 def standard_deviation(lst):
     mean_ = mean(lst)
     residual_ = [i-mean_ for i in lst]
     square_sum = sum([i*i for i in residual_])
-    sd_ = square_sum / (len(lst) - 1)   # unbiased estimate
+    sd_ = square_sum / (len(lst) - 1)   
     return math.sqrt(sd_)
 
 import unittest
