@@ -33,5 +33,15 @@ def tobaidu():
 
 from flask import render_template
 
+@app.route('/render')
+def render():
+    data = {'Name': "Mory", 'Age': 24}
+    return render_template('mysite.html', **data)
+
+@app.route('/renderlist')
+def renderlist():
+    data = "Ann Mory Jenny".split()
+    return render_template('mysitelist.html', names=data)
+
 if __name__ == '__main__':
     app.run(host='localhost', port=8000, debug=True)
