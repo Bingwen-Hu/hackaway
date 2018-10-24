@@ -23,3 +23,17 @@ mlb = MultiLabelBinarizer()
 data = np.array(['A', 'B', 'C'])
 mlb.fit(data)
 mlb.transform(['A', 'B'])
+
+
+# standardlize and inverse
+from sklearn.preprocessing import StandardScaler
+
+sample = np.array([
+    [38.1455, 137.454],
+    [42.456, 173.345],
+    [32.456, 165.34],
+])
+
+scaler = StandardScaler()
+std_data = scaler.fit_transform(sample)
+org_data = scaler.inverse_transform(std_data)
