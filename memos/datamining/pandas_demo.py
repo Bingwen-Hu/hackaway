@@ -47,3 +47,15 @@ print(df_surpass)
 
 df_surpass['Level'] = df_surpass['Level'].map(lambda x: min(5, x+1))
 print(df_surpass)
+
+# demo dummy variable
+data = pd.DataFrame(columns=['weekday'])
+data.weekday = [i for i in range(1, 8)] * 3
+data['score'] = 1.0
+# perform dummy
+dummy_data = pd.get_dummies(data.weekday, prefix='weekday')
+# merge two
+mergedata = pd.concat([data.drop(['weekday'], axis=1), dummy_data], axis=1)
+
+# another merge method
+data.join(dummy_data)
