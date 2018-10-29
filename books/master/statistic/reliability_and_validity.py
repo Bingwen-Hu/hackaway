@@ -51,3 +51,7 @@ def interrater_reliability():
     X2 = np.array([1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1])
     r = (X1 == X2).sum() / X1.shape[0]
     return r
+
+# content validity: whether the content and reflect the target?
+# criterion validity: whether this index is relative to others?
+# construct validity: 
