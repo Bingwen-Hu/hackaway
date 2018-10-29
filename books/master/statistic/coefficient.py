@@ -2,7 +2,7 @@ import numpy as np
 import seaborn as sns
 
 def coefficient(X, Y):
-    """
+    """ Pearson correlation coefficient
                          n * sum(XY) - sum(X)sum(Y) 
     r_XY =  ---------------------------------------------------------
             sqrt([n * sum(X^2) - sum(X)^2] [n * sum(Y^2) - sum(Y)^2])
