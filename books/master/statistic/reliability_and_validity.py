@@ -41,3 +41,13 @@ def internal_consisitency_reliability():
     sum_of_s_i = df.var(axis=0).sum()
     epsilon = (k / (k - 1)) * ((s_y - sum_of_s_i) / s_y)
     return epsilon
+
+
+def interrater_reliability():
+    """determine whether two interrater are consistent with 
+    observation
+    """
+    X1 = np.array([1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 1, 1])
+    X2 = np.array([1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1])
+    r = (X1 == X2).sum() / X1.shape[0]
+    return r
