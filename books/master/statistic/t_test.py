@@ -1,5 +1,6 @@
 # when use t test?
 # two independent group
+# sample not larger than 30
 import numpy as np
 from scipy import stats
 
