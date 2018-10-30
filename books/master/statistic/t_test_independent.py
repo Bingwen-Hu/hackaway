@@ -56,6 +56,18 @@ def t_value_test():
     print(msg)
 
 
+def effect_size(X1, X2):
+    """
+               X1_bar - X2_bar
+    ES = ---------------------------
+         sqrt[(X1_var + X2_var) / 2]
+    """
+    X1_bar = np.mean(X1)
+    X2_bar = np.mean(X2)
+    X1_var = np.var(X1)
+    X2_var = np.var(X2)
+    ES = (X1_bar - X2_bar) / np.sqrt((X1_var + X2_var) / 2)
+    return ES
 
 if __name__ == '__main__':
     t_value_test()
