@@ -18,12 +18,13 @@ def coefficient(X, Y):
     denominator = np.sqrt(deno(X) * deno(Y))
     return numerator / denominator
 
-def scatterplot(X, Y):
-    sns.scatterplot(x=X, y=Y)
     
 
-if __name__ == '__main__':
+def demo():
     X = np.array([2, 4, 5, 6, 4, 7, 8, 5, 6, 7])
     Y = np.array([3, 2, 6, 5, 3, 6, 5, 4, 4, 5])
     R_xy = coefficient(X, Y)
-    scatterplot(X, Y)
+    sns.scatterplot(x=X, y=Y)
+
+if __name__ == '__main__':
+    demo()
