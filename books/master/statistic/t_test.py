@@ -28,7 +28,7 @@ def t_value(X1, X2):
     t = (X1_bar - X2_bar) / np.sqrt(temp1 * temp2)
     return t
 
-if __name__ == '__main__':
+def t_value_test():
     X1 = np.array([
         7, 5, 5, 3, 4, 7, 3, 6, 1, 2, 
         10, 9, 3, 10, 2, 8, 5, 5, 8, 1, 
@@ -54,3 +54,7 @@ if __name__ == '__main__':
             'reject the original hypothesis')
     print(msg)
 
+
+
+if __name__ == '__main__':
+    t_value_test()
