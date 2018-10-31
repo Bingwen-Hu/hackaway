@@ -1,3 +1,9 @@
+# some explanation
+# when some assumptions are not true -- data is small and 
+# variance is different, we use nonparametric statistics
+# it is useful to detect preference in data
+# chi_square test is one of the method
+
 import numpy as np
 
 
