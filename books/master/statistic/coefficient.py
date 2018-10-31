@@ -28,6 +28,8 @@ def demo():
     sns.scatterplot(x=X, y=Y)
 
 def correlation_coefficient_test():
+    """if we check two variable (not two group) relationship, we can 
+    use correlation coefficient test"""
     marriage_quality = np.array([
         76, 81, 78, 76, 76, 78, 76, 78, 98, 88, 76, 66, 44, 
         67, 65, 59, 87, 77, 79, 85, 68, 76, 77, 98, 99, 98, 
