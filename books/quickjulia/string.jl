@@ -24,10 +24,6 @@ print(believe[1:end])
 # get the length
 length(believe)
 
-# find some thing
-# deprecated
-search(believe, "Ann")
-
 # string in
 occursin("Ann", believe)
 
