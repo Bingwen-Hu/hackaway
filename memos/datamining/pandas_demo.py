@@ -59,3 +59,13 @@ mergedata = pd.concat([data.drop(['weekday'], axis=1), dummy_data], axis=1)
 
 # another merge method
 data.join(dummy_data)
+
+
+# Excel
+excel = pd.ExcelWriter('demo.xlsx')
+data.to_excel(excel, 'dummy')
+excel.close()
+
+# read back
+dummy = pd.read_excel('demo.xlsx', 'dummy')
+print(dummy)
