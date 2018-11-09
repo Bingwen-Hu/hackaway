@@ -120,10 +120,10 @@
 ; recursive process
 (defn f [n]
   (if (< n 3)
-      n
-      (+ (f (- n 1))
-         (* (f (- n 2)) 2)
-         (* (f (- n 3)) 3))))
+    n
+    (+ (f (- n 1))
+       (* (f (- n 2)) 2)
+       (* (f (- n 3)) 3))))
 
 (f 4)
 (f 12)
@@ -143,7 +143,104 @@
   (cond 
     (= 1 n) 1
     (= 2 n) [1 1]
-    :else "remain to implement"))
+    :else "remain to implement if I still living and remember"))
   
 ; 1.2.3 order of growth
+; 1.2.4 exponentiation
+(defn expt [b n]
+  (if (= n 0)
+      1
+      (* b (expt b (- n 1)))))
+(expt 2 3)
 
+(defn expt [b n]
+  (expt-iter b n 1))
+(defn expt-iter [b counter product]
+  (if (= counter 0)
+      product 
+      (expt-iter b (- counter 1) (* b product))))
+
+(expt 2 3)
+
+(defn fast-expt [b n]
+  (cond 
+    (= n 0) 1
+    (even? n) (square (fast-expt b (/ n 2))) ; square in element_of_prog.clj
+    :else (* b (fast-expt b (- n 1)))))
+
+(defn even? [n]
+  (= (rem n 2) 0))
+  
+(fast-expt 2 3)
+(fast-expt 4 2)
+
+; e1.16
+(defn fast-expt [b n]
+  (fast-expt-helper b n 1))
+
+(defn fast-expt-helper [b n a]
+  "b: base n: expt number a: result
+  a * b^n is an invariant quantity"
+  (cond 
+    (= n 0) a
+    (even? n) (fast-expt-helper b (- n 2) (* a b b)) ; square in element_of_prog.clj
+    :else (fast-expt-helper b (- n 1) (* a b))))
+
+(fast-expt 2 3)
+(fast-expt 4 2)
+
+; e1.17 define a fast multiple operation
+(defn fast* [a b]
+  "a is the one to repeat
+  b is the repeat time"  
+  (cond 
+    (= 0 b) 0
+    (even? b) (mory-double (fast* a (halve b)))
+    :else (+ a (fast* a (- b 1)))))
+
+(defn halve [n]
+  (/ n 2))
+
+(defn mory-double [n] ; double is a keyword in clojure
+  (+ n n))
+
+(mory-double 2)
+
+(halve 3)
+(fast* 3 4)
+
+; 1.2.5 Greatest Common Divisors
+; equation: GCD(a, b) = GCD(b, r) while r = (rem a b)
+(defn gcd [a b]
+  "assume a > b"
+  (if (= b 0)
+      a
+      (gcd b (rem a b))))
+
+(gcd 4 6)
+(gcd 12 20)
+(gcd 100 25)
+
+; 1.2.6 Example: testing for primality
+(defn smallest-divisor [n]
+  (find-divisor n 2))
+
+(defn find-divisor [n test-divisor]
+  (cond
+    (> (square test-divisor) n) n
+    (divides? test-divisor n) test-divisor
+    :else (find-divisor n (+ 1 test-divisor)))) 
+
+(defn divides? [a b]
+  (= (rem b a) 0))
+
+(smallest-divisor 239)
+
+(defn prime? [n]
+  (= (smallest-divisor n) n))
+
+(prime? 239)
+(prime? 123)
+(smallest-divisor 199)
+(smallest-divisor 1999)
+(smallest-divisor 19999)
