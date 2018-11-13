@@ -129,3 +129,20 @@
   (fn [m] (m x y)))
 (defn car [z]
   (z (fn [p q] p)))
+(defn cdr [z]
+  (z (fn [p q] q)))
+(def x (cons-ann 1 2))
+(car x)
+(cdr x)
+
+; church numerals
+(defn zero []
+  (fn [f]
+    (fn [x] x)))
+
+(defn add-1 [n]
+  (fn [f] 
+    (fn [x] (f ((n f) x)))))
+
+
+
