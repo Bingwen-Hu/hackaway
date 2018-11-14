@@ -12,6 +12,26 @@ import numpy as np
 import argparse
 
 
+class LabelEncoder(object):
+
+    def __init__(self, labels):
+        self.data = labels
+        self.data_size = len(labels)
+        # classes and class_num match
+        self.classes_ = sorted(set(labels))
+        self.class_num = len(self.classes_)
+
+    def transform(self):
+        result = np.zeros([self.data_size, self.class_num])
+        for i, d in enumerate(self.data):
+            index = self.classes_.index(d)
+            result[i][index] = 1
+        return result
+
+    def inverse_transform(self, data):
+        pass            
+
+
 ap = argparse.ArgumentParser()
 ap.add_argument('-d', '--dataset', required=True,
     help='path to input dataset')
@@ -30,13 +50,13 @@ data = data.astype('float') / 255.0
 trainX, testX, trainY, testY = train_test_split(data, labels,
     test_size=0.25, random_state=42)
 
-trainY = LabelBinarizer().fit_transform(trainY)
-testY = LabelBinarizer().fit_transform(testY)
+trainY = LabelEncoder(trainY).transform()
+testY = LabelEncoder(testY).transform()
 
 print('[INFO] compiling model...')
 opt = SGD(lr=0.005)
 model = ShallowNet.build(width=32, height=32, depth=3, classes=2)
-model.compile(loss='categorical_crossentropy', optimizer=opt,
+model.compile(loss='binary_crossentropy', optimizer=opt,
     metrics=['accuracy'])
 
 print('[INFO] training network...')
