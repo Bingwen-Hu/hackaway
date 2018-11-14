@@ -6,6 +6,7 @@ from pyimage.preprocessing import SimplePreprocessor
 from pyimage.datasets import SimpleDatasetLoader
 from pyimage.nn.conv import ShallowNet
 from pyimage.nn.conv import LeNet
+from pyimage.nn.conv import MiniVGGNet
 from keras.optimizers import SGD
 from imutils import paths
 import matplotlib.pyplot as plt
@@ -32,14 +33,22 @@ class LabelEncoder(object):
     def inverse_transform(self, data):
         pass            
 
+NETWORK_BANK = {
+    'shallownet': ShallowNet,
+    'minivggnet': MiniVGGNet,
+    'lenet': LeNet,
+}
 
 ap = argparse.ArgumentParser()
 ap.add_argument('-d', '--dataset', required=True,
     help='path to input dataset')
+ap.add_argument('-n', '--network', required=True,
+    help='model to test %s' % ', '.join(NETWORK_BANK.keys()))
 args = vars(ap.parse_args())
 
 print('[INFO] loading images...')
 imagePaths = list(paths.list_images(args['dataset']))
+model = NETWORK_BANK[args['network']]
 
 sp = SimplePreprocessor(32, 32)
 iap = ImageToArrayPreprocessor()
@@ -56,7 +65,7 @@ testY = LabelEncoder(testY).transform()
 
 print('[INFO] compiling model...')
 opt = SGD(lr=0.005)
-model = LeNet.build(width=32, height=32, depth=3, classes=2)
+model = model.build(width=32, height=32, depth=3, classes=2)
 model.compile(loss='binary_crossentropy', optimizer=opt,
     metrics=['accuracy'])
 
