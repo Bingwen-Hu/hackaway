@@ -5,6 +5,7 @@ from pyimage.preprocessing.imagetoarraypreprocessor import ImageToArrayPreproces
 from pyimage.preprocessing.simplepreprocessor import SimplePreprocessor
 from pyimage.datasets.simpledatasetloader import SimpleDatasetLoader
 from pyimage.nn.conv.shallownet import ShallowNet
+from pyimage.nn.conv import LeNet
 from keras.optimizers import SGD
 from imutils import paths
 import matplotlib.pyplot as plt
@@ -55,7 +56,7 @@ testY = LabelEncoder(testY).transform()
 
 print('[INFO] compiling model...')
 opt = SGD(lr=0.005)
-model = ShallowNet.build(width=32, height=32, depth=3, classes=2)
+model = LeNet.build(width=32, height=32, depth=3, classes=2)
 model.compile(loss='binary_crossentropy', optimizer=opt,
     metrics=['accuracy'])
 
