@@ -13,7 +13,7 @@ from imutils import paths
 import matplotlib.pyplot as plt
 import numpy as np
 import argparse
-
+import os
 
 class LabelEncoder(object):
 
@@ -45,7 +45,12 @@ ap.add_argument('-d', '--dataset', required=True,
     help='path to input dataset')
 ap.add_argument('-n', '--network', required=True,
     help='model to test %s' % ', '.join(NETWORK_BANK.keys()))
+ap.add_argument('-o', '--output', required=True,
+    help='path to the output directory')
 args = vars(ap.parse_args())
+
+# easily tracking
+print('[INTO] process ID: {}'.format(os.getpid()))
 
 print('[INFO] loading images...')
 imagePaths = list(paths.list_images(args['dataset']))
@@ -70,9 +75,17 @@ model = model.build(width=32, height=32, depth=3, classes=2)
 model.compile(loss='binary_crossentropy', optimizer=opt,
     metrics=['accuracy'])
 
+# plot-log
+logdir = args['output']
+if not os.path.exists(logdir):
+    os.makedirs(logdir)
+figPath = os.path.sep.join([args['output'], '{}.png'.format(os.getpid())])
+jsonPath = os.path.sep.join([args['output'], '{}.json'.format(os.getpid())])
+callbacks = [TrainingMonitor(figPath, jsonPath=jsonPath)]
+
 print('[INFO] training network...')
 H = model.fit(trainX, trainY, validation_data=(testX, testY),
-    batch_size=32, epochs=100, verbose=1)
+    batch_size=32, epochs=100, verbose=1, callbacks=callbacks)
 
 print('[INFO] evaluating network...')
 predictions = model.predict(testX, batch_size=32)
