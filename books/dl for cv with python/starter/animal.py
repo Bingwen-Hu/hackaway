@@ -7,6 +7,7 @@ from pyimage.datasets import SimpleDatasetLoader
 from pyimage.nn.conv import ShallowNet
 from pyimage.nn.conv import LeNet
 from pyimage.nn.conv import MiniVGGNet
+from pyimage.callbacks import TrainingMonitor
 from keras.optimizers import SGD
 from imutils import paths
 import matplotlib.pyplot as plt
