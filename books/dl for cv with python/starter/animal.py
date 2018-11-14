@@ -8,6 +8,7 @@ from pyimage.nn.conv import ShallowNet
 from pyimage.nn.conv import LeNet
 from pyimage.nn.conv import MiniVGGNet
 from pyimage.callbacks import TrainingMonitor
+from keras.callbacks import ModelCheckpoint
 from keras.optimizers import SGD
 from imutils import paths
 import matplotlib.pyplot as plt
@@ -47,6 +48,8 @@ ap.add_argument('-n', '--network', required=True,
     help='model to test %s' % ', '.join(NETWORK_BANK.keys()))
 ap.add_argument('-o', '--output', required=True,
     help='path to the output directory')
+ap.add_argument('-w', '--weights', required=True,
+    help='path to best weight file')
 args = vars(ap.parse_args())
 
 # easily tracking
@@ -83,9 +86,14 @@ figPath = os.path.sep.join([args['output'], '{}.png'.format(os.getpid())])
 jsonPath = os.path.sep.join([args['output'], '{}.json'.format(os.getpid())])
 callbacks = [TrainingMonitor(figPath, jsonPath=jsonPath)]
 
+# checkpoint: for illustration
+# checkpoint = ModelCheckpoint(args['weights'], monitor='val_loss', mode='min', 
+#     save_best_only=True, verbose=1)
+# callbacks.append(checkpoint)
+
 print('[INFO] training network...')
 H = model.fit(trainX, trainY, validation_data=(testX, testY),
-    batch_size=32, epochs=100, verbose=1, callbacks=callbacks)
+    batch_size=32, epochs=100, verbose=2, callbacks=callbacks)
 
 print('[INFO] evaluating network...')
 predictions = model.predict(testX, batch_size=32)
