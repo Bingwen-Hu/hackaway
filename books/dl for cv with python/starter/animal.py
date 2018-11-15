@@ -10,30 +10,13 @@ from pyimage.nn.conv import MiniVGGNet
 from pyimage.callbacks import TrainingMonitor
 from keras.callbacks import ModelCheckpoint
 from keras.optimizers import SGD
+from keras.utils import np_utils
 from imutils import paths
 import matplotlib.pyplot as plt
 import numpy as np
 import argparse
 import os
 
-class LabelEncoder(object):
-
-    def __init__(self, labels):
-        self.data = labels
-        self.data_size = len(labels)
-        # classes and class_num match
-        self.classes_ = sorted(set(labels))
-        self.class_num = len(self.classes_)
-
-    def transform(self):
-        result = np.zeros([self.data_size, self.class_num])
-        for i, d in enumerate(self.data):
-            index = self.classes_.index(d)
-            result[i][index] = 1
-        return result
-
-    def inverse_transform(self, data):
-        pass            
 
 NETWORK_BANK = {
     'shallownet': ShallowNet,
@@ -69,8 +52,9 @@ data = data.astype('float') / 255.0
 trainX, testX, trainY, testY = train_test_split(data, labels,
     test_size=0.25, random_state=42)
 
-trainY = LabelEncoder(trainY).transform()
-testY = LabelEncoder(testY).transform()
+lb = LabelBinarizer()
+trainY = np_utils.to_categorical(lb.fit_transform(trainY), 2)
+testY = np_utils.to_categorical(lb.fit_transform(testY), 2)
 
 print('[INFO] compiling model...')
 opt = SGD(lr=0.005)
