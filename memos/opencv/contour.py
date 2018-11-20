@@ -1,6 +1,8 @@
 import cv2
 import numpy as np
 from uuid import uuid1
+from imutils import paths
+
 
 def findContour(imagepath):
     img = cv2.imread(imagepath)
@@ -23,5 +25,9 @@ def findContour(imagepath):
 
 
 if __name__ == '__main__':
-    imgpath = 'seccode_1.png'
-    findContour(imgpath)
+    directory = "/home/jenny/Downloads/hkcaptcha/unuse/crop/"
+    imgpaths = paths.list_images(directory)
+    
+    for imgpath in imgpaths:
+        findContour(imgpath)
+        
