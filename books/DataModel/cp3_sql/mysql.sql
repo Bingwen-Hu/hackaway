@@ -8,6 +8,17 @@ create table if not exists surpasser(
 );
 
 
+create table news(
+    id int(11) not null auto_increment,
+    title varchar(200) default null,
+    content text default null,
+    hitwords text default null,
+    url varchar(200) default null,
+    time datetime default CURRENT_TIMESTAMP,
+    primary key (id)
+)
+
+
 insert into surpasser(name, surpass_kind, surpass_level) 
     values("Mory", "Demon", "Highest");
 insert into surpasser(name, surpass_kind, surpass_level) 
