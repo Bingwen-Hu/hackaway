@@ -8,7 +8,7 @@ set timeout 10
 # send "2Foralfv\r"
 
 # spawn sudo zypper update zypper
-# spawn sudo zypper install git emacs sbcl
+# spawn sudo zypper install git emacs sbcl rlwarp
 
 # # vscode 
 # spawn sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
