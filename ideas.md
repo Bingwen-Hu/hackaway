@@ -12,6 +12,10 @@
 + Practice: 
   + cv with Py -> deeplearning 2 vol
   + C engineers
+  + common lisp
+  + rust
+  + clojure(script)
+  + elixir
 
 
 
