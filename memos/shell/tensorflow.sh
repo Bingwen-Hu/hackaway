@@ -64,8 +64,8 @@ I suggest to build TensorFlow using virtual environment. There are multiple ways
 
 3.1.2 Activate virtual environment and run following commands:
 pip install -U pip six numpy wheel mock
-pip install -U keras_applications==1.0.5 — no-deps
-pip install -U keras_preprocessing==1.0.3 — no-deps
+pip install -U keras_applications==1.0.5 --no-deps
+pip install -U keras_preprocessing==1.0.3 --no-deps
 
 3.2 Download and build.
 3.2.1 Download source codes. I cloned git repository. If you haven’t git installed, run sudo apt install git
@@ -74,7 +74,7 @@ git clone https://github.com/tensorflow/tensorflow.git
 cd tensorflow
 
 3.2.2 Test it with bazel.
-bazel test -c opt — //tensorflow/… -//tensorflow/compiler/… -//tensorflow/contrib/lite/…
+bazel test -c opt //tensorflow/…  //tensorflow/compiler/…  //tensorflow/contrib/lite/…
 Well, it was processing about an hour on my machine. As a result I have about 60 failed test results but it doesn’t impact build process.
 
 3.2.3 Configure TensorFlow build by running ./configure. 
