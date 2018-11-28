@@ -13,4 +13,4 @@ model = VGG16(weights='imagenet', include_top=args['include_top']>0)
 print('[INFO] shwoing layers...')
 
 for (i, layer) in enumerate(model.layers):
-    print('[INFO] {}\{}'.format(i, layer.__class__.__name__))
+    print('[INFO] {}\t{}'.format(i, layer.__class__.__name__))
