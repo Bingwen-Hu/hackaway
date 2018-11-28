@@ -1,3 +1,5 @@
 training_set
 output
 *.pk
+*.h5
+smallset
