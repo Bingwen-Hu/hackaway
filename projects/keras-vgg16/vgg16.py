@@ -1,6 +1,7 @@
 from keras.applications import VGG16
 from keras.layers import Input, Dense, Flatten
 from keras.models import Model
+from keras.preprocessing.image import ImageDataGenerator
 import tensorflow as tf
 import numpy as np
 
@@ -32,10 +33,18 @@ def train():
     model = Model(inputs=[X_tensor], outputs=[output])
     model.compile(optimizer='adam', loss=sigmoid_loss, metrics=[captcha_accuracy])
 
+    aug = ImageDataGenerator(rotation_range=10, width_shift_range=0.1,
+        height_shift_range=0.1, horizontal_flip=False, fill_mode="nearest")
+
 
     for epoch in range(FLAGS.num_epochs):
         for i, (X_train, y_train) in enumerate(train_data_iterator()):
             X_train, y_train = np.array(X_train), np.array(y_train)
+            imageGen = aug.flow(X_train, batch_size=FLAGS.batch_size)
+            for X_train in imageGen:
+                aug_X_train = X_train
+                break
+            X_train = aug_X_train
             loss = model.train_on_batch(X_train, y_train)
             print(f"epoch: {epoch} step: {i} loss: {loss}")
 
