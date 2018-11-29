@@ -15,6 +15,13 @@ def bn(x, e=1e-7):
     x_ = (x - mu) / np.sqrt(sigma2 + e)
     return x_
 
+def pad_same(width, kernel, slide):
+    """Given width, kernel size and slide, compute how 
+    to pad to make output same as input"""
+    res = (width - kernel) / slide + 1
+    pad = (width - res) / 2
+    return pad
+
 if __name__ == "__main__":
     width = 224
     kernel = 11
@@ -28,3 +35,7 @@ if __name__ == "__main__":
     x = np.array([1, 2, 3, 4, 5])
     x_ = bn(x)
     print(x_)
+
+    # 
+    pad = pad_same(width, kernel, slide)
+    print(pad)
