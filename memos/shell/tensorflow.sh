@@ -88,6 +88,10 @@ NCCL — 1.3
 You might wondering why NCCL version is not 2.3. Well, I’ve tried but NCCL version default path are different from those that are expected during building. It requires to manually copy nccl.h and libnccl.so.2 to required path. As I’m not using multiple GPU, I left 1.3 version which install automatically into expected directories.
 
 3.2.4 Build and install TensorFlow. Run 
+sudo ldconfig /usr/local/cuda-10.0/lib64
+bazel build --config=opt --config=cuda //tensorflow/tools/pip_package:build_pip_package
+cat tensorflow/tools/bazel.rc >> tensorflow/.tf_configure.bazelrc
+
 ./bazel-bin/tensorflow/tools/pip_package/build_pip_package /tmp/tensorflow_pkg
 Be ready to entertain yourself for an hour while building process is in progress. As a result pip package will be placed at /tmp/tensorflow_pkg. 
 We are almost done — run from your venv and enjoy
