@@ -2,7 +2,9 @@ from hdf5io import HDF5DatasetWriter
 from imutils import paths
 from sklearn.model_selection import train_test_split
 import os
-
+import cv2
+import json
+import progressbar
 
 
 class Config:
@@ -40,3 +42,46 @@ split = train_test_split(trainPaths, trainLabels,
     random_state=42)
 
 trainPaths, valPaths, trainLabels, valLabels = split
+
+datasets = [
+    ('train', trainPaths, trainLabels, config.TRAIN_HDF5),
+    ('val', valPaths, valLabels, config.VAL_HDF5),
+    ('test', testPaths, testLabels, config.TEST_HDF5),
+]
+
+# if there is any transforms, set up here
+transforms = []
+# placeholder for RGB pixel
+R, G, B = [], [], []
+
+for (dType, paths, labels, outputPath) in datasets:
+    print('[INFO] building {}...'.format(outputPath))
+    writer = HDF5DatasetWriter((len(paths), 256, 256, 3), outputPath)
+
+
+    widgets = ['Building Dataset: ', progressbar.Percentage(), ' ',
+        progressbar.Bar(), ' ', progressbar.ETA()]
+    
+    pbar = progressbar.ProgressBar(maxval=len(paths), 
+        widgets=widgets).start()
+
+    for (i, (path, label)) in enumerate(zip(paths, labels)):
+        image = cv2.imread(path)
+        image = cv2.resize(image, (256, 256)) # match writer 
+
+        if dType == 'train':
+            (b, g, r) = cv2.mean(image)[:3]
+            R.append(r)
+            G.append(g)
+            B.append(b)
+        
+        writer.add([image], [label])
+        pbar.update(i)
+    
+    pbar.finish()
+    writer.close()
+
+print('[INFO] serializing means...')
+D = {'R': np.mean(R), 'G': np.mean(G), 'B': np.mean(B)}
+with open(config.DATASET_MEAN, 'w') as f:
+    f.write(json.dumps(D))
