@@ -1,11 +1,12 @@
 from hdf5io import HDF5DatasetWriter
 from imutils import paths
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelBinarizer
 import os
 import cv2
 import json
 import progressbar
-
+import numpy as np
 
 class Config:
     # build dataset into HDF5 format
@@ -30,6 +31,7 @@ config = Config
 trainPaths = list(paths.list_images(config.IMAGES_PATH))
 # NOTE: dataset format: path/to/data/{label}/xx.png
 trainLabels = [p.split(os.path.sep)[-2] for p in trainPaths]
+trainLabels = LabelBinarizer().fit_transform(trainLabels)
 
 split = train_test_split(trainPaths, trainLabels, 
     test_size=config.NUM_TEST_IMAGES, stratify=trainLabels,
@@ -68,14 +70,14 @@ for (dType, paths, labels, outputPath) in datasets:
     for (i, (path, label)) in enumerate(zip(paths, labels)):
         image = cv2.imread(path)
         image = cv2.resize(image, (256, 256)) # match writer 
-
+        
         if dType == 'train':
             (b, g, r) = cv2.mean(image)[:3]
             R.append(r)
             G.append(g)
             B.append(b)
         
-        writer.add([image], [label])
+        writer.add([image], [label[0]])
         pbar.update(i)
     
     pbar.finish()
