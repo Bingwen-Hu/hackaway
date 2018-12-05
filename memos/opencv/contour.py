@@ -25,7 +25,7 @@ def findContour(imagepath):
 
 
 if __name__ == '__main__':
-    directory = "/home/jenny/Downloads/hkcaptcha/unuse/crop/"
+    directory = "/home/jenny/datasets/img/"
     imgpaths = paths.list_images(directory)
     
     for imgpath in imgpaths:
