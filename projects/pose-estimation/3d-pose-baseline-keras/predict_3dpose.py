@@ -1,4 +1,3 @@
-
 """Predicting 3d poses from 2d joints"""
 
 from __future__ import absolute_import
