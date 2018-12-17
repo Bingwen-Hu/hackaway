@@ -16,3 +16,9 @@ then run
 ```
 ffmpeg -f concat -i filelist.txt -c copy output.mkv
 ```
+
+
+### extract key frame from video
+```
+ffmpeg -i video.mp4 -vf select='eq(pict_type\,I)' -vsync 2 -s 1920*1080 -f image2 core-%02d.jpeg
+```
