@@ -33,12 +33,11 @@ async def fetch(word):
             return get_urls(text)
             
 
-async def download(url):
+async def download(url, name):
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as resp:
             content = await resp.read()
-            uname = get_short_uuid()
-            with open('image/%s.jpg' % uname, 'wb') as f:
+            with open(name, 'wb') as f:
                 f.write(content)
 
 
