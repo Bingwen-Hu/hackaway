@@ -26,7 +26,7 @@ words = [
 
 def get_short_uuid():
     s = f"{uuid1()}"
-    return s[:4]
+    return s[:8]
 
 
 def get_html(word):
