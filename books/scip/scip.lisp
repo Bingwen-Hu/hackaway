@@ -109,25 +109,28 @@
 (square (mysqrt 1000))
 
 ;;; 1.8 note: buggy
-(defun average-cube (x y)
-  (/ (+ (/ x (square y))
-        (* 2 y))
+(defun average-cube (guess x)
+  (/ (+ (/ x (square guess))
+        (* 2 guess))
      3))
 
-(defun mycube (x)
-  (cube-iter 1.0 x))
+(defun mycube-root (x)
+  (cube-root-iter 1.0 x))
 
 (defun cube-improve (guess x)
-  (average-cube x guess))
+  (average-cube guess x))
 
-(defun cube-iter (guess x)
+(defun cube-root-iter (guess x)
   (if (cube-good-enough? guess x)
       guess
-      (cube-iter (cube-improve x guess) x)))
+      (cube-root-iter (cube-improve guess x) 
+                      x)))
 
 (defun cube-good-enough? (guess x)
-  (let ((next (cube-improve x guess)))
+  (let ((next (cube-improve guess x)))
     (< (myabs (- next guess))
-       0.001)))
+       0.00001)))
 
-(mycube 2)
+(mycube-root 2)
+
+
