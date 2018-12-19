@@ -35,7 +35,7 @@ class FaceHdf5Reader(object):
     
     def read(self, label):
         dset = self.db[label]
-        return dset[...]
+        return dset[:]
 
     def close(self):
         self.db.close()
