@@ -15,8 +15,7 @@ async def passvar(request):
     return web.json_response({'name': name})
 
 @routes.view('/login')
-class LoginView(web.View):
-        
+class LoginView(web.View):        
     async def post(self):
         data = await self.request.post()
         login = data['login']
@@ -28,6 +27,27 @@ class LoginView(web.View):
         return {}
 
 
+@routes.view('/upload')
+class UploadView(web.View):
+    async def post(self):
+        reader = await self.request.multipart()
+        # verify inputs
+        field = await reader.next()
+        assert field.name == 'fileContent'
+        
+        with open(field.filename, 'wb') as f:
+            while True:
+                chunk = await field.read_chunk()
+                if not chunk:
+                    break
+                f.write(chunk)
+        return web.Response(text="haha")
+
+    @aiohttp_jinja2.template('upload.html')
+    async def get(self):
+        return {}
+
+        
 
 # run with gunicorn
 async def face_server():
