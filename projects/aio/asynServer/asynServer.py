@@ -10,16 +10,17 @@ async def passvar(request):
     name = request.match_info.get('name', 'unknown')
     return web.json_response({'name': name})
 
+class LoginView(web.View):
+        
+    async def post_login(self):
+        data = await self.post()
+        login = data['login']
+        password = data['password']
+        return web.json_response({'login': login, 'password': password})
 
-async def login(request):
-    data = await request.post()
-    login = data['login']
-    password = data['password']
-    return web.json_response({'login': login, 'password': password})
-
-@aiohttp_jinja2.template('login.html')
-async def get_login(request):
-    return {}
+    @aiohttp_jinja2.template('login.html')
+    async def get_login(self):
+        return {}
 
 
 
@@ -29,6 +30,6 @@ async def face_server():
     aiohttp_jinja2.setup(app, loader=jinja2.FileSystemLoader('templates'))
     app.router.add_get('/', hello)
     # app.router.add_get('/{name}/{ann}', passvar)
-    app.router.add_get('/login', get_login)
-    app.router.add_post('/login', login)
+    app.router.add_get('/login', LoginView.get_login)
+    app.router.add_post('/login', LoginView.post_login)
     return app
