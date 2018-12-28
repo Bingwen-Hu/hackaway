@@ -3,8 +3,6 @@ import asyncio
 import aiohttp
 import time
 
-from baidu_image import get_short_uuid
-
 
 START_TIME = time.time()
 IMAEG_LIST = []
