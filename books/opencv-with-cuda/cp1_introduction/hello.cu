@@ -1,4 +1,4 @@
-#include <iostream>
+#include <stdio.h>
 __global__ void myfirstkernel(void) {}
 
 int main(void){
