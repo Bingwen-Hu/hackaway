@@ -26,7 +26,7 @@ int main(void){
     cudaMemcpy(d_a, &h_a, sizeof(int), cudaMemcpyHostToDevice);
     cudaMemcpy(d_b, &h_b, sizeof(int), cudaMemcpyHostToDevice);
 
-    gpuAdd << <1, 1> >> (d_a, d_b, d_c);
+    gpuAdd << <1, 1>> > (d_a, d_b, d_c);
 
     cudaMemcpy(&h_c, d_c, sizeof(int), cudaMemcpyDeviceToHost);
     printf("Passing Parameter by Reference Output: %d + %d = %d\n", 
