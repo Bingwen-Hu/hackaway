@@ -3,6 +3,7 @@ OBJECTS+=hello
 OBJECTS+=adding
 OBJECTS+=reference
 OBJECTS+=findDevice
+OBJECTS+=deviceProp
 
 
 clean:
@@ -17,3 +18,5 @@ reference:
 	nvcc reference.cu -o $@
 findDevice:
 	nvcc findDevice.cu -o $@
+deviceProp:
+	nvcc deviceProp.cu -o $@
