@@ -19,7 +19,7 @@ import pickle as pkl
 
 def arg_parse():
     parser=argparse.ArgumentParser(description='YOLO v3 Detection Module')
-    parser.add_argument("--images", dest='images', help="Image / Directory containing images to perform detection upon", default="imgs", type=str)
+    parser.add_argument("--video", dest='video', help="Image / Directory containing images to perform detection upon", required=True, type=str)
     parser.add_argument("--det", dest='det', help="Image / Directory to store detections to", default="det", type=str)
     parser.add_argument("--bs", dest="bs", help="Batch size", default=1)
     parser.add_argument("--confidence", dest="confidence", help="Object Confidence to filter predictions", default=0.5)
@@ -55,13 +55,25 @@ assert inp_dim > 32
 # Set the model in evaluation mode
 model.eval()
 
+# colors used by draw
+colors = pkl.load(open("pallete", "rb"))
 
+
+        
+def cprep_image(orig_im: np.ndarray, inp_dim):
+    """ Prepare image for inputting to the neural network. 
+    Returns a Variable  """
+    dim = orig_im.shape[1], orig_im.shape[0]
+    img = (letterbox_image(orig_im, (inp_dim, inp_dim)))
+    img_ = img[:,:,::-1].transpose((2,0,1)).copy()
+    img_ = torch.from_numpy(img_).float().div(255.0).unsqueeze(0)
+    return img_, orig_im, dim
 
 
 
 def predict(image, testing=False):
     imlist = [image]
-    batches = list(map(prep_image, imlist, [inp_dim for x in range(len(imlist))]))
+    batches = list(map(cprep_image, imlist, [inp_dim for x in range(len(imlist))]))
     im_batches = [x[0] for x in batches]
     orig_ims = [x[1] for x in batches]
     im_dim_list = [x[2] for x in batches]
@@ -91,7 +103,25 @@ def predict(image, testing=False):
 
     return coord, labels
 
-if __name__ ==  '__main__':
-    coords, labels = predict(args.images)
+def draw(img, coords, labels):
+    def helper(img, coord, label):
+        coord = list(map(int, coord))
+        c1 = coord[0:2]
+        c2 = coord[2:4] 
+        img = cv2.rectangle(img, c1, c2, random.choice(colors))
+        img = cv2.putText(img, label, (c1[0], c1[1] + 4), cv2.FONT_HERSHEY_PLAIN, 1, [225,255,255], 1)
     for coord, label in zip(coords, labels):
-        print('detect %s in %r' % (label, coord))
+        helper(img, coord, label) 
+    return img
+
+if __name__ ==  '__main__':
+    video = cv2.VideoCapture('/home/mory/Downloads/test.mp4')
+    while True:
+        ret, frame = video.read()
+        if not ret:
+            print('done!')
+            break
+        coords, labels = predict(frame)
+        img = draw(frame, coords, labels)
+        cv2.imshow('Test', img)
+    cv2.destroyAllWindows()
