@@ -30,3 +30,9 @@ ffmpeg -i video.mp4 pattern_%04d.jpg -hide_banner
 
 # -hide_banner: hide ffmpeg compilation information
 ```
+
+### extract a piece of video from video
+```bash
+ffmpeg  -i ./tocatoca.mp4 -vcodec copy -acodec copy -ss 00:00:10 -to 00:00:15 ./cutout1.mp4 -y
+# -y means override if file exists
+```
