@@ -71,7 +71,7 @@ def cprep_image(orig_im: np.ndarray, inp_dim):
 
 
 
-def predict(image, testing=False):
+def predict(image):
     imlist = [image]
     batches = list(map(cprep_image, imlist, [inp_dim for x in range(len(imlist))]))
     im_batches = [x[0] for x in batches]
@@ -95,33 +95,32 @@ def predict(image, testing=False):
         output[i, [1,3]] = torch.clamp(output[i, [1,3]], 0.0, im_dim_list[i,0])
         output[i, [2,4]] = torch.clamp(output[i, [2,4]], 0.0, im_dim_list[i,1])
     
-    coord = [output_[1:5].tolist() for output_ in output]
+    return output
 
-    # classes
-    labels = [int(output_[-1]) for output_ in output]
-    labels = [classes[label] for label in labels]
-
-    return coord, labels
-
-def draw(img, coords, labels):
-    def helper(img, coord, label):
-        coord = list(map(int, coord))
-        c1 = coord[0:2]
-        c2 = coord[2:4] 
-        img = cv2.rectangle(img, c1, c2, random.choice(colors))
-        img = cv2.putText(img, label, (c1[0], c1[1] + 4), cv2.FONT_HERSHEY_PLAIN, 1, [225,255,255], 1)
-    for coord, label in zip(coords, labels):
-        helper(img, coord, label) 
+def draw(outputs, img):
+    def draw_single_obj(x, img):
+        c1 = tuple(x[1:3].int())
+        c2 = tuple(x[3:5].int())
+        cls = int(x[-1])
+        label = "{0}".format(classes[cls])
+        color = random.choice(colors)
+        img = cv2.rectangle(img, c1, c2, color, 1)
+        t_size = cv2.getTextSize(label, cv2.FONT_HERSHEY_PLAIN, 1 , 1)[0]
+        c2 = c1[0] + t_size[0] + 3, c1[1] + t_size[1] + 4
+        img = cv2.rectangle(img, c1, c2,color, -1)
+        img = cv2.putText(img, label, (c1[0], c1[1] + t_size[1] + 4), cv2.FONT_HERSHEY_PLAIN, 1, [225,255,255], 1)
+        return img
+    list(map(lambda x: draw_single_obj(x, img), outputs))
     return img
 
 if __name__ ==  '__main__':
-    video = cv2.VideoCapture('/home/mory/Downloads/test.mp4')
+    import time
+    video = cv2.VideoCapture(args.video)
     while True:
         ret, frame = video.read()
-        if not ret:
-            print('done!')
+        output = predict(frame)
+        frame = draw(output, frame)
+        cv2.imshow('Test', frame)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
             break
-        coords, labels = predict(frame)
-        img = draw(frame, coords, labels)
-        cv2.imshow('Test', img)
     cv2.destroyAllWindows()
