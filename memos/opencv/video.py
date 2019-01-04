@@ -1,7 +1,7 @@
 import cv2
 import time
 
-cap = cv2.VideoCapture("/home/mory/Downloads/fengjiao.mp4")
+cap = cv2.VideoCapture("/home/mory/Downloads/org.avi")
 
 while(cap.isOpened()):
     ret, frame = cap.read()
@@ -11,7 +11,7 @@ while(cap.isOpened()):
         break
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
-    time.sleep(0.025)
+    time.sleep(0.040)
 
 cap.release()
 cv2.destroyAllWindows()
