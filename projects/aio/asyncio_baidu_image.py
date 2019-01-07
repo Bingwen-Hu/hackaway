@@ -40,12 +40,18 @@ async def download(url, name):
 
 
 def main():
+    global IMAEG_LIST
     words = [
-        '写真', '美女写真', '模特', '明星写真', '街拍', '车模', 
+        '奥巴马', '特朗普', '习近平', '马云'
     ]
 
     tasks = [asyncio.ensure_future(fetch(word)) for word in words]
     loop = asyncio.get_event_loop()
+    loop.run_until_complete(asyncio.wait(tasks))
+    
+    # download
+    IMAEG_LIST = [url for lst in IMAEG_LIST for url in lst]
+    tasks = [asyncio.ensure_future(download(url, "%s.jpg" % i)) for i, url in enumerate(IMAEG_LIST)]
     loop.run_until_complete(asyncio.wait(tasks))
 
 
