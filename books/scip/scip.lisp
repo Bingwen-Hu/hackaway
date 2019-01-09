@@ -108,7 +108,7 @@
        0.001)))
 (square (mysqrt 1000))
 
-;;; 1.8 note: buggy
+;;; 1.8 note: buggy fixed
 (defun average-cube (guess x)
   (/ (+ (/ x (square guess))
         (* 2 guess))
@@ -133,4 +133,69 @@
 
 (mycube-root 2)
 
+; A procedure definition should be able to suppress details
 
+;; introduce block structure and lexical scoping
+(defun mysqrt (x)
+  (defun good-enough? (guess)
+    (< (myabs (- (square guess) x)) 0.001))
+  (defun improve (guess)
+    (average guess (/ x guess)))
+  (defun sqrt-iter (guess)
+    (if (good-enough? guess)
+        guess
+        (sqrt-iter (improve guess))))
+  (sqrt-iter 1.0))
+
+
+                                              
+; Great! Here is 1.2 Procedures and the Processes they Generate
+; We are still lack of typical openings, tactics, or strategy
+; The ability to visualize the consequences of the actions under consideration is crucial to becoming an expert programmer
+
+; 1.2.1 Linear Recursion and Iteration
+
+; using trace can see the difference bwtween the following two functions
+(defun factorial (n)
+  "recursive process"
+  (if (= n 1)
+      1
+      (* n (factorial (- n 1)))))
+
+(defun factorial (n)
+  "iterative recursion"
+  (labels ((helper (n ret)
+             (if (= n 1)
+                 ret
+                 (helper (1- n) (* ret n)))))
+    (helper n 1)))
+
+;;; 1.2.2 Tree Recursion
+
+(defun fib (n)
+  (cond ((= n 0) 0)
+        ((= n 1) 1)
+        (t (+ (fib (- n 1))
+              (fib (- n 2))))))
+
+(defun fib (n)
+  "iteration process"
+  (defun fib-iter (a b count)
+    (if (= count 0)
+        b
+        (fib-iter (+ a b) a (1- count))))
+  (fib-iter 1 0 n))
+
+;;; Example: Counting Change
+;;; $ 100 to 5, 2, 1
+
+; the mory version
+(defparameter available-coins '(1 2 5))
+
+
+(defun count-change (amount coins)
+  )
+
+(defun count-change-contain (amount the-coin rest-coins)
+  (cond ((= amount 0) 1)
+        ((= ))))
