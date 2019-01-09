@@ -16,3 +16,9 @@ and add the following content
 install-option=--prefix=~/.local
 
 ```
+# using another mirror
+
+
+'''
+pip install -i https://pypi.mirrors.ustc.edu.cn/simple/ opencv_python
+'''
