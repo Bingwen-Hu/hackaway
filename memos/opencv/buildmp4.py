@@ -5,16 +5,16 @@ from os.path import basename
 
 def sort_helper(path):
     name = basename(path)
-    name = name.lstrip('dance')
-    num = name.rstrip('_skel.jpg')
+    name = name.lstrip('result_')
+    num = name.rstrip('.png')
     num = int(num)
     return num
 
 
-img_dir = "/home/mory/Downloads/output"
-video_path = "/home/mory/Downloads/dance.avi"
+img_dir = "/home/mory/Downloads/ding"
+video_path = "/home/mory/Downloads/dingcut.avi"
 # use for fps
-org_video_path = "/home/mory/Downloads/dance.mp4"
+org_video_path = "/home/mory/Downloads/dingcut.mp4"
 
 org = cv2.VideoCapture(org_video_path)
 fps = org.get(cv2.CAP_PROP_FPS)

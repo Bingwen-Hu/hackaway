@@ -21,8 +21,8 @@ def single_show():
 
 import time
 def multi_show(writepath=None):
-    cap1 = cv2.VideoCapture('/home/mory/Downloads/mory.mp4')
-    cap2 = cv2.VideoCapture('/home/mory/Downloads/dance.avi')
+    cap1 = cv2.VideoCapture('/home/mory/Downloads/dingcut.mp4')
+    cap2 = cv2.VideoCapture('/home/mory/Downloads/dingcut.avi')
     fps = cap1.get(cv2.CAP_PROP_FPS)
 
     imgsize = int(cap1.get(cv2.CAP_PROP_FRAME_WIDTH)), int(cap1.get(cv2.CAP_PROP_FRAME_HEIGHT))
@@ -32,6 +32,10 @@ def multi_show(writepath=None):
     while True:
         ret1, frame1 = cap1.read()
         ret2, frame2 = cap2.read()
+        # cut out
+        frame1 = frame1[:, 300:-300, :]
+        frame2 = frame2[:, 300:-300, :]
+         
         if ret1 == ret2 == True:
             concat = np.hstack([frame2, frame1, frame2])
             cv2.imshow('frame', concat)
@@ -47,3 +51,7 @@ def multi_show(writepath=None):
     cv2.destroyAllWindows()
 
 multi_show('/home/mory/Downloads/concat.avi')
+
+
+def nice_show(path):
+    pass
