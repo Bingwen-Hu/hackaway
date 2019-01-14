@@ -32,11 +32,11 @@ def multi_show(writepath=None):
     while True:
         ret1, frame1 = cap1.read()
         ret2, frame2 = cap2.read()
-        # cut out
-        frame1 = frame1[:, 300:-300, :]
-        frame2 = frame2[:, 300:-300, :]
-         
+
         if ret1 == ret2 == True:
+            # cut out
+            frame1 = frame1[:, 300:-300, :]
+            frame2 = frame2[:, 300:-300, :]
             concat = np.hstack([frame2, frame1, frame2])
             cv2.imshow('frame', concat)
             videowriter.write(concat)
@@ -44,7 +44,7 @@ def multi_show(writepath=None):
             break
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
-        time.sleep(0.5/fps) 
+        time.sleep(0.5/fps)
     videowriter.release()
     cap1.release()
     cap2.release()
