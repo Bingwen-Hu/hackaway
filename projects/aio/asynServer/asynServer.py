@@ -47,12 +47,17 @@ class UploadView(web.View):
     async def get(self):
         return {}
 
-@routes.view('/static')
+@routes.view('/image')
 class ShowImage(web.View):
-    @aiohttp_jinja2.template('static.html')
+    @aiohttp_jinja2.template('image.html')
     async def get(self):
         return {}
 
+@routes.view('/audio')
+class ShowImage(web.View):
+    @aiohttp_jinja2.template('audio.html')
+    async def get(self):
+        return {}
 
 routes.static('/statics', './statics')
 
