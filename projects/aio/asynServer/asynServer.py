@@ -47,11 +47,20 @@ class UploadView(web.View):
     async def get(self):
         return {}
 
-        
+@routes.view('/static')
+class ShowImage(web.View):
+    @aiohttp_jinja2.template('static.html')
+    async def get(self):
+        return {}
+
+
+routes.static('/statics', './statics')
 
 # run with gunicorn
-async def face_server():
+async def run_server():
     app = web.Application()
     aiohttp_jinja2.setup(app, loader=jinja2.FileSystemLoader('templates'))
     app.router.add_routes(routes)
     return app
+
+# gunicorn asynServer:run_server --worker-class aiohttp.GunicornWebWorker
