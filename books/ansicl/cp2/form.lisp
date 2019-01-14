@@ -186,3 +186,29 @@
 
 
 ;;; 2.14 functions as objects
+(function +)
+#'+
+; (apply function (vars))
+(apply #'+ '(1 2 3 4))
+; (funcall function var*)
+(funcall #'+ 1 2 3 4)
+
+; (lambda (parameter) (body))
+(apply 
+ (lambda (a b)
+   (+ a b))
+ '(1 3))
+
+((lambda (x) (+ x 100)) 1)
+(funcall #'(lambda (x) (+ x 100))
+         1)
+
+;;; 2.6
+(typep 42 'integer)
+(typep 42 t)
+(typep 42 'rational)
+(typep 42 'real)
+(typep 42 'atom)
+(typep 42 'fixnum)
+(typep 42 'number)
+
