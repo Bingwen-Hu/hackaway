@@ -3,7 +3,9 @@ from imutils import paths
 import os
 from os.path import basename
 import numpy as np
-
+import requests
+import cv2
+import time
 
 DATA_DIR = './data/images'
 
@@ -47,9 +49,34 @@ def build_facedb(dirpath:str):
 DB_EMBED, DB_LABELS = build_facedb(DATA_DIR)
 
 
+def yolo(imgpath:str):
+    url = "http://localhost:8000/objectapi/detect"
+    files = {'image': (imgpath, open(imgpath, 'rb'), 'image/jpg')}
+    resp = requests.post(url, files=files)
+    resp_json = resp.json()
+    results = resp_json['results']
+    if len(results):
+        results = [d['bbox'] for d in results if d['label'] == 'person']
+    else:
+        raise ValueError("No Person Detected!")
+    return results
+    
 
-def recognize(imgpath:str):
-    img = face_recognition.load_image_file(imgpath)
+
+def region_mask(img, bboxes):
+    img = img.copy()
+    size = img.shape[:2]
+    mask = np.zeros(size, dtype=np.int32)
+    bbox = bboxes[0]
+    mask[bbox[0]: bbox[2], bbox[1]: bbox[3]] = 1
+    channels = img.shape[2]
+    for channel in range(channels):
+        img[:, :, channel] = img[:, :, channel] * mask
+    return img
+    
+
+
+def recognize(img:np.array):
     locations = face_recognition.face_locations(img)
     encodings = face_recognition.face_encodings(img, locations)
     def distance_helper(compared_encoding, bbox):
@@ -59,9 +86,16 @@ def recognize(imgpath:str):
         min_distance = distances[min_index]
         # threshold
         label = DB_LABELS[min_index] if min_distance < 0.4 else 'unknown'
-        return {'bbox': [bbox[3], bbox[0], bbox[1], bbox[2]], 'label': label}
+        return {'bbox': [bbox[3], bbox[0], bbox[1], bbox[2]], 'label': label, 'distance': min_distance}
     results = list(map(distance_helper, encodings, locations))
     return results
 
 if __name__ == "__main__":
-    pass    
+    img = cv2.imread('masked.png')    
+    t = time.time()
+    bboxes = yolo('masked.png')
+    print('detect cost %.3fs' % (time.time() - t))
+    t = time.time()
+    masked = region_mask(img, bboxes)
+    print('mask cost %.3f' % (time.time() - t))
+    cv2.imwrite('masked_.png', masked)
