@@ -173,7 +173,8 @@ if __name__ == "__main__":
     cap = cv2.VideoCapture('2019.mp4') 
     # procedure1: read in raw image -> image
     while True:
-        ret, img = cap.read()
+        for i in range(25):
+            ret, img = cap.read()
         if not ret:
             break
         img = resize(img, 1000)
