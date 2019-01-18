@@ -31,6 +31,7 @@ INFO = {
     'jianlong': ['邓建龙','AILab','研究员','怎么又错了'],
     'junguang': ['冼俊光','AILab','研究员', 'be a quiet and beautiful man'],
     'guangyi': ['袁广益','数据平台','Java开发','快睡觉'],
+    'unknown': ['unknown', 'unknown', 'unknown', 'unknown'],
 } 
 
 def build_facedb(dirpath:str):
@@ -85,6 +86,8 @@ def region_mask(img, bbox):
 
 def recognize(img:np.array):
     locations = face_recognition.face_locations(img)
+    if len(locations) == 0:
+        return {'label': 'fail detect', 'distance': 0.999, 'info': INFO['unknown']}
     encodings = face_recognition.face_encodings(img, locations)
     def distance_helper(compared_encoding, bbox):
         # NOTE: location just use as return value
@@ -92,7 +95,7 @@ def recognize(img:np.array):
         min_index = np.argmin(distances)
         min_distance = distances[min_index]
         # threshold
-        label = DB_LABELS[min_index]
+        label = DB_LABELS[min_index] if min_distance < 0.56 else 'unknown'
         return {'bbox': [bbox[3], bbox[0], bbox[1], bbox[2]], 'label': label, 'distance': min_distance, 'info': INFO[label]}
     results = list(map(distance_helper, encodings, locations))
     return results[0]
@@ -102,7 +105,10 @@ def create_info(height, width, infos):
     distance = infos['distance']
     info = infos['info']
     # build image path and read in
-    img = cv2.imread(os.path.join(DATA_DIR, f"{label}.jpg"))
+    if label == 'unknown':
+        img = cv2.imread('unknown.jpg')
+    else:
+        img = cv2.imread(os.path.join(DATA_DIR, f"{label}.jpg"))
     # resize to width when keeping height:width ratio by center crop 
     img = resize(img, width)
     # create a canvas
