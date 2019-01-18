@@ -18,7 +18,36 @@
       a))
 
 ; e5 What do these functions do?
+
 (defun enigma (x)
   (and (not (null x))
        (or (null (car x))
            (enigma (cdr x)))))
+; answer: test whether any nil in x
+
+(defun mystery (x y)
+  (if (null y)
+      nil
+      (if (eql (car y) x)
+          0
+          (let ((z (mystery x (cdr y))))
+            (and z (+ z 1))))))
+; search the x index in y
+
+; e6 
+(car (car (cdr '(a (b c) d))))
+(or 13 (/ 1 0))
+(funcall #'list 1 nil)
+(apply #'list 1 nil)
+
+; e7 takes a list as an argument and returns true if one of its elements is a list
+(defun list-as-element (lst)
+  (if (null lst)
+      nil
+      (if (listp (car lst))
+          t
+          (list-as-element (cdr lst)))))
+
+(list-as-element '(1 2 3))
+(list-as-element '(1 (2 3) 4))
+

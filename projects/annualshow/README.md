@@ -4,7 +4,7 @@ demo design using [face_recognition](https://github.com/ageitgey/face_recognitio
 
 ### TODOLIST
 + [x] build the face database
-+ [ ] using yolo detect the bbox
++ [x] using yolo detect the bbox
 + [ ] postprocess to make the matching people show and other hide
 + [ ] output the mp4 -- that's all
 
