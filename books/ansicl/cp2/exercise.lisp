@@ -51,3 +51,43 @@
 (list-as-element '(1 2 3))
 (list-as-element '(1 (2 3) 4))
 
+; e8 define iterative and recursive definitions of a function
+(defun print-dots (n)
+  (if (<= n 0)
+      nil
+      (progn
+        (format t ".")
+        (print-dots (1- n)))))
+
+(defun print-dots (n)
+  (dotimes (i n)
+    (format t ".")))
+
+; takes a list and returns the number of times the symbol a occurs int it
+(defun appear-times (a lst)
+  (let ((count 0))
+    (dolist (i lst)
+      (if (eql i a)
+          (setf count (1+ count))))
+    count))
+
+(defun appear-times (a lst)
+  (labels ((appear-helper (a lst count)
+             (if (null lst)
+                 count
+                 (if (eql a (car lst))
+                     (appear-helper a (cdr lst) (1+ count))
+                     (appear-helper a (cdr lst) count)))))
+    (appear-helper a lst 0)))
+
+; e9
+(defun summit (lst)
+  (apply #'+ (remove nil lst)))
+
+(defun summit (lst)
+  (if (null lst)
+      0
+      (let ((x (car lst)))
+        (if (null x)
+            (summit (cdr lst))
+            (+ x (summit (cdr lst)))))))

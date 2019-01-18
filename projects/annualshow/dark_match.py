@@ -20,7 +20,7 @@ JOB = 2
 # 一句话描述
 INTRO = 3
 
-infos = {
+INFO = {
     'jiang': ['江纬','AILab','研究员','quick quick learn day day up'],
     'zhou': ['陈周','AILab','研究员','简单'],
     'kejian': ['李科健','AILab','研究员','哈哈哈'],
@@ -93,7 +93,7 @@ def recognize(img:np.array):
         min_distance = distances[min_index]
         # threshold
         label = DB_LABELS[min_index]
-        return {'bbox': [bbox[3], bbox[0], bbox[1], bbox[2]], 'label': label, 'distance': min_distance, 'info': infos[label]}
+        return {'bbox': [bbox[3], bbox[0], bbox[1], bbox[2]], 'label': label, 'distance': min_distance, 'info': INFO[label]}
     results = list(map(distance_helper, encodings, locations))
     return results[0]
 
@@ -160,27 +160,40 @@ def append_info(img, img_info):
 
 
 if __name__ == "__main__":
+    # init
     bbox_index = 0
-    frame_num = 100
+    frame_max = 100
+    frame_cnt = 0
+    cap = cv2.VideoCapture('2019.mp4') 
     # procedure1: read in raw image -> image
-    img = cv2.imread('im.png')
-    img = resize(img, 1000)
-    # procedure2: yolo detect person -> person-bbox 
-    bboxes = yolo_detect(img)
-    bboxes_num = len(bboxes)
-    # procedure3: masked just one person out -> masked-image
-    bbox = bboxes[bbox_index]
-    masked = region_mask(img, bbox)
-    # procedure4: faceapi detect the person -> label, infos
-    infos = recognize(masked)
-    # procedure5.1: create info -> info-image
-    img_info = create_info(img.shape[0], 300, infos)
-    # procedure5.2: draw face bbox -> face-image
-    # img_face = draw_facebbox(masked, infos['bbox'])
-    img_face = masked
-    # procedure6: combine masked-image and info-image -> END
-    img = append_info(img_face, img_info)
-    cv2.imshow("test", img)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-    cv2.imwrite('final.png', img)
+    while True:
+        ret, img = cap.read()
+        if not ret:
+            break
+        img = resize(img, 1000)
+        # procedure2: yolo detect person -> person-bbox
+        bboxes = yolo_detect(img)
+        bboxes_num = len(bboxes)
+        # procedure3: masked just one person out -> masked-image
+        bbox = bboxes[bbox_index]
+        masked = region_mask(img, bbox)
+        # procedure4: faceapi detect the person -> label, infos
+        infos = recognize(masked)
+        # procedure5.1: create info -> info-image
+        img_info = create_info(img.shape[0], 300, infos)
+        # procedure5.2: draw face bbox -> face-image
+        # img_face = draw_facebbox(masked, infos['bbox'])
+        img_face = masked
+        # procedure6: combine masked-image and info-image -> END
+        img = append_info(img_face, img_info)
+        cv2.imshow("test", img)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
+        # monitor frame count
+        frame_cnt += 1
+        if frame_cnt == frame_max:
+            bbox_index += 1
+            if bbox_index == bbox_index:
+                bbox_index = 0
+            frame_cnt = 0 
