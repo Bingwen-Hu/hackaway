@@ -36,3 +36,14 @@ ffmpeg -i video.mp4 pattern_%04d.jpg -hide_banner
 ffmpeg  -i ./tocatoca.mp4 -vcodec copy -acodec copy -ss 00:00:10 -to 00:00:15 ./cutout1.mp4 -y
 # -y means override if file exists
 ```
+
+
+### combine image to a video
+```bash
+ffmpeg -f image2 -i face/%d.png -vcodec libx264 -r 30 -b 900k face.mp4
+# -f format (image)
+# -i input pattern
+# -vcodec libx264 means mp4
+# -r fps
+# -b image size
+```
