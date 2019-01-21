@@ -10,3 +10,8 @@ demo design using [face_recognition](https://github.com/ageitgey/face_recognitio
 
 ### dataflow
 image --> yoloapi --> select one person bbox --> faceapi --> recognize person info 
+
+trick
+```
+image -> yoloapi -> select one person -> indexing person info
+```

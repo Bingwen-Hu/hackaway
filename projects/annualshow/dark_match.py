@@ -26,7 +26,7 @@ INFO = {
     'kejian': ['李科健','AILab','研究员','哈哈哈'],
     'changshu': ['陈昌澍','AILab','研究员','和你一样'],
     'fengjiao': ['王凤娇','AILab','研究员','笑死我了'],
-    'zhihao': ['周志豪','AILab','研究员','别闹'],
+    'zhihao': ['曹志豪','AILab','研究员','别闹'],
     'zhan': ['陈站','AILab','研究员','不学习会死'],
     'jianlong': ['邓建龙','AILab','研究员','怎么又错了'],
     'junguang': ['冼俊光','AILab','研究员', 'be a quiet and beautiful man'],
@@ -64,7 +64,7 @@ DB_EMBED, DB_LABELS = build_facedb(DATA_DIR)
 def yolo_detect(img):
     results = objectapi.detect(img)
     results = [r['bbox'] for r in results if r['label'] == 'person']
-    results.sort(key=lambda x: x[3], reverse=True)
+    results.sort(key=lambda x: x[0], reverse=True)
     return results
 
 
@@ -84,7 +84,7 @@ def region_mask(img, bbox):
     return img
     
 
-def recognize(img:np.array):
+def recognize(img:np.array, trick=None):
     locations = face_recognition.face_locations(img)
     if len(locations) == 0:
         return {'label': 'fail detect', 'distance': 0.999, 'info': INFO['unknown']}
@@ -96,8 +96,12 @@ def recognize(img:np.array):
         min_distance = distances[min_index]
         # threshold
         label = DB_LABELS[min_index] if min_distance < 0.56 else 'unknown'
+        if trick:
+            label = trick
         return {'bbox': [bbox[3], bbox[0], bbox[1], bbox[2]], 'label': label, 'distance': min_distance, 'info': INFO[label]}
     results = list(map(distance_helper, encodings, locations))
+    results = sorted(results, key=lambda x: x['distance'])
+    print(results)
     return results[0]
 
 def create_info(height, width, infos):
@@ -165,16 +169,22 @@ def append_info(img, img_info):
     return combine
 
 
+trick_labels = {
+    0: 'junguang',
+    1: 'kejian',
+    2: 'guangyi',
+}
+
+
 if __name__ == "__main__":
     # init
     bbox_index = 0
-    frame_max = 100
+    frame_max = 245
     frame_cnt = 0
-    cap = cv2.VideoCapture('2019.mp4') 
+    cap = cv2.VideoCapture('/home/mory/data/face/threecut.mp4') 
     # procedure1: read in raw image -> image
     while True:
-        for i in range(25):
-            ret, img = cap.read()
+        ret, img = cap.read()
         if not ret:
             break
         img = resize(img, 1000)
@@ -185,7 +195,7 @@ if __name__ == "__main__":
         bbox = bboxes[bbox_index]
         masked = region_mask(img, bbox)
         # procedure4: faceapi detect the person -> label, infos
-        infos = recognize(masked)
+        infos = recognize(masked, trick_labels[bbox_index])
         # procedure5.1: create info -> info-image
         img_info = create_info(img.shape[0], 300, infos)
         # procedure5.2: draw face bbox -> face-image
@@ -201,6 +211,6 @@ if __name__ == "__main__":
         frame_cnt += 1
         if frame_cnt == frame_max:
             bbox_index += 1
-            if bbox_index == bbox_index:
+            if bbox_index == bboxes_num:
                 bbox_index = 0
             frame_cnt = 0 
