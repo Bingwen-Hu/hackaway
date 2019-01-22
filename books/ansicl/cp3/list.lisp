@@ -68,3 +68,18 @@
         (nreverse x))))
 
 (defun mory-append ())
+
+
+; access
+(nth 0 '(1 2 3))
+(nthcdr 0 '(1 2 3))
+(nthcdr 1 '(1 2 3))
+
+
+; mapping
+; mapcar => map car
+(mapcar #'(lambda (x y) (list x y)) 
+        '(1 2 3)
+        '(a b c d))
+; maplist => map cdr
+(maplist #'(lambda (x) x) '(a b c d))

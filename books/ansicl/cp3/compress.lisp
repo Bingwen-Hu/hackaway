@@ -24,6 +24,7 @@
                                                      (n-elts elt n)
                                                      ret)))))))
     (nreverse (compr-iter elt n lst nil))))
+
 (defun n-elts (elt n)
   (if (> n 1)
       (list n elt)
@@ -43,6 +44,13 @@
   (if (zerop n)
       nil
       (cons elt (list-of (- n 1) elt))))
+
+(defun mory-list-of (n elt)
+  (labels ((list-of (n elt ret)
+             (if (zerop n)
+                 ret
+                 (list-of (- n 1) elt (cons elt ret)))))
+    (list-of n elt nil)))
 
 
 (list-of 3 'ho)
