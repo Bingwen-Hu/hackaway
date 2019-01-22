@@ -21,7 +21,7 @@ JOB = 2
 INTRO = 3
 
 INFO = {
-    'jiang': ['江纬','AILab','研究员','quick quick learn day day up'],
+    'jiang': ['江纬','AILab','研究员','day day up'],
     'zhou': ['陈周','AILab','研究员','简单'],
     'kejian': ['李科健','AILab','研究员','哈哈哈'],
     'changshu': ['陈昌澍','AILab','研究员','和你一样'],
