@@ -66,3 +66,5 @@
             (setf x (cons i x))
             (format t "x: ~a~%" x)))
         (nreverse x))))
+
+(defun mory-append ())

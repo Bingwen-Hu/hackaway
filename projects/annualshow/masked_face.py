@@ -8,7 +8,7 @@ import cv2
 import time
 import matplotlib.pyplot as plt
 
-# external 
+# external
 from yolo import objectapi
 
 
@@ -29,15 +29,15 @@ INFO = {
     'zhihao': ['曹志豪','AILab','研究员','别闹'],
     'zhan': ['陈站','AILab','研究员','不学习会死'],
     'jianlong': ['邓建龙','AILab','研究员','怎么又错了'],
-    'junguang': ['冼俊光','AILab','研究员', 'be a quiet and beautiful man'],
+    'junguang': ['冼俊光','AILab','研究员', 'be a quiet man'],
     'guangyi': ['袁广益','数据平台','Java开发','快睡觉'],
     'unknown': ['unknown', 'unknown', 'unknown', 'unknown'],
-} 
+}
 
 def build_facedb(dirpath:str):
     """ build a face database as following:
     Args:
-        dirpath: known face database, assume subdir name is the name of person     
+        dirpath: known face database, assume subdir name is the name of person
 
     Returns:
         key-value face database
@@ -70,24 +70,27 @@ def yolo_detect(img):
 
 def region_mask(img, bbox):
     """
-    return masked image and crop image for face recognition 
+    return masked image and crop image for face recognition
     """
-    img = img.copy()
+    img_mask = img.copy()
+    img_dark = img.copy()
     size = img.shape[:2]
-    mask = np.zeros(size)
-    mask[bbox[1]: bbox[3], bbox[0]: bbox[2]] = 1
-    mask = np.where(mask==0, 0.3, 1)
+    dark = np.zeros(size)
+    dark[bbox[1]: bbox[3], bbox[0]: bbox[2]] = 1
+    mask = np.where(dark==0, 0.3, 1)
     channels = img.shape[2]
     for channel in range(channels):
-        img[:, :, channel] = img[:, :, channel] * mask
-    img.dtype = np.uint8
-    return img
-    
+        img_mask[:, :, channel] = img_mask[:, :, channel] * mask
+        img_dark[:, :, channel] = img_dark[:, :, channel] * dark
+    img_mask.dtype = np.uint8
+    img_dark.dtype = np.uint8 
+    return img_mask, img_dark
+
 
 def recognize(img:np.array, trick=None):
     locations = face_recognition.face_locations(img)
     if len(locations) == 0:
-        return {'label': 'fail detect', 'distance': 0.999, 'info': INFO['unknown']}
+        return {'label': 'unknown', 'distance': 0.999, 'info': INFO['unknown'], 'bbox': None}
     encodings = face_recognition.face_encodings(img, locations)
     def distance_helper(compared_encoding, bbox):
         # NOTE: location just use as return value
@@ -96,12 +99,11 @@ def recognize(img:np.array, trick=None):
         min_distance = distances[min_index]
         # threshold
         label = DB_LABELS[min_index] if min_distance < 0.56 else 'unknown'
-        if trick:
+        if trick and label != 'unknown':
             label = trick
         return {'bbox': [bbox[3], bbox[0], bbox[1], bbox[2]], 'label': label, 'distance': min_distance, 'info': INFO[label]}
     results = list(map(distance_helper, encodings, locations))
-    results = sorted(results, key=lambda x: x['distance'])
-    print(results)
+    # results = sorted(results, key=lambda x: x['distance'])
     return results[0]
 
 def create_info(height, width, infos):
@@ -111,9 +113,12 @@ def create_info(height, width, infos):
     # build image path and read in
     if label == 'unknown':
         img = cv2.imread('unknown.jpg')
+        print('read unknown.jpg')
     else:
-        img = cv2.imread(os.path.join(DATA_DIR, f"{label}.jpg"))
-    # resize to width when keeping height:width ratio by center crop 
+        path = os.path.join(DATA_DIR, f"{label}.jpg")
+        img = cv2.imread(path)
+        print('read {}'.format(path))
+    # resize to width when keeping height:width ratio by center crop
     img = resize(img, width)
     # create a canvas
     canvas = np.zeros((height, width, 3), dtype=np.uint8)
@@ -132,10 +137,10 @@ def create_info(height, width, infos):
         # name
         draw.text((10, width + 180), font=font, text=f"Name: ", fill="#ffaaee")
         draw.text((10, width + 240), font=font, text=f"{info[NAME]}", fill="#ffaa00")
-        # department 
+        # department
         draw.text((10, width + 300), font=font, text=f"Department: ", fill="#ffaaee")
         draw.text((10, width + 360), font=font, text=f"{info[DEPAT]}", fill="#ffaa00")
-        # Job title 
+        # Job title
         draw.text((10, width + 420), font=font, text=f"Job: ", fill="#ffaaee")
         draw.text((10, width + 480), font=font, text=f"{info[JOB]}", fill="#ffaa00")
         # description
@@ -157,7 +162,8 @@ def resize(img, width):
     return cv2.resize(img, (width, width))
 
 def draw_facebbox(img, bbox):
-    img = cv2.rectangle(img, (bbox[0], bbox[1]), (bbox[2], bbox[3]), (128, 255, 128), 3)
+    if bbox is not None:
+        img = cv2.rectangle(img, (bbox[0]-20, bbox[1]-20), (bbox[2]+20, bbox[3]+20), (128, 255, 128), 3)
     return img
 
 def append_info(img, img_info):
@@ -181,7 +187,7 @@ if __name__ == "__main__":
     bbox_index = 0
     frame_max = 245
     frame_cnt = 0
-    cap = cv2.VideoCapture('/home/mory/data/face/threecut.mp4') 
+    cap = cv2.VideoCapture('/home/mory/data/face/fourcut.mp4')
     # procedure1: read in raw image -> image
     while True:
         ret, img = cap.read()
@@ -193,14 +199,14 @@ if __name__ == "__main__":
         bboxes_num = len(bboxes)
         # procedure3: masked just one person out -> masked-image
         bbox = bboxes[bbox_index]
-        masked = region_mask(img, bbox)
+        masked, darked = region_mask(img, bbox)
         # procedure4: faceapi detect the person -> label, infos
-        infos = recognize(masked, trick_labels[bbox_index])
+        infos = recognize(darked, None)
         # procedure5.1: create info -> info-image
         img_info = create_info(img.shape[0], 300, infos)
         # procedure5.2: draw face bbox -> face-image
-        # img_face = draw_facebbox(masked, infos['bbox'])
-        img_face = masked
+        img_face = draw_facebbox(masked, infos['bbox'])
+        # img_face = masked
         # procedure6: combine masked-image and info-image -> END
         img = append_info(img_face, img_info)
         cv2.imshow("test", img)
