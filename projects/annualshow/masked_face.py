@@ -187,6 +187,7 @@ if __name__ == "__main__":
     bbox_index = 0
     frame_max = 245
     frame_cnt = 0
+    total_cnt = 0
     cap = cv2.VideoCapture('/home/mory/data/face/fourcut.mp4')
     # procedure1: read in raw image -> image
     while True:
@@ -209,14 +210,17 @@ if __name__ == "__main__":
         # img_face = masked
         # procedure6: combine masked-image and info-image -> END
         img = append_info(img_face, img_info)
-        cv2.imshow("test", img)
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
+        # cv2.imshow("test", img)
+        # if cv2.waitKey(1) & 0xFF == ord('q'):
+        #     break
+        img.imwrite('{}.png'.format(total_cnt), img)
 
         # monitor frame count
         frame_cnt += 1
+        total_cnt += 1
+        # switch bbox
         if frame_cnt == frame_max:
+            frame_cnt = 0 
             bbox_index += 1
             if bbox_index == bboxes_num:
-                bbox_index = 0
-            frame_cnt = 0 
+                bbox_index -= 1
