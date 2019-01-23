@@ -153,4 +153,14 @@
          (let ((mid (/ len 2)))
            (equal (subseq s 0 mid)
                   (reverse (subseq s mid)))))))
-(defun )
+
+;;; assoc lists
+(setf trans '((+ . "add") (- . "subtract")))
+(assoc '+ trans)
+
+(defun our-assoc (key alist)
+  (and (consp alist)
+       (let ((pair (car alist)))
+         (if (eql key (car pair))
+             pair
+             (our-assoc key (cdr alist))))))
