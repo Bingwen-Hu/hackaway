@@ -67,6 +67,8 @@ def preprocess(img, img_size):
 def detect(img):
     img = cv2.imread(img) if type(img) == str else img
     input_img = preprocess(img, (opt.img_size, opt.img_size))
+    if cuda:
+        input_img = input_img.cuda()
 
     # Get detections
     with torch.no_grad():
@@ -74,7 +76,7 @@ def detect(img):
         detections = non_max_suppression(detections, 80, opt.conf_thres, opt.nms_thres)
     # single image
     detections = detections[0]
-    detections = detections.numpy()
+    detections = detections.cpu().numpy()
     # The amount of padding that was added
     pad_x = max(img.shape[0] - img.shape[1], 0) * (opt.img_size / max(img.shape))
     pad_y = max(img.shape[1] - img.shape[0], 0) * (opt.img_size / max(img.shape))

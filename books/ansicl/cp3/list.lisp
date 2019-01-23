@@ -83,3 +83,74 @@
         '(a b c d))
 ; maplist => map cdr
 (maplist #'(lambda (x) x) '(a b c d))
+
+; tree
+; Conses can also be considered as binary trees, with the car representing the right subtree and the cdr the left
+
+(defun our-copy-tree (tr)
+  (if (atom tr)
+      tr
+      (cons (our-copy-tree (car tr))
+            (our-copy-tree (cdr tr)))))
+
+
+; replace element in a tree
+; this will not work
+(substitute 'y 'x '(and (integerp x) (zerop (mod x 2))))
+(subst 'y 'x '(and (integerp x) (zerop (mod x 2))))
+
+(defun our-subst (new old tree)
+  (if (eql tree old)
+      new
+      (if (atom tree)
+          tree
+          (cons (our-subst new old (car tree))
+                (our-subst new old (cdr tree))))))
+
+
+
+; list as set
+(member 'b '(a b c))
+(defun mory-member (item lst)
+  (if (null lst)
+      nil
+      (if (eql item (car lst))
+          lst
+          (mory-member item (cdr lst)))))
+
+; introduce keyword parameter
+(member '(a) '((a) (z)) :test #'equal)
+
+(member-if #'oddp '(1 2 3 4))
+(mapcar #'oddp '(1 2 3 4))
+
+(defun our-member-if (fn lst)
+  (and (consp lst)
+       (if (funcall fn (car lst))
+           lst
+           (our-member-if fn (cdr lst)))))
+
+(adjoin 'b '(a b c))
+(adjoin 'z '(a b c))
+
+
+(union '(a b c) '(c b s))
+(intersection '(a b c) '(b b c))
+(set-difference '(a b c d e) '(b e))
+
+;;; 3.11 sequences
+(length '(a b c))
+
+(setf lst '(a b c d))
+(setf sublst (subseq lst 1 3))
+(setf sublst 'Mory)
+(format t "~a~%" sublst)
+
+; palindrome
+(defun mirror? (s)
+  (let ((len (length s)))
+    (and (evenp len)
+         (let ((mid (/ len 2)))
+           (equal (subseq s 0 mid)
+                  (reverse (subseq s mid)))))))
+(defun )

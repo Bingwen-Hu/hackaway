@@ -83,7 +83,7 @@ def region_mask(img, bbox):
         img_mask[:, :, channel] = img_mask[:, :, channel] * mask
         img_dark[:, :, channel] = img_dark[:, :, channel] * dark
     img_mask.dtype = np.uint8
-    img_dark.dtype = np.uint8 
+    img_dark.dtype = np.uint8
     return img_mask, img_dark
 
 
@@ -98,7 +98,7 @@ def recognize(img:np.array, trick=None):
         min_index = np.argmin(distances)
         min_distance = distances[min_index]
         # threshold
-        label = DB_LABELS[min_index] if min_distance < 0.56 else 'unknown'
+        label = DB_LABELS[min_index] if min_distance < 0.60 else 'unknown'
         if trick and label != 'unknown':
             label = trick
         return {'bbox': [bbox[3], bbox[0], bbox[1], bbox[2]], 'label': label, 'distance': min_distance, 'info': INFO[label]}
@@ -109,6 +109,7 @@ def recognize(img:np.array, trick=None):
 def create_info(height, width, infos):
     label = infos['label']
     distance = infos['distance']
+    prob = min((1 - distance) + 0.2, 0.999) * 100
     info = infos['info']
     # build image path and read in
     if label == 'unknown':
@@ -132,8 +133,8 @@ def create_info(height, width, infos):
         font = ImageFont.truetype('/home/mory/.mory/font/msyh.ttc', 40)
         draw = ImageDraw.Draw(img)
         # face difference
-        draw.text((10, width + 60), font=font, text=f"Face distance: ", fill="#ffaaee")
-        draw.text((10, width + 120), font=font, text=f"{distance:.3f}", fill="#ffaa00")
+        draw.text((10, width + 60), font=font, text=f"Probability: ", fill="#ffaaee")
+        draw.text((10, width + 120), font=font, text=f"{prob:.3f}%", fill="#ffaa00")
         # name
         draw.text((10, width + 180), font=font, text=f"Name: ", fill="#ffaaee")
         draw.text((10, width + 240), font=font, text=f"{info[NAME]}", fill="#ffaa00")
@@ -185,42 +186,58 @@ trick_labels = {
 if __name__ == "__main__":
     # init
     bbox_index = 0
-    frame_max = 245
+    frame_max = 244
     frame_cnt = 0
     total_cnt = 0
-    cap = cv2.VideoCapture('/home/mory/data/face/fourcut.mp4')
+    bboxes_num = 3
+    cap = cv2.VideoCapture('/home/mory/data/face/metoo2_938.mp4')
+
+    # for debug
+    for i in range(720):
+        ret, img = cap.read()
+        frame_cnt += 1
+        total_cnt += 1
+        bbox_index += 1
+        if bbox_index == bboxes_num:
+            bbox_index -= 1
+        print('process: %d, bbox_index: %d\r' % (total_cnt, bbox_index))
+
     # procedure1: read in raw image -> image
     while True:
         ret, img = cap.read()
         if not ret:
             break
-        img = resize(img, 1000)
+        # img = resize(img, 1000)
         # procedure2: yolo detect person -> person-bbox
         bboxes = yolo_detect(img)
         bboxes_num = len(bboxes)
         # procedure3: masked just one person out -> masked-image
-        bbox = bboxes[bbox_index]
-        masked, darked = region_mask(img, bbox)
+        try:
+            bbox = bboxes[bbox_index]
+        except:
+            cv2.imwrite('bug_%d_%d.png' % (total_cnt, bbox_index), img)
+        # masked, darked = region_mask(img, bbox)
         # procedure4: faceapi detect the person -> label, infos
-        infos = recognize(darked, None)
+        # infos = recognize(darked, None)
         # procedure5.1: create info -> info-image
-        img_info = create_info(img.shape[0], 300, infos)
+        # img_info = create_info(img.shape[0], 300, infos)
         # procedure5.2: draw face bbox -> face-image
-        img_face = draw_facebbox(masked, infos['bbox'])
+        # img_face = draw_facebbox(masked, infos['bbox'])
         # img_face = masked
         # procedure6: combine masked-image and info-image -> END
-        img = append_info(img_face, img_info)
+        # img = append_info(img_face, img_info)
         # cv2.imshow("test", img)
         # if cv2.waitKey(1) & 0xFF == ord('q'):
         #     break
-        img.imwrite('{}.png'.format(total_cnt), img)
+        # cv2.imwrite('{}.png'.format(total_cnt), img)
 
         # monitor frame count
         frame_cnt += 1
         total_cnt += 1
         # switch bbox
         if frame_cnt == frame_max:
-            frame_cnt = 0 
+            frame_cnt = 0
             bbox_index += 1
             if bbox_index == bboxes_num:
                 bbox_index -= 1
+        print('\rprocess: %d, bbox_index: %d' % (total_cnt, bbox_index))
