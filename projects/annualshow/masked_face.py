@@ -87,7 +87,7 @@ def region_mask(img, bbox):
     return img_mask, img_dark
 
 
-def recognize(img:np.array, trick=None):
+def recognize(img:np.array):
     locations = face_recognition.face_locations(img)
     if len(locations) == 0:
         return {'label': 'unknown', 'distance': 0.999, 'info': INFO['unknown'], 'bbox': None}
@@ -99,8 +99,6 @@ def recognize(img:np.array, trick=None):
         min_distance = distances[min_index]
         # threshold
         label = DB_LABELS[min_index] if min_distance < 0.70 else 'unknown'
-        if trick and label != 'unknown':
-            label = trick
         return {'bbox': [bbox[3], bbox[0], bbox[1], bbox[2]], 'label': label, 'distance': min_distance, 'info': INFO[label]}
     results = list(map(distance_helper, encodings, locations))
     return results[0]
@@ -213,8 +211,8 @@ if __name__ == "__main__":
             continue
         bbox = bboxes[bbox_index]
         masked, darked = region_mask(img, bbox)
-        # procedure4: faceapi detect the person -> label, infos
-        infos = recognize(darked, None)
+        # procedure4: faceapi detect the person -> infos
+        infos = recognize(darked)
         # procedure5.1: create info -> info-image
         img_info = create_info(img.shape[0], 300, infos)
         # procedure5.2: draw face bbox -> face-image
