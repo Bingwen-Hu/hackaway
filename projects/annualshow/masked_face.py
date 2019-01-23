@@ -219,7 +219,6 @@ if __name__ == "__main__":
         img_info = create_info(img.shape[0], 300, infos)
         # procedure5.2: draw face bbox -> face-image
         img_face = draw_facebbox(masked, infos['bbox'])
-        # img_face = masked
         # procedure6: combine masked-image and info-image -> END
         img = append_info(img_face, img_info)
         # cv2.imshow("test", img)
