@@ -4,11 +4,13 @@ python:  3.6
 flask:   1.0.2
 
 """
+import requests
 from flask import Flask
 from flask import request, jsonify, render_template, redirect
-import requests
-
 from datetime import datetime
+
+
+import newsapi
 
 app = Flask(__name__)
 
@@ -34,7 +36,7 @@ def get_weather():
 
 @app.route('/dailynews', methods=["GET"])
 def locate():
-    data = [['天气真好', 'http://url']]
+    data = newsapi.read_cache()
     weather = get_weather()
     return render_template('dailynews.html', news=data, weather=weather)
 

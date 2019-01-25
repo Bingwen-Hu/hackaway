@@ -7,7 +7,7 @@
 <body>
     <p>{{weather}}</p>
     {% for data in news %}
-        <p>{{data[0]}}<br/>
-        {{data[1]}}</p>
+        <p>{{data['Title']}}<br/>
+        {{data['Url']}}</p>
     {% endfor %}
 </body>
