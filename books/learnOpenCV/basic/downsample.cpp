@@ -6,7 +6,7 @@ int main() {
     cv::namedWindow("Image1", cv::WINDOW_AUTOSIZE);
     cv::namedWindow("Image2", cv::WINDOW_AUTOSIZE);
 
-    img1 = cv::imread("/home/mory/Downloads/cat.jpeg");
+    img1 = cv::imread("/home/mory/Downloads/result/mory.png");
     cv::imshow("Image1", img1);
     cv::pyrDown(img1, img2);
     cv::imshow("Image2", img2);

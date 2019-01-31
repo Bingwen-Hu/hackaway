@@ -1,4 +1,4 @@
-CXXFLAGS=-g -Wall -std=c++14 `pkg-config --cflags opencv`
+CXXFLAGS=-g -Wall -std=c++14 -I/usr/local/include/opencv4 -I/usr/local/include
 LDLIBS=`pkg-config --libs opencv`
 CXX=g++
 OBJECTS=display_img display_video video_trackbar simple_transform

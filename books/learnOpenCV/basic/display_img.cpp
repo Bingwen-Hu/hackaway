@@ -16,7 +16,7 @@ void readPixel(int x, int y, cv::Mat& img){
 }
 
 int main(int argc, char** argv) {
-    cv::Mat img = cv::imread("/home/mory/Downloads/cat.jpeg", -1);
+    cv::Mat img = cv::imread("/home/mory/Downloads/result/mory.png", -1);
     if ( img.empty() ) return -1;
     
     // cv::namedWindow("cat", cv::WINDOW_AUTOSIZE);
