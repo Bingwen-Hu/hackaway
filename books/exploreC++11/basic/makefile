@@ -1,5 +1,6 @@
 CC=c++
-OBJECTS= readtext readtext2 boole int_arithmetic
+OBJECTS=readtext readtext2 boole int_arithmetic str_output
+OBJECTS+=str_empty 
 
 clean:
 	rm -rf $(OBJECTS)
@@ -16,3 +17,9 @@ boole: boole.o
 
 int_arithmetic: int_arithmetic.o
 	$(CC) int_arithmetic.cpp -o $@
+
+str_output: str_output.o
+	$(CC) str_output.cpp -o $@
+
+str_empty: str_empty.o
+	$(CC) str_empty.cpp -o $@
