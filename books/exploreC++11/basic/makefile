@@ -1,8 +1,5 @@
 CC=c++
-OBJECTS=MoryNothing
-OBJECTS+=readtext
-OBJECTS+=readtext2
-OBJECTS+=boole
+OBJECTS= readtext readtext2 boole int_arithmetic
 
 clean:
 	rm -rf $(OBJECTS)
@@ -16,3 +13,6 @@ readtext2: readtext2.o
 
 boole: boole.o
 	$(CC) boole.cpp -o $@
+
+int_arithmetic: int_arithmetic.o
+	$(CC) int_arithmetic.cpp -o $@
