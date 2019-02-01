@@ -2,6 +2,7 @@ CC=c++
 OBJECTS=MoryNothing
 OBJECTS+=readtext
 OBJECTS+=readtext2
+OBJECTS+=boole
 
 clean:
 	rm -rf $(OBJECTS)
@@ -12,3 +13,6 @@ readtext: readtext.o
 
 readtext2: readtext2.o
 	$(CC) readtext2.cpp -o $@
+
+boole: boole.o
+	$(CC) boole.cpp -o $@
