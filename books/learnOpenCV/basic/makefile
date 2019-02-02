@@ -2,7 +2,7 @@ CXXFLAGS=-g -Wall -std=c++14 -I/usr/local/include/opencv4 -I/usr/local/include
 LDLIBS=`pkg-config --libs opencv`
 CXX=g++
 OBJECTS=display_img display_video video_trackbar simple_transform
-OBJECTS+=downsample canny_demo camera writeVideo
+OBJECTS+=downsample canny_demo camera writeVideo rotate
 
 display_img: display_img.o
 	$(CXX) display_img.cpp $(CXXFLAGS) $(LDLIBS)  -o $@
@@ -27,6 +27,9 @@ camera: camera.o
 
 writeVideo: writeVideo.o
 	$(CXX) writeVideo.cpp $(CXXFLAGS) $(LDLIBS)  -o $@
+
+rotate: rotate.o
+	$(CXX) rotate.cpp $(CXXFLAGS) $(LDLIBS) -o $@
 
 clean:
 	rm -rf *.o
