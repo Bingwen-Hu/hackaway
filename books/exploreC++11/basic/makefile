@@ -1,10 +1,19 @@
 CC=c++
 OBJECTS=readtext readtext2 boole int_arithmetic str_output
-OBJECTS+=str_empty 
+OBJECTS+=str_empty io str_io error
 
 clean:
 	rm -rf $(OBJECTS)
 	rm -rf *.o
+
+io: io.o
+	$(CC) io.cpp -o $@
+
+error: error.o
+	$(CC) error.cpp -o $@
+
+str_io: str_io.o
+	$(CC) str_io.cpp -o $@
 
 readtext: readtext.o
 	$(CC) readtext.cpp -o $@
