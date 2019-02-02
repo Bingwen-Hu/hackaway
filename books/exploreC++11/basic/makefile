@@ -1,10 +1,14 @@
 CC=c++
 OBJECTS=readtext readtext2 boole int_arithmetic str_output
 OBJECTS+=str_empty io str_io error for format format_fill
+OBJECTS+=alignment
 
 clean:
 	rm -rf $(OBJECTS)
 	rm -rf *.o
+
+alignment: alignment.o
+	$(CC) alignment.cpp -o $@
 
 format_fill: format_fill.o
 	$(CC) format_fill.cpp -o $@
