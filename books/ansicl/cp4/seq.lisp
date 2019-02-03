@@ -27,3 +27,14 @@
 
 (find-if #'characterp "ham")
 
+;; only contain the last one
+(remove-duplicates "abracterabcdra")
+
+;; reduce
+(reduce #'+ '(1 3 2 5 5))
+(reduce #'+ '(1 2 3 4 5) :initial-value 100)
+
+
+;; here skip an example
+;; parse date
+
