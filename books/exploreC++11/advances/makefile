@@ -1,10 +1,16 @@
 CC=c++
 OBJECTS=vector copy only_iterators foreach increment error_decre reverse_vector
-OBJECTS+=only_iterators2 print_bool as_bool
+OBJECTS+=only_iterators2 print_bool as_bool logic_op compare
 
 clean:
 	rm -rf $(OBJECTS)
 	rm -rf *.o
+
+compare: compare.o
+	$(CC) compare.cpp -o $@
+
+logic_op: logic_op.o
+	$(CC) logic_op.cpp -o $@
 
 as_bool: as_bool.o
 	$(CC) as_bool.cpp -o $@ 
