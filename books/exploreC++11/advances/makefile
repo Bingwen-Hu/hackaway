@@ -1,5 +1,5 @@
 CC=c++
-OBJECTS=vector copy only_iterators
+OBJECTS=vector copy only_iterators foreach increment error_decre
 
 
 clean:
@@ -14,3 +14,12 @@ copy: copy.o
 
 only_iterators: only_iterators.o
 	$(CC) only_iterators.cpp -o $@
+
+foreach: foreach.o
+	$(CC) foreach.cpp -o $@
+
+increment: increment.o
+	$(CC) increment.cpp -o $@
+
+error_decre: error_decre.o
+	$(CC`) error_decre.cpp -o $@
