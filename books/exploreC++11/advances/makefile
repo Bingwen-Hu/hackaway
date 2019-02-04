@@ -1,12 +1,16 @@
 CC=c++
 OBJECTS=vector copy only_iterators foreach increment error_decre reverse_vector
-OBJECTS+=only_iterators2
-
+OBJECTS+=only_iterators2 print_bool as_bool
 
 clean:
 	rm -rf $(OBJECTS)
 	rm -rf *.o
 
+as_bool: as_bool.o
+	$(CC) as_bool.cpp -o $@ 
+
+print_bool: print_bool.o
+	$(CC) print_bool.cpp -o $@
 
 only_iterators2: only_iterators2.o
 	$(CC) only_iterators2.cpp -o $@
