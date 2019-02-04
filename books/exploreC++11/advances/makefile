@@ -1,10 +1,15 @@
 CC=c++
-OBJECTS=vector copy only_iterators foreach increment error_decre
+OBJECTS=vector copy only_iterators foreach increment error_decre reverse_vector
+OBJECTS+=only_iterators2
 
 
 clean:
 	rm -rf $(OBJECTS)
 	rm -rf *.o
+
+
+only_iterators2: only_iterators2.o
+	$(CC) only_iterators2.cpp -o $@
 
 vector: vector.o
 	$(CC) vector.cpp -o $@
@@ -22,4 +27,7 @@ increment: increment.o
 	$(CC) increment.cpp -o $@
 
 error_decre: error_decre.o
-	$(CC`) error_decre.cpp -o $@
+	$(CC) error_decre.cpp -o $@
+
+reverse_vector: reverse_vector.o
+	$(CC) reverse_vector.cpp -o $@
