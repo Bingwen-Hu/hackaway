@@ -1,5 +1,5 @@
 CC=c++
-OBJECTS=vector
+OBJECTS=vector copy
 
 
 clean:
@@ -10,3 +10,5 @@ vector: vector.o
 	$(CC) vector.cpp -o $@
 
 
+copy: copy.o
+	$(CC) copy.cpp -o $@
