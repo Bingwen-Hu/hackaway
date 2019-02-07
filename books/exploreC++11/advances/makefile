@@ -1,11 +1,16 @@
 CC=c++
+CFLAGS=-Wall
 OBJECTS=vector copy only_iterators foreach increment error_decre reverse_vector
-OBJECTS+=only_iterators2 print_bool as_bool logic_op compare fileio
+OBJECTS+=only_iterators2 print_bool as_bool logic_op compare fileio map
+
 
 clean:
 	rm -rf $(OBJECTS)
 	rm -rf *.o
 	rm -rf fileio.out
+
+map: map.o
+	$(CC) map.cpp $(CFLAGS) -o $@
 
 fileio: fileio.o
 	$(CC) fileio.cpp -o $@
