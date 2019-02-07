@@ -2,12 +2,16 @@ CC=c++
 CFLAGS=-Wall
 OBJECTS=vector copy only_iterators foreach increment error_decre reverse_vector
 OBJECTS+=only_iterators2 print_bool as_bool logic_op compare fileio map
+OBJECTS+=alias
 
 
 clean:
 	rm -rf $(OBJECTS)
 	rm -rf *.o
 	rm -rf fileio.out
+
+alias: alias.o
+	$(CC) alias.cpp $(CFLAGS) -o $@
 
 map: map.o
 	$(CC) map.cpp $(CFLAGS) -o $@
