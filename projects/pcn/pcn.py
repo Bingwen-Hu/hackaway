@@ -59,28 +59,48 @@ def crop_face(img, face:Window, cropsize):
 ## following is PCN.cpp
 class PCN:
     @classmethod
-    def loadModel(modelDetect:str, net1:str, net2:str, net3:str):
-        pass
+    def loadModel():
+        from models import PCN1, PCN2, PCN3
+        pcn1 = torch.load('pth/pcn1.pth')
+        pcn2 = torch.load('pth/pcn2.pth')
+        pcn3 = torch.load('pth/pcn3.pth')
+        return pcn1, pcn2, pcn3
+
 
     @classmethod
     def resizeImg(img, scale:float):
-        pass
+        h, w = img.shape
+        h_, w_ = int(h_ / scale), int(w_ / scale)
+        return cv2.resize(img, (w_, h_))        
 
     @classmethod
     def compareWin(w1:Window2, w2:Window2):
-        pass
+        return w1.conf > w2.conf
 
     @classmethod
     def legal(x, y, img):
-        pass
+        if 0 <= x < img.shape[1] and 0 <= y < img.shape[0]:
+            return True
+        else:
+            return False
 
     @classmethod
     def inside(x, y, rect:Window2):
-        pass
+        if rect.x <= x < rect.x + rect.w and rect.y <= y < rect.y + rect.h:
+            return True
+        else:
+            return False
 
     @classmethod
     def smooth_angle(a, b):
-        pass
+        if a > b:
+            a, b = b, a
+        # a <= b
+        diff = (b - a) % 360
+        if diff < 180:
+            return a + diff // 2
+        else:
+            return b + (360 - diff) // 2
 
     @classmethod
     def smooth_window(winlist: list<Window2>):
@@ -100,7 +120,7 @@ class PCN:
 
     @classmethod
     def preprocess_img(img, dim=None):
-        pass
+
 
     # method overload allow input as vector
     @classmethod
