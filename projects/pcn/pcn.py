@@ -147,7 +147,10 @@ class PCN:
 
     @classmethod
     def pad_img(img):
-        pass
+        row = min(int(img.shape[0] * 0.2), 100)
+        col = min(int(img.shape[1] * 0.2), 100)
+        ret = cv2.copyMakeBorder(img, row, row, col, col, cv2::BORDER_CONSTANT)
+        return ret
 
     @classmethod
     def trans_window(img, img_pad, winlist:list<Window2>):
