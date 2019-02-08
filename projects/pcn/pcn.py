@@ -108,11 +108,29 @@ class PCN:
 
     @classmethod
     def IoU(w1:Window2, w2:Window2) -> float:
-        pass
+        xOverlap = max(0, min(w1.x + w1.w - 1, w2.x + w2.w - 1) - max(w1.x, w2.x) + 1)
+        yOverlap = max(0, min(w1.y + w1.h - 1, w2.y + w2.h - 1) - max(w1.y, w2.y) + 1)
+        intersection = xOverlap * yOverlap
+        unio = w1.w * w1.h + w2.w * w2.h - intersection
+        return intersection / unio
 
     @classmethod
     def MNS(winlist:list<Window2>, local:bool, threshold:float) -> list<Window2>:
-        pass
+        length = len(winlist)
+        if length == 0:
+            return winlist
+        winlist.sort(key=lambda x: x.conf, reverse=True)        
+        flag = [0] * length
+        for i in range(length):
+            if flag[i]:
+                continue
+            for j in range(i+1, length):
+                if local and abs(winlist[i].scale - winlist[j].scale) > EPS:
+                    continue
+                if IoU(winlist[i], winlist[j]) > threshold:
+                    flag[j] = 1
+        ret = [winlist[i] for i in range(length) if flag[i])
+        return ret
 
     @classmethod
     def deleteFP(winlist:list<Window2>):
