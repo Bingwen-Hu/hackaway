@@ -2,13 +2,23 @@ CC=c++
 CFLAGS=-Wall
 OBJECTS=vector copy only_iterators foreach increment error_decre reverse_vector
 OBJECTS+=only_iterators2 print_bool as_bool logic_op compare fileio map
-OBJECTS+=alias
+OBJECTS+=alias char chario point
 
 
 clean:
 	rm -rf $(OBJECTS)
 	rm -rf *.o
 	rm -rf fileio.out
+
+
+point: point.o
+	$(CC) point.cpp $(CFLAGS) -o $@
+
+chario: chario.o
+	$(CC) chario.cpp $(CFLAGS) -o $@
+
+char: char.o
+	$(CC) char.cpp $(CFLAGS) -o $@
 
 alias: alias.o
 	$(CC) alias.cpp $(CFLAGS) -o $@
