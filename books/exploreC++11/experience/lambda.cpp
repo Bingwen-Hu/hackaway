@@ -10,7 +10,8 @@
 void mutable_fn()
 {
     int x{0};
-    auto lambda = [&x](int y) mutable {
+    // using return type 
+    auto lambda = [&x](int y) mutable -> int {
         x = 1;
         y = 2;
         return x + y;
