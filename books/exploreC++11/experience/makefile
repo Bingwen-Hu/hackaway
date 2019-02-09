@@ -1,6 +1,7 @@
 CC=c++
 CFLAGS=-Wall
-OBJS=char_category locale function by_ref algorithms
+OBJS=char_category locale function by_ref algorithms predicate
+OBJS+=lambda
 
 
 # in this makefile, latter script will appear later
@@ -23,3 +24,9 @@ by_ref: by_ref.o
 
 algorithms: algorithms.o
 	$(CC) algorithms.cpp $(CFLAGS) -o $@
+
+predicate: predicate.o
+	$(CC) predicate.cpp $(CFLAGS) -o $@
+	
+lambda: lambda.o
+	$(CC) lambda.cpp $(CFLAGS) -o $@
