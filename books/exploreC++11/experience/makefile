@@ -1,6 +1,6 @@
 CC=c++
 CFLAGS=-Wall
-OBJS=char_category locale
+OBJS=char_category locale function
 
 
 # in this makefile, latter script will appear later
@@ -14,3 +14,6 @@ char_category: char_category.o
 
 locale: locale.o
 	$(CC) locale.cpp $(CFLAGS) -o $@
+
+function: function.o
+	$(CC) function.cpp $(CFLAGS) -o $@
