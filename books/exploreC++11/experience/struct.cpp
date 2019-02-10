@@ -1,3 +1,5 @@
+// The truth is quite simple. The struct and class keywords both start class definitions.  
+// The only difference is the default access level: private for class and public for struct. That’s all
 #include <iostream>
 #include <sstream>
 #include <cassert>
@@ -74,7 +76,7 @@ struct rational
 
 private:
     int numerator;
-    int denominator;
+    int denominator{1};
 };
 
 int rational::getNum()
