@@ -37,6 +37,10 @@ struct rational
         reduce();
     }
 
+    // default constructor using `=`
+    rational(rational const&) = default;
+    
+    /*
     rational& operator=(rational& rhs)
     {
         numerator = rhs.getNum();
@@ -44,7 +48,7 @@ struct rational
         reduce();
         return *this;
     }
-
+    */
     void reduce()
     {
         assert(denominator != 0);
