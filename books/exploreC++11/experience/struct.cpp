@@ -37,6 +37,14 @@ struct rational
         reduce();
     }
 
+    rational& operator=(rational& rhs)
+    {
+        numerator = rhs.getNum();
+        denominator = rhs.getDen();
+        reduce();
+        return *this;
+    }
+
     void reduce()
     {
         assert(denominator != 0);
@@ -121,7 +129,7 @@ std::ostream& operator<<(std::ostream& out, rational& rat)
 
 int main()
 { 
-    rational p1{12, 24};
+    auto p1 = rational{12, 24};
     p1.reduce();
     rational p2{12, 20};
     std::cout << (p1==p2) << '\n';
