@@ -1,7 +1,7 @@
 CC=c++
 CFLAGS=-Wall
 OBJS=char_category locale function by_ref algorithms predicate
-OBJS+=lambda
+OBJS+=lambda overload_fn cast doxygen
 
 
 # in this makefile, latter script will appear later
@@ -30,3 +30,12 @@ predicate: predicate.o
 	
 lambda: lambda.o
 	$(CC) lambda.cpp $(CFLAGS) -o $@
+	
+overload_fn: overload_fn.o
+	$(CC) overload_fn.cpp $(CFLAGS) -o $@
+
+cast: cast.o
+	$(CC) cast.cpp $(CFLAGS) -o $@
+
+doxygen: doxygen.o
+	$(CC) doxygen.cpp $(CFLAGS) -o $@
