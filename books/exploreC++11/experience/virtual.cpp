@@ -12,7 +12,8 @@ class work
         std::string const& id()
             const { return id_;  }
         std::string const& title() const { return title_;  }
-        virtual void print(std::ostream&) const {}
+        // pure virtual function and abstract class
+        virtual void print(std::ostream&) const = 0;
     private:
         std::string id_;
         std::string title_;
@@ -74,7 +75,6 @@ void showoff(work const& w)
 {
     w.print(std::cout);
     std::cout << '\n';
-
 }
 
 int main()
