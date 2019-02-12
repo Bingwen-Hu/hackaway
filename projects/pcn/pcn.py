@@ -238,8 +238,55 @@ def stage2(img, img180, net, thres, dim, winlist):
         return winlist
     datalist = []
     height = img.shape[0]
+    for win in winlist:
+        if abs(win.angle) < EPS:
+            datalist.append(preprocess_img(img[win.y:win.y+win.h, win.x:win.x+win.w,:]))
+        else:
+            y2 = win.y + win.h -1
+            y = height - 1 - y2
+            datalist.append(preprocess_img(img[y:y+win.h, win.x:win.x+win.w, :]))
+    net_input = set_input(datalist)
+    net.eval()
+    cls_prob, rotate, bbox = net(net_input)
+    ret = []
     for i in range(length):
-        if abs(winlist[i].angle) < EPS:
+        if cls_prob[i, 1, 0, 0].item() > thres:
+            sn = bbox[i, 0, 0, 0].item()
+            xn = bbox[i, 1, 0, 0].item()
+            yn = bbox[i, 2, 0, 0].item()
+            cropX = winlist[i].x
+            cropY = winlist[i].y 
+            cropW = winlist[i].w
+            if abs(winlist[i].angle) > EPS:
+                cropY = height - 1 - (cropY + cropW - 1)
+            w = int(sn * cropW)
+            x = int(cropX - 0.5 * sn * cropW + cropW * sn * xn + 0.5 * cropW)
+            y = int(cropY - 0.5 * sn * cropW + cropW * sn * yn + 0.5 * cropW)
+            maxRotateScore = 0
+            maxRotateIndex = 0
+            for j in range(3):
+                if rotate[i, j, 0, 0].item() > maxRotateScore:
+                    maxRotateScore = rotate[i, j, 0, 0].item()
+                    maxRotateIndex = j
+            if legal(x, y, img) and legal(x+w-1, y+w-1, img):
+                angle = 0
+                if abs(winlist[i].angle) < EPS:
+                    if maxRotateIndex == 0:
+                        angle = 90
+                    elif maxRotateIndex == 1:
+                        angle = 0
+                    else:
+                        angle = -90
+                    ret.append(Window2(x, y, w, w, angle, winlist[i].scale, cls_prob[i, 1, 0, 0]))
+                else:
+                    if maxRotateIndex == 0:
+                        angle = 90
+                    elif maxRotateIndex == 1:
+                        angle = 180
+                    else:
+                        angle = -90
+                    ret.append(Window2(x, height-1-(y+w-1), w, w, angle, winlist[i].scale, cls_prob[i, 1, 0, 0]))
+    return ret
 
 def stage3(img, img180, img90, imgNeg90, net, thres, dim, winlist):
     pass
