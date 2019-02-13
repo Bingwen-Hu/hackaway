@@ -203,7 +203,7 @@ def trans_window(img, img_pad, winlist: list_win2):
     ret = list()
     for win in winlist:
         if win.w > 0 and win.h > 0:
-            ret.append(Window(win.x-col, win.y-row, win.angle, win.conf))
+            ret.append(Window(win.x-col, win.y-row, win.w, win.angle, win.conf))
     return ret
 
 def stage1(img, img_pad, net, thres):
@@ -323,7 +323,7 @@ def stage3(img, img180, img90, imgNeg90, net, thres, dim, winlist):
     ret = []
 
     for i in range(length):
-        if cls_prob[i, 1].item() > thres:
+        if True or cls_prob[i, 1].item() > thres:
             sn = bbox[i, 0].item()
             xn = bbox[i, 1].item()
             yn = bbox[i, 2].item()
@@ -347,7 +347,7 @@ def stage3(img, img180, img90, imgNeg90, net, thres, dim, winlist):
             y = int(cropY - 0.5 * sn * cropW + cropW * sn * yn + 0.5 * cropW)
             angle = angleRange_ * rotate[i, 0].item()
             if legal(x, y, img_tmp) and legal(x+w-1, y+w-1, img_tmp):
-                if abs(winlist.angle) < EPS:
+                if abs(winlist[i].angle) < EPS:
                     ret.append(Window2(x, y, w, w, angle, winlist[i].scale, cls_prob[i, 1].item()))
                 elif abs(winlist[i].angle - 180) < EPS:
                     ret.append(Window2(x, height-1-(y+w-1), w, w, 180-angle, winlist[i].scale, cls_prob[i, 1].item()))
@@ -369,9 +369,9 @@ def detect(img, img_pad):
     # winlist = NMS(winlist, True, nmsThreshold_[1])
 
     winlist = stage3(img_pad, img180, img90, imgNeg90, net_[2], classThreshold_[2], 56, winlist)
-    print(winlist)
     # winlist = NMS(winlist, False, nmsThreshold_[2])
-    winlist = deleteFP(winlist)
+    # winlist = deleteFP(winlist)
+    print(winlist)
     return winlist
 
 def track(img, net, thres, dim, winlist):
