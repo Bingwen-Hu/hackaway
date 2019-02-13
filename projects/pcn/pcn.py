@@ -182,7 +182,11 @@ def preprocess_img(img, dim=None):
 
 # method overload allow input as vector
 def set_input(img):
-    if len(img.shape) == 3:
+    if type(img) == list:
+        print(type(img[0]), img[0].shape)
+        img = np.stack(img, axis=0)
+        print(img.shape)
+    else:
         img = img[np.newaxis, :, :, :]
     img = img.transpose((0, 3, 1, 2))
     return torch.FloatTensor(img)
@@ -244,11 +248,11 @@ def stage2(img, img180, net, thres, dim, winlist):
     height = img.shape[0]
     for win in winlist:
         if abs(win.angle) < EPS:
-            datalist.append(preprocess_img(img[win.y:win.y+win.h, win.x:win.x+win.w,:]))
+            datalist.append(preprocess_img(img[win.y:win.y+win.h, win.x:win.x+win.w,:], dim))
         else:
             y2 = win.y + win.h -1
             y = height - 1 - y2
-            datalist.append(preprocess_img(img[y:y+win.h, win.x:win.x+win.w, :]))
+            datalist.append(preprocess_img(img[y:y+win.h, win.x:win.x+win.w, :], dim))
     net_input = set_input(datalist)
     net.eval()
     cls_prob, rotate, bbox = net(net_input)
@@ -359,13 +363,13 @@ def detect(img, img_pad):
     imgNeg90 = cv2.flip(img90, 0)
     
     winlist = stage1(img, img_pad, net_[0], classThreshold_[0])
-    winlist = NMS(winlist, True, nmsThreshold_[0])
+    #winlist = NMS(winlist, True, nmsThreshold_[0])
 
     winlist = stage2(img_pad, img180, net_[1], classThreshold_[1], 24, winlist)
-    winlist = NMS(winlist, True, nmsThreshold_[1])
+    # winlist = NMS(winlist, True, nmsThreshold_[1])
 
     winlist = stage3(img_pad, img180, img90, imgNeg90, net_[2], classThreshold_[2], 48, winlist)
-    winlist = NMS(winlist, False, nmsThreshold_[2])
+    # winlist = NMS(winlist, False, nmsThreshold_[2])
     winlist = deleteFP(winlist)
     return winlist
 

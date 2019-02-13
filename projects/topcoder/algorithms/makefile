@@ -1,5 +1,5 @@
 CC=c++
-OBJS=ADPaper
+OBJS=ADPaper AB
 
 clean: 
 	rm -rf *.o
@@ -8,3 +8,6 @@ clean:
 
 ADPaper: ADPaper.o
 	$(CC) ADPaper.cpp -o $@
+
+AB: AB.o
+	$(CC) AB.cpp -o $@
