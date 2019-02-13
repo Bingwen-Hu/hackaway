@@ -1,5 +1,5 @@
 CC=c++
-OBJS=ADPaper AB shifts
+OBJS=ADPaper AB shifts ABBA
 
 clean: 
 	rm -rf *.o
@@ -11,6 +11,9 @@ ADPaper: ADPaper.o
 
 AB: AB.o
 	$(CC) AB.cpp -o $@
+
+ABBA: ABBA.o
+	$(CC) ABBA.cpp -o $@
 
 shifts: shifts.o
 	$(CC) shifts.cpp -o $@
