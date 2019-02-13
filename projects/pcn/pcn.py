@@ -2,18 +2,20 @@ import numpy as np
 import cv2
 import torch
 
+from models import PCN1, PCN2, PCN3
+
 EPS = 1e-5
 net_ = [None, None, None]
-minFace_ = 0
-scale_ = 0
-stride_ = 0
-classThreshold_ = [0, 0, 0]
-nmsThreshold_ = [0, 0, 0]
-angleRange_ = 0
+minFace_ = 20 * 1.4
+scale_ = 1.414
+stride_ = 8
+classThreshold_ = [0.37, 0.43, 0.97]
+nmsThreshold_ = [0.8, 0.8, 0.3]
+angleRange_ = 45
 stable_ = 0
-period_ = 0
-trackThreshold_ = 0
-augScale_ = 0
+period_ = 30
+trackThreshold_ = .95
+augScale_ = 0.15
 
 
 class Window:
@@ -76,14 +78,16 @@ def crop_face(img, face:Window, cropsize):
 ## that all above PCN.h
 ## following is PCN.cpp
 def loadModel():
-    from models import PCN1, PCN2, PCN3
     pcn1 = torch.load('pth/pcn1.pth')
     pcn2 = torch.load('pth/pcn2.pth')
     pcn3 = torch.load('pth/pcn3.pth')
-    return pcn1, pcn2, pcn3
+    net_[0] = pcn1
+    net_[1] = pcn2
+    net_[2] = pcn3
+    return net_
 
 def resizeImg(img, scale:float):
-    h, w = img.shape
+    h, w = img.shape[:2]
     h_, w_ = int(h / scale), int(w / scale)
     return cv2.resize(img, (w_, h_))
 
@@ -138,7 +142,7 @@ def IoU(w1:Window2, w2:Window2) -> float:
     unio = w1.w * w1.h + w2.w * w2.h - intersection
     return intersection / unio
 
-def MNS(winlist:list_win2, local:bool, threshold:float) -> list_win2:
+def NMS(winlist:list_win2, local:bool, threshold:float) -> list_win2:
     length = len(winlist)
     if length == 0:
         return winlist
@@ -350,7 +354,37 @@ def stage3(img, img180, img90, imgNeg90, net, thres, dim, winlist):
     return ret
 
 def detect(img, img_pad):
-    pass
+    img180 = cv2.flip(img, 0)
+    img90 = cv2.transpose(img_pad)
+    imgNeg90 = cv2.flip(img90, 0)
+    
+    winlist = stage1(img, img_pad, net_[0], classThreshold_[0])
+    winlist = NMS(winlist, True, nmsThreshold_[0])
+
+    winlist = stage2(img_pad, img180, net_[1], classThreshold_[1], 24, winlist)
+    winlist = NMS(winlist, True, nmsThreshold_[1])
+
+    winlist = stage3(img_pad, img180, img90, imgNeg90, net_[2], classThreshold_[2], 48, winlist)
+    winlist = NMS(winlist, False, nmsThreshold_[2])
+    winlist = deleteFP(winlist)
+    return winlist
 
 def track(img, net, thres, dim, winlist):
     pass
+
+def pcn_detect(img):
+    img_pad = pad_img(img)
+    winlist = detect(img, img_pad)
+    if stable_:
+        winlist = smooth_window(winlist)
+    return trans_window(img, img_pad, winlist)
+
+if __name__ == '__main__':
+    loadModel()
+    img = cv2.imread('1.jpg') 
+    faces = pcn_detect(img)
+    for face in faces:
+        draw_face(img, face)
+    cv2.imshow("PCN", img)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
