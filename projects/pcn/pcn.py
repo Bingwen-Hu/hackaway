@@ -289,7 +289,65 @@ def stage2(img, img180, net, thres, dim, winlist):
     return ret
 
 def stage3(img, img180, img90, imgNeg90, net, thres, dim, winlist):
-    pass
+    length = len(winlist)
+    if length == 0:
+        return winlist
+    
+    datalist = []
+    height, width = img.shape[:2]
+
+    for win in winlist:
+        if abs(win.angle) < EPS:
+            datalist.append(preprocess_img(img[win.y:win.y+win.h, win.x:win.x+win.w, :], dim))
+        elif abs(win.angle - 90) < EPS:
+            datalist.append(preprocess_img(img90[win.x:win.x+win.w, win.y:win.y+win.h, :], dim))
+        elif abs(win.angle + 90) < EPS:
+            x = win.y
+            y = width - 1 - (win.x + win.w -1)
+            datalist.append(preprocess_img(imgNeg90[y:y+win.h, x:x+win.w, :], dim))
+        else:
+            y2 = win.y + win.h - 1
+            y = height - 1 - y2 
+            datalist.append(preprocess_img(img180[y:y+win.h, win.x:win.x+win.w, :], dim))
+    net_input = set_input(datalist)
+    net.eval()
+    cls_prob, rotate, bbox = net(net_input)
+    ret = []
+
+    for i in range(length):
+        if cls_prob[i, 1, 0, 0].item() > thres:
+            sn = bbox[i, 0, 0, 0].item()
+            xn = bbox[i, 1, 0, 0].item()
+            yn = bbox[i, 2, 0, 0].item()
+            cropX = winlist[i].x
+            cropY = winlist[i].y
+            cropW = winlist[i].w
+            img_tmp = img
+            if abs(winlist[i].angle - 180) < EPS:
+                cropY = height - 1 - (cropY + cropW -1)
+                img_tmp = img180
+            elif abs(winlist[i].angle - 90) < EPS:
+                cropX, cropY = cropY, cropX
+                img_tmp = img90
+            elif abs(winlist[i].angle + 90) < EPS:
+                cropX = winlist[i].y
+                cropY = width -1 - (winlist[i].x + winlist[i].w - 1)
+                img_tmp = imgNeg90
+    
+            w = int(sn * cropW)
+            x = int(cropX - 0.5 * sn * cropW + cropW * sn * xn + 0.5 * cropW)
+            y = int(cropY - 0.5 * sn * cropW + cropW * sn * yn + 0.5 * cropW)
+            angle = angleRange_ * rotate[i, 0, 0, 0].item()
+            if legal(x, y, img_tmp) and legal(x+w-1, y+w-1, img_tmp):
+                if abs(winlist.angle) < EPS:
+                    ret.append(Window2(x, y, w, w, angle, winlist[i].scale, cls_prob[i, 1, 0, 0].item()))
+                elif abs(winlist[i].angle - 180) < EPS:
+                    ret.append(Window2(x, height-1-(y+w-1), w, w, 180-angle, winlist[i].scale, cls_prob[i, 1, 0, 0].item()))
+                elif abs(winlist[i].angle - 90) < EPS:
+                    ret.append(Window2(y, x, w, w, 90-angle, winlist[i].scale, cls_prob[i, 1, 0, 0].item()))
+                else:
+                    ret.append(Window2(width-y-w, x, w, w, -90+angle, winlist[i].scale, cls_prob[i, 1, 0, 0].item()))
+    return ret
 
 def detect(img, img_pad):
     pass
