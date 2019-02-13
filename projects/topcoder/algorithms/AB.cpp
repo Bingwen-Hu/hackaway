@@ -36,14 +36,18 @@ string AB::createString(int N, int K)
     return str;
 }
 
-void test(AB& ab)
-{
-    
-}
-
-int main()
+void test()
 {
     AB ab{};
     string str = ab.createString(10, 12);
     cout << str << endl;
+    str = ab.createString(5, 8);
+    cout << str << endl;
+    str = ab.createString(2, 0);
+    cout << str << endl;
+}
+
+int main()
+{
+    test();
 }
