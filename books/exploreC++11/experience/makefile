@@ -2,7 +2,7 @@ CC=c++
 CFLAGS=-Wall
 OBJS=char_category locale function by_ref algorithms predicate
 OBJS+=lambda overload_fn cast doxygen struct class virtual
-OBJS+=functor
+OBJS+=functor search
 
 # in this makefile, latter script will appear later
 clean:
@@ -51,3 +51,6 @@ virtual: virtual.o
 
 functor: functor.o
 	$(CC) functor.cpp $(CFLAGS) -o $@
+
+search: search.o
+	$(CC) search.cpp $(CFLAGS) -o $@
