@@ -57,3 +57,6 @@ search: search.o
 
 find_if: find_if.o
 	$(CC) find_if.cpp $(CFLAGS) -o $@
+
+replace_if: replace_if.o
+	$(CC) replace_if.cpp $(CFLAGS) -o $@
