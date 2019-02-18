@@ -366,10 +366,10 @@ def detect(img, img_pad):
     winlist = stage1(img, img_pad, net_[0], classThreshold_[0])
     winlist = NMS(winlist, True, nmsThreshold_[0])
 
-    winlist = stage2(img_pad, img180, net_[1], classThreshold_[1], 26, winlist)
+    winlist = stage2(img_pad, img180, net_[1], classThreshold_[1], 24, winlist)
     winlist = NMS(winlist, True, nmsThreshold_[1])
 
-    winlist = stage3(img_pad, img180, img90, imgNeg90, net_[2], classThreshold_[2], 56, winlist)
+    winlist = stage3(img_pad, img180, img90, imgNeg90, net_[2], classThreshold_[2], 48, winlist)
     winlist = NMS(winlist, False, nmsThreshold_[2])
     winlist = deleteFP(winlist)
     print(winlist)

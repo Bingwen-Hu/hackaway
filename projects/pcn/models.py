@@ -26,6 +26,29 @@ class PCN1(nn.Module):
         bbox = self.bbox(x)
         return cls_prob, rotate, bbox
 
+# caffe output for data shape
+# data                        	 (1, 3, 24, 24)
+# conv1_1                     	 (1, 16, 11, 11)
+# conv2_1                     	 (1, 32, 5, 5)
+# conv3_1                     	 (1, 64, 2, 2)
+# fc4_1                       	 (1, 128, 1, 1)
+# fc4_1_relu4_1_0_split_0     	 (1, 128, 1, 1)
+# fc4_1_relu4_1_0_split_1     	 (1, 128, 1, 1)
+# fc4_1_relu4_1_0_split_2     	 (1, 128, 1, 1)
+# fc5_1                       	 (1, 2, 1, 1)
+# cls_prob                    	 (1, 2, 1, 1)
+# fc6_1                       	 (1, 2, 1, 1)
+# rotate_cls_prob             	 (1, 2, 1, 1)
+# bbox_reg_1                  	 (1, 3, 1, 1)
+
+# caffe param
+# conv1_1                     	 (16, 3, 3, 3) (16,)
+# conv2_1                     	 (32, 16, 3, 3) (32,)
+# conv3_1                     	 (64, 32, 3, 3) (64,)
+# fc4_1                       	 (128, 64, 2, 2) (128,)
+# fc5_1                       	 (2, 128, 1, 1) (2,)
+# fc6_1                       	 (2, 128, 1, 1) (2,)
+# bbox_reg_1                  	 (3, 128, 1, 1) (3,)
 
 class PCN2(nn.Module):
 
@@ -51,6 +74,32 @@ class PCN2(nn.Module):
         rotate = F.softmax(self.rotate(x))
         bbox = self.bbox(x)
         return cls_prob, rotate, bbox
+
+# caffe output for data shape
+# data                        	 (1, 3, 24, 24)
+# conv1_2                     	 (1, 20, 22, 22)
+# pool1_2                     	 (1, 20, 11, 11)
+# conv2_2                     	 (1, 40, 9, 9)
+# pool2_2                     	 (1, 40, 4, 4)
+# conv3_2                     	 (1, 70, 3, 3)
+# fc4_2                       	 (1, 140)
+# fc4_2_relu4_2_0_split_0     	 (1, 140)
+# fc4_2_relu4_2_0_split_1     	 (1, 140)
+# fc4_2_relu4_2_0_split_2     	 (1, 140)
+# fc5_2                       	 (1, 2)
+# cls_prob                    	 (1, 2)
+# fc6_2                       	 (1, 3)
+# rotate_cls_prob             	 (1, 3)
+# bbox_reg_2                  	 (1, 3)
+
+# caffe param
+# conv1_2                     	 (20, 3, 3, 3) (20,)
+# conv2_2                     	 (40, 20, 3, 3) (40,)
+# conv3_2                     	 (70, 40, 2, 2) (70,)
+# fc4_2                       	 (140, 630) (140,)
+# fc5_2                       	 (2, 140) (2,)
+# fc6_2                       	 (3, 140) (3,)
+# bbox_reg_2                  	 (3, 140) (3,)
 
 
 class PCN3(nn.Module):
@@ -80,3 +129,32 @@ class PCN3(nn.Module):
         rotate = self.rotate(x)
         bbox = self.bbox(x)
         return cls_prob, rotate, bbox
+
+# caffe output for data shape
+# data                        	 (1, 3, 48, 48)
+# conv1_3                     	 (1, 24, 46, 46)
+# pool1_3                     	 (1, 24, 23, 23)
+# conv2_3                     	 (1, 48, 21, 21)
+# pool2_3                     	 (1, 48, 10, 10)
+# conv3_3                     	 (1, 96, 8, 8)
+# pool3_3                     	 (1, 96, 4, 4)
+# conv4_3                     	 (1, 144, 3, 3)
+# fc5_3                       	 (1, 192)
+# fc5_3_relu5_3_0_split_0     	 (1, 192)
+# fc5_3_relu5_3_0_split_1     	 (1, 192)
+# fc5_3_relu5_3_0_split_2     	 (1, 192)
+# fc6_3                       	 (1, 2)
+# cls_prob                    	 (1, 2)
+# bbox_reg_3                  	 (1, 3)
+# rotate_reg_3                	 (1, 1)
+
+
+# caffe param
+# conv1_3                     	 (24, 3, 3, 3) (24,)
+# conv2_3                     	 (48, 24, 3, 3) (48,)
+# conv3_3                     	 (96, 48, 3, 3) (96,)
+# conv4_3                     	 (144, 96, 2, 2) (144,)
+# fc5_3                       	 (192, 1296) (192,)
+# fc6_3                       	 (2, 192) (2,)
+# bbox_reg_3                  	 (3, 192) (3,)
+# rotate_reg_3                	 (1, 192) (1,)
