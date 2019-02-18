@@ -2,7 +2,7 @@ CC=c++
 CFLAGS=-Wall
 OBJS=char_category locale function by_ref algorithms predicate
 OBJS+=lambda overload_fn cast doxygen struct class virtual
-OBJS+=functor search find_if
+OBJS+=functor search find_if replace_if
 
 # in this makefile, latter script will appear later
 clean:
