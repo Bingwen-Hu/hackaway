@@ -114,6 +114,7 @@ def smooth_angle(a, b):
         return b + (360 - diff) // 2
 
 prelist = []
+import copy
 def smooth_window(winlist):
     global prelist
     for win in winlist:
@@ -132,7 +133,7 @@ def smooth_window(winlist):
                 win.w = (win.w + pwin.w) // 2
                 win.h = (win.h + pwin.h) // 2
                 win.angle = smooth_angle(win.angle, pwin.angle)
-    prelist = winlist
+    prelist = copy.deepcopy(winlist)
     return winlist
 
 def IoU(w1:Window2, w2:Window2) -> float:
@@ -156,7 +157,7 @@ def NMS(winlist:list_win2, local:bool, threshold:float) -> list_win2:
                 continue
             if IoU(winlist[i], winlist[j]) > threshold:
                 flag[j] = 1
-    ret = [winlist[i] for i in range(length) if flag[i]]
+    ret = [winlist[i] for i in range(length) if not flag[i]]
     return ret
 
 def deleteFP(winlist:list_win2):
@@ -172,7 +173,7 @@ def deleteFP(winlist:list_win2):
             win = winlist[j]
             if inside(win.x, win.y, winlist[i]) and inside(win.x + win.w - 1, win.y + win.h - 1, winlist[i]):
                 flag[j] = 1
-    ret = [winlist[i] for i in range(length) if flag[i]]
+    ret = [winlist[i] for i in range(length) if not flag[i]]
     return ret
 
 def preprocess_img(img, dim=None):
@@ -258,7 +259,7 @@ def stage2(img, img180, net, thres, dim, winlist):
     cls_prob, rotate, bbox = net(net_input)
     ret = []
     for i in range(length):
-        if True or cls_prob[i, 1].item() > thres:
+        if cls_prob[i, 1].item() > thres:
             sn = bbox[i, 0].item()
             xn = bbox[i, 1].item()
             yn = bbox[i, 2].item()
@@ -276,7 +277,7 @@ def stage2(img, img180, net, thres, dim, winlist):
                 if rotate[i, j].item() > maxRotateScore:
                     maxRotateScore = rotate[i, j].item()
                     maxRotateIndex = j
-            if True or legal(x, y, img) and legal(x+w-1, y+w-1, img):
+            if legal(x, y, img) and legal(x+w-1, y+w-1, img):
                 angle = 0
                 if abs(winlist[i].angle) < EPS:
                     if maxRotateIndex == 0:
@@ -323,7 +324,7 @@ def stage3(img, img180, img90, imgNeg90, net, thres, dim, winlist):
     ret = []
 
     for i in range(length):
-        if True or cls_prob[i, 1].item() > thres:
+        if cls_prob[i, 1].item() > thres:
             sn = bbox[i, 0].item()
             xn = bbox[i, 1].item()
             yn = bbox[i, 2].item()
@@ -363,14 +364,14 @@ def detect(img, img_pad):
     imgNeg90 = cv2.flip(img90, 0)
     
     winlist = stage1(img, img_pad, net_[0], classThreshold_[0])
-    #winlist = NMS(winlist, True, nmsThreshold_[0])
+    winlist = NMS(winlist, True, nmsThreshold_[0])
 
     winlist = stage2(img_pad, img180, net_[1], classThreshold_[1], 26, winlist)
-    # winlist = NMS(winlist, True, nmsThreshold_[1])
+    winlist = NMS(winlist, True, nmsThreshold_[1])
 
     winlist = stage3(img_pad, img180, img90, imgNeg90, net_[2], classThreshold_[2], 56, winlist)
-    # winlist = NMS(winlist, False, nmsThreshold_[2])
-    # winlist = deleteFP(winlist)
+    winlist = NMS(winlist, False, nmsThreshold_[2])
+    winlist = deleteFP(winlist)
     print(winlist)
     return winlist
 
