@@ -322,7 +322,7 @@ def stage3(img, img180, img90, imgNeg90, net, thres, dim, winlist):
     ret = []
 
     for i in range(length):
-        if cls_prob[i, 1].item() > thres:
+        if True or cls_prob[i, 1].item() > thres:
             sn = bbox[i, 0].item()
             xn = bbox[i, 1].item()
             yn = bbox[i, 2].item()
