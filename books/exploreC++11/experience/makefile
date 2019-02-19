@@ -2,7 +2,7 @@ CC=c++
 CFLAGS=-Wall
 OBJS=char_category locale function by_ref algorithms predicate
 OBJS+=lambda overload_fn cast doxygen struct class virtual
-OBJS+=functor search find_if replace_if exception
+OBJS+=functor search find_if replace_if exception noexcept
 
 # in this makefile, latter script will appear later
 clean:
@@ -63,3 +63,6 @@ replace_if: replace_if.o
 
 exception: exception.o
 	$(CC) exception.cpp $(CFLAGS) -o $@
+
+noexcept: noexcept.o
+	$(CC) noexcept.cpp $(CFLAGS) -o $@
