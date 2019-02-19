@@ -184,9 +184,7 @@ def preprocess_img(img, dim=None):
 # method overload allow input as vector
 def set_input(img):
     if type(img) == list:
-        print(type(img[0]), img[0].shape)
         img = np.stack(img, axis=0)
-        print(img.shape)
     else:
         img = img[np.newaxis, :, :, :]
     img = img.transpose((0, 3, 1, 2))
@@ -364,14 +362,21 @@ def detect(img, img_pad):
     imgNeg90 = cv2.flip(img90, 0)
     
     winlist = stage1(img, img_pad, net_[0], classThreshold_[0])
+    print("\nstage1: winlist", len(winlist))
     winlist = NMS(winlist, True, nmsThreshold_[0])
+    print("\nstage1 NMS: winlist", len(winlist))
 
     winlist = stage2(img_pad, img180, net_[1], classThreshold_[1], 24, winlist)
+    print("\nstage2: winlist", len(winlist))
     winlist = NMS(winlist, True, nmsThreshold_[1])
+    print("\nstage2 NMS: winlist", len(winlist))
 
     winlist = stage3(img_pad, img180, img90, imgNeg90, net_[2], classThreshold_[2], 48, winlist)
+    print("\nstage3: winlist", len(winlist))
     winlist = NMS(winlist, False, nmsThreshold_[2])
+    print("\nstage3 NMS: winlist", len(winlist))
     winlist = deleteFP(winlist)
+    print("\ndeleteFP: winlist", len(winlist))
     print(winlist)
     return winlist
 
@@ -387,7 +392,7 @@ def pcn_detect(img):
 
 if __name__ == '__main__':
     loadModel()
-    img = cv2.imread('1.jpg') 
+    img = cv2.imread('6.jpg') 
     faces = pcn_detect(img)
     for face in faces:
         draw_face(img, face)

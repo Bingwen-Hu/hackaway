@@ -62,7 +62,7 @@ class PCN2(nn.Module):
         self.rotate = nn.Linear(140, 3)
         self.cls_prob = nn.Linear(140, 2)
         self.bbox = nn.Linear(140, 3)
-        self.mp = nn.MaxPool2d(kernel_size=2, stride=2)
+        self.mp = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
 
     def forward(self, x):
         batch_size = x.size(0)
@@ -115,13 +115,15 @@ class PCN3(nn.Module):
         self.cls_prob = nn.Linear(192, 2)
         self.bbox = nn.Linear(192, 3)
         self.rotate = nn.Linear(192, 1)
-        self.mp = nn.MaxPool2d(kernel_size=2, stride=2)
+        self.mp1 = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
+        self.mp2 = nn.MaxPool2d(kernel_size=2, stride=2)
+
 
     def forward(self, x):
         batch_size = x.size(0)
-        x = F.relu(self.mp(self.conv1(x)), inplace=True)
-        x = F.relu(self.mp(self.conv2(x)), inplace=True)
-        x = F.relu(self.mp(self.conv3(x)), inplace=True)
+        x = F.relu(self.mp1(self.conv1(x)), inplace=True)
+        x = F.relu(self.mp1(self.conv2(x)), inplace=True)
+        x = F.relu(self.mp2(self.conv3(x)), inplace=True)
         x = F.relu(self.conv4(x), inplace=True)
         x = x.view(batch_size, -1)
         x = self.fc(x)
