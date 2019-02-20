@@ -208,10 +208,15 @@ def trans_window(img, img_pad, winlist: list_win2):
 def stage1(img, img_pad, net, thres):
     row = (img_pad.shape[0] - img.shape[0]) // 2
     col = (img_pad.shape[1] - img.shape[1]) // 2
+    print("row={}, col={}".format(row, col))
     winlist = []
     netSize = 24
     curScale = minFace_ / netSize
     img_resized = resizeImg(img, curScale)
+    print("thres={}".format(thres))
+    print("resizeIMG: rows={}, cols={}".format(img_resized.shape[0], img_resized.shape[1]))
+    print("before while: curScale={}, minFace_={}".format(curScale, minFace_))
+    print("here go in while\n")
     while min(img_resized.shape[:2]) >= netSize:
         img = preprocess_img(img)
         net_input = set_input(img)
@@ -219,6 +224,10 @@ def stage1(img, img_pad, net, thres):
         # reg -> bbox, prob -> cls_prob
         cls_prob, rotate, bbox = net(net_input)
         w = netSize * curScale
+        print('\nw = {:.3f}'.format(w))
+        print("prob shape: = ", cls_prob.shape)
+        print("prob->height = ", cls_prob.shape[2])
+        print("prob->width = ", cls_prob.shape[3])
         for i in range(cls_prob.size()[2]): # cls_prob[2]->height        
             for j in range(cls_prob.size()[3]): # cls_prob[3]->width
                 if cls_prob[0, 1, i, j].item() > thres:
@@ -234,7 +243,12 @@ def stage1(img, img_pad, net, thres):
                         else:
                             winlist.append(Window2(rx, ry, rw, rw, 180, curScale, cls_prob[0, 1, i, j].item()))
         img_resized = resizeImg(img_resized, scale_)                    
-        curScale = img.shape[0] / img_resized.shape[1]
+        curScale = img.shape[0] / img_resized.shape[0]
+        print('resize stage:')
+        print("resizeimg: \nrows={}\n cols={}".format(img_resized.shape[0], img_resized.shape[1]))
+        print("curScale = {:.3f}".format(curScale))
+        print("winlist count: ", len(winlist))
+        
     return winlist                
     
 
