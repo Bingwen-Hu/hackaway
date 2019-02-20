@@ -87,9 +87,11 @@ def loadModel():
     return net_
 
 def resizeImg(img, scale:float):
+    print("in resizeimg", img.shape)
     h, w = img.shape[:2]
     h_, w_ = int(h / scale), int(w / scale)
-    return cv2.resize(img, (w_, h_))
+    ret = cv2.resize(img, (w_, h_))
+    return ret
 
 def legal(x, y, img):
     if 0 <= x < img.shape[1] and 0 <= y < img.shape[0]:
@@ -218,8 +220,8 @@ def stage1(img, img_pad, net, thres):
     print("before while: curScale={}, minFace_={}".format(curScale, minFace_))
     print("here go in while\n")
     while min(img_resized.shape[:2]) >= netSize:
-        img = preprocess_img(img)
-        net_input = set_input(img)
+        img_resized = preprocess_img(img_resized)
+        net_input = set_input(img_resized)
         net.eval()
         # reg -> bbox, prob -> cls_prob
         cls_prob, rotate, bbox = net(net_input)
