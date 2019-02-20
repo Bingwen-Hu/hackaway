@@ -9,7 +9,7 @@ class PCN1(nn.Module):
 
     def __init__(self):
         super().__init__()
-        self.conv1 = nn.Conv2d(3, 16, kernel_size=3, stride=2)
+        self.conv1 = nn.Conv2d(3, 16, kernel_size=3, stride=2, dilation=1)
         self.conv2 = nn.Conv2d(16, 32, kernel_size=3, stride=2)
         self.conv3 = nn.Conv2d(32, 64, kernel_size=3, stride=2)
         self.conv4 = nn.Conv2d(64, 128, kernel_size=2, stride=1)
@@ -72,7 +72,6 @@ class PCN2(nn.Module):
         x = self.conv2(x)
         x = F.pad(x, (0, 1, 0, 1))
         x = F.relu(self.mp(x), inplace=True)
-        print("mp2", x.size())
         x = F.relu(self.conv3(x), inplace=True)
         x = x.view(batch_size, -1)
         x = F.relu(self.fc(x), inplace=True)
@@ -129,13 +128,16 @@ class PCN3(nn.Module):
         x = self.conv1(x)
         x = F.pad(x, (0, 1, 0, 1))
         x = F.relu(self.mp1(x), inplace=True)
+
         x = self.conv2(x)
         x = F.pad(x, (0, 1, 0, 1))
         x = F.relu(self.mp1(x), inplace=True)
-        x = F.relu(self.mp2(self.conv3(x)), inplace=True)
+
+        x = self.conv3(x)
+        x = F.relu(self.mp2(x), inplace=True)
         x = F.relu(self.conv4(x), inplace=True)
         x = x.view(batch_size, -1)
-        x = self.fc(x)
+        x = F.relu(self.fc(x), inplace=True)
         cls_prob = F.softmax(self.cls_prob(x), dim=1)
         rotate = self.rotate(x)
         bbox = self.bbox(x)
