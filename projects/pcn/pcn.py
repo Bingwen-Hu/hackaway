@@ -377,7 +377,6 @@ def detect(img, img_pad):
     print("\nstage3 NMS: winlist", len(winlist))
     winlist = deleteFP(winlist)
     print("\ndeleteFP: winlist", len(winlist))
-    print(winlist)
     return winlist
 
 def track(img, net, thres, dim, winlist):
@@ -392,7 +391,7 @@ def pcn_detect(img):
 
 if __name__ == '__main__':
     loadModel()
-    img = cv2.imread('1.jpg') 
+    img = cv2.imread('0.jpg') 
     faces = pcn_detect(img)
     for face in faces:
         draw_face(img, face)
