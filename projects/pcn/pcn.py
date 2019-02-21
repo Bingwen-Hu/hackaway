@@ -406,7 +406,7 @@ def pcn_detect(img):
 
 if __name__ == '__main__':
     loadModel()
-    img = cv2.imread('6.jpg') 
+    img = cv2.imread('5.jpg') 
     faces = pcn_detect(img)
     for face in faces:
         draw_face(img, face)
