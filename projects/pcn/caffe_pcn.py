@@ -89,20 +89,20 @@ def stage2_caffe(img, img180, net, thres, dim, winlist):
             y2 = win.y + win.h -1
             y = height - 1 - y2
             datalist.append(preprocess_img(img[y:y+win.h, win.x:win.x+win.w, :], dim))
-        
+
     out = forward_caffe(datalist, net)
     cls_prob = out['cls_prob'].data
-    bbox = out['bbox_reg_1'].data
+    bbox = out['bbox_reg_2'].data
     rotate = out['rotate_cls_prob'].data
 
     ret = []
     for i in range(length):
-        if cls_prob[i, 1, 0, 0] > thres:
-            sn = bbox[i, 0, 0, 0]
-            xn = bbox[i, 1, 0, 0]
-            yn = bbox[i, 2, 0, 0]
+        if cls_prob[i, 1] > thres:
+            sn = bbox[i, 0]
+            xn = bbox[i, 1]
+            yn = bbox[i, 2]
             cropX = winlist[i].x
-            cropY = winlist[i].y 
+            cropY = winlist[i].y
             cropW = winlist[i].w
             if abs(winlist[i].angle) > EPS:
                 cropY = height - 1 - (cropY + cropW - 1)
@@ -112,8 +112,8 @@ def stage2_caffe(img, img180, net, thres, dim, winlist):
             maxRotateScore = 0
             maxRotateIndex = 0
             for j in range(3):
-                if rotate[i, j, 0, 0] > maxRotateScore:
-                    maxRotateScore = rotate[i, j].item()
+                if rotate[i, j] > maxRotateScore:
+                    maxRotateScore = rotate[i, j]
                     maxRotateIndex = j
             if legal(x, y, img) and legal(x+w-1, y+w-1, img):
                 angle = 0
@@ -124,7 +124,7 @@ def stage2_caffe(img, img180, net, thres, dim, winlist):
                         angle = 0
                     else:
                         angle = -90
-                    ret.append(Window2(x, y, w, w, angle, winlist[i].scale, cls_prob[i, 1, 0, 0]))
+                    ret.append(Window2(x, y, w, w, angle, winlist[i].scale, cls_prob[i, 1]))
                 else:
                     if maxRotateIndex == 0:
                         angle = 90
@@ -132,7 +132,7 @@ def stage2_caffe(img, img180, net, thres, dim, winlist):
                         angle = 180
                     else:
                         angle = -90
-                    ret.append(Window2(x, height-1-(y+w-1), w, w, angle, winlist[i].scale, cls_prob[i, 1, 0, 0]))
+                    ret.append(Window2(x, height-1-(y+w-1), w, w, angle, winlist[i].scale, cls_prob[i, 1]))
     return ret
 
 
@@ -151,5 +151,5 @@ if __name__ == "__main__":
     pcn1 = caffe.Net('model/PCN-1.prototxt', 'model/PCN.caffemodel', caffe.TEST)
     pcn2 = caffe.Net('model/PCN-2.prototxt', 'model/PCN.caffemodel', caffe.TEST)
     winlist = stage1_caffe(img, imgPad, pcn1, thres)
-    winlist = pcn.NMS(winlist)
-    winlist = stage2_caffe(img, img180, pcn2, pcn.classThreshold_[1], 24, winlist)
+    winlist = pcn.NMS(winlist, True, pcn.nmsThreshold_[0])
+    winlist = stage2_caffe(imgPad, img180, pcn2, pcn.classThreshold_[1], 24, winlist)
