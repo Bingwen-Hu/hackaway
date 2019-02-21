@@ -86,11 +86,11 @@ def loadModel():
     net_[2] = pcn3
     return net_
 
+from skimage import transform
 def resizeImg(img, scale:float):
-    print("in resizeimg", img.shape)
     h, w = img.shape[:2]
     h_, w_ = int(h / scale), int(w / scale)
-    ret = cv2.resize(img, (w_, h_))
+    ret = transform.resize(img, (h_, w_))
     return ret
 
 def legal(x, y, img):
