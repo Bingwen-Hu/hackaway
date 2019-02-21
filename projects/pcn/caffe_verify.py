@@ -1,3 +1,4 @@
+import numpy as np
 import caffe
 import cv2
 import pcn
@@ -13,7 +14,11 @@ thres = pcn.classThreshold_[0]
 minFace_ = pcn.minFace_
 
 def forward_caffe(img, net):
-    net.blobs['data'].data[...] = img
+    net.blobs['data'].reshape(1, 3, img.shape[0], img.shape[1])
+    net_input = np.transpose(img, (2, 0, 1))
+    net_input = net_input[np.newaxis, :, :, :]
+    net.reshape()
+    net.blobs['data'].data[...] = net_input
     out = net.forward()
     return out
 
@@ -34,10 +39,10 @@ def stage1_caffe(img, img_pad, net, thres):
         rotate = out['rotate_cls_prob'].data
 
         w = netSize * curScale
-        for i in range(cls_prob.shape[2]): # cls_prob[2]->height        
+        for i in range(cls_prob.shape[2]): # cls_prob[2]->height
             for j in range(cls_prob.shape[3]): # cls_prob[3]->width
                 if cls_prob[0, 1, i, j] > thres:
-                    print(f'cls_prob[0, 1, {i}, {j}] = {cls_prob[0, 1, i, j]}')
+                    print('cls_prob[0, 1, {}, {}] = {}'.format(i, j, cls_prob[0, 1, i, j]))
                     layerdetect += 1
                     sn = bbox[0, 0, i, j]
                     xn = bbox[0, 1, i, j]
@@ -47,19 +52,19 @@ def stage1_caffe(img, img_pad, net, thres):
                     rw = int(w * sn)
                     if legal(rx, ry, img_pad) and legal(rx + rw - 1, ry + rw -1, img_pad):
                         if rotate[0, 1, i, j] > 0.5:
-                            winlist.append(Window2(rx, ry, rw, rw, 0, curScale, cls_prob[0, 1, i, j])
+                            winlist.append(Window2(rx, ry, rw, rw, 0, curScale, cls_prob[0, 1, i, j]))
                         else:
-                            winlist.append(Window2(rx, ry, rw, rw, 180, curScale, cls_prob[0, 1, i, j])
+                            winlist.append(Window2(rx, ry, rw, rw, 180, curScale, cls_prob[0, 1, i, j]))
         print("layer detect", layerdetect)
-        img_resized = resizeImg(img_resized, scale_)                    
+        img_resized = resizeImg(img_resized, scale_)
+
         curScale = round(img.shape[0] / img_resized.shape[0],3)
-    return winlist                
-    
+    return winlist
+
 if __name__ == "__main__":
     imgpath = 'imgs/5.jpg'
     img = cv2.imread(imgpath)
     imgPad = pcn.pad_img(img)
-    thres = 0.37
-    
+
     pcn1 = caffe.Net('model/PCN-1.prototxt', 'model/PCN.caffemodel', caffe.TEST)
     stage1_caffe(img, imgPad, pcn1, thres)
