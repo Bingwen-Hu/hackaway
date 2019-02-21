@@ -208,7 +208,7 @@ def stage1(img, img_pad, net, thres):
     col = (img_pad.shape[1] - img.shape[1]) // 2
     winlist = []
     netSize = 24
-    curScale = minFace_ / netSize
+    curScale = round(minFace_ / netSize, 3)
     img_resized = resizeImg(img, curScale)
     layerdetect = 0
     while min(img_resized.shape[:2]) >= netSize:
@@ -221,6 +221,7 @@ def stage1(img, img_pad, net, thres):
         for i in range(cls_prob.shape[2]): # cls_prob[2]->height        
             for j in range(cls_prob.shape[3]): # cls_prob[3]->width
                 if cls_prob[0, 1, i, j].item() > thres:
+                    print(f'cls_prob[0, 1, {i}, {j}] = {cls_prob[0, 1, i, j].item()}')
                     layerdetect += 1
                     sn = bbox[0, 0, i, j].item()
                     xn = bbox[0, 1, i, j].item()
@@ -235,7 +236,7 @@ def stage1(img, img_pad, net, thres):
                             winlist.append(Window2(rx, ry, rw, rw, 180, curScale, cls_prob[0, 1, i, j].item()))
         print("layer detect", layerdetect)
         img_resized = resizeImg(img_resized, scale_)                    
-        curScale = img.shape[0] / img_resized.shape[0]
+        curScale = round(img.shape[0] / img_resized.shape[0],3)
     return winlist                
     
 def stage2(img, img180, net, thres, dim, winlist):
