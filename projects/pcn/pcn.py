@@ -86,7 +86,8 @@ def loadModel():
 def resizeImg(img, scale:float):
     h, w = img.shape[:2]
     h_, w_ = int(h / scale), int(w / scale)
-    ret = cv2.resize(img, (w_, h_), interpolation=cv2.INTER_NEAREST)
+    img = img.astype(np.float32)
+    ret = cv2.resize(img, (w_, h_))
     return ret
 
 def legal(x, y, img):
