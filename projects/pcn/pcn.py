@@ -337,7 +337,7 @@ def stage3(img, img180, img90, imgNeg90, net, thres, dim, winlist):
     ret = []
 
     for i in range(length):
-        if True or cls_prob[i, 1].item() > thres:
+        if cls_prob[i, 1].item() > thres:
             sn = bbox[i, 0].item()
             xn = bbox[i, 1].item()
             yn = bbox[i, 2].item()
@@ -406,7 +406,7 @@ def pcn_detect(img):
 
 if __name__ == '__main__':
     loadModel()
-    img = cv2.imread('0.jpg') 
+    img = cv2.imread('6.jpg') 
     faces = pcn_detect(img)
     for face in faces:
         draw_face(img, face)
