@@ -142,7 +142,7 @@ def stage3_caffe(img, img180, img90, imgNeg90, net, thres, dim, winlist):
     length = len(winlist)
     if length == 0:
         return winlist
-    
+
     datalist = []
     height, width = img.shape[:2]
 
@@ -157,21 +157,21 @@ def stage3_caffe(img, img180, img90, imgNeg90, net, thres, dim, winlist):
             datalist.append(preprocess_img(imgNeg90[y:y+win.h, x:x+win.w, :], dim))
         else:
             y2 = win.y + win.h - 1
-            y = height - 1 - y2 
+            y = height - 1 - y2
             datalist.append(preprocess_img(img90[win.x:win.x+win.w, win.y:win.y+win.h, :], dim))
-    # network forward 
+    # network forward
 
     out = forward_caffe(datalist, net)
     cls_prob = out['cls_prob'].data
     bbox = out['bbox_reg_3'].data
-    rotate = out['rotate_cls_prob'].data
+    rotate = out['rotate_reg_3'].data
 
     ret = []
     for i in range(length):
-        if cls_prob[i, 1].item() > thres:
-            sn = bbox[i, 0].item()
-            xn = bbox[i, 1].item()
-            yn = bbox[i, 2].item()
+        if cls_prob[i, 1] > thres:
+            sn = bbox[i, 0]
+            xn = bbox[i, 1]
+            yn = bbox[i, 2]
             cropX = winlist[i].x
             cropY = winlist[i].y
             cropW = winlist[i].w
@@ -186,21 +186,21 @@ def stage3_caffe(img, img180, img90, imgNeg90, net, thres, dim, winlist):
                 cropX = winlist[i].y
                 cropY = width -1 - (winlist[i].x + winlist[i].w - 1)
                 img_tmp = imgNeg90
-    
+
             w = int(sn * cropW)
             x = int(cropX - 0.5 * sn * cropW + cropW * sn * xn + 0.5 * cropW)
             y = int(cropY - 0.5 * sn * cropW + cropW * sn * yn + 0.5 * cropW)
-            angle = angleRange_ * rotate[i, 0].item()
+            angle = angleRange_ * rotate[i, 0]
             if legal(x, y, img_tmp) and legal(x+w-1, y+w-1, img_tmp):
                 pass_legal += 1
                 if abs(winlist[i].angle) < EPS:
-                    ret.append(Window2(x, y, w, w, angle, winlist[i].scale, cls_prob[i, 1].item()))
+                    ret.append(Window2(x, y, w, w, angle, winlist[i].scale, cls_prob[i, 1] ))
                 elif abs(winlist[i].angle - 180) < EPS:
-                    ret.append(Window2(x, height-1-(y+w-1), w, w, 180-angle, winlist[i].scale, cls_prob[i, 1].item()))
+                    ret.append(Window2(x, height-1-(y+w-1), w, w, 180-angle, winlist[i].scale, cls_prob[i, 1] ))
                 elif abs(winlist[i].angle - 90) < EPS:
-                    ret.append(Window2(y, x, w, w, 90-angle, winlist[i].scale, cls_prob[i, 1].item()))
+                    ret.append(Window2(y, x, w, w, 90-angle, winlist[i].scale, cls_prob[i, 1] ))
                 else:
-                    ret.append(Window2(width-y-w, x, w, w, -90+angle, winlist[i].scale, cls_prob[i, 1].item()))
+                    ret.append(Window2(width-y-w, x, w, w, -90+angle, winlist[i].scale, cls_prob[i, 1] ))
     return ret
 
 def detect_caffe():
