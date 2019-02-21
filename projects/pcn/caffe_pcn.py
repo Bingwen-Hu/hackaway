@@ -14,6 +14,7 @@ scale_ = pcn.scale_
 stride_ = pcn.stride_
 thres = pcn.classThreshold_[0]
 minFace_ = pcn.minFace_
+angleRange_ = pcn.angleRange_
 
 
 def forward_caffe(img, net):
@@ -136,8 +137,71 @@ def stage2_caffe(img, img180, net, thres, dim, winlist):
     return ret
 
 
-def stage3_caffe():
-    pass
+
+def stage3_caffe(img, img180, img90, imgNeg90, net, thres, dim, winlist):
+    length = len(winlist)
+    if length == 0:
+        return winlist
+    
+    datalist = []
+    height, width = img.shape[:2]
+
+    for win in winlist:
+        if abs(win.angle) < EPS:
+            datalist.append(preprocess_img(img[win.y:win.y+win.h, win.x:win.x+win.w, :], dim))
+        elif abs(win.angle - 90) < EPS:
+            datalist.append(preprocess_img(img90[win.x:win.x+win.w, win.y:win.y+win.h, :], dim))
+        elif abs(win.angle + 90) < EPS:
+            x = win.y
+            y = width - 1 - (win.x + win.w -1)
+            datalist.append(preprocess_img(imgNeg90[y:y+win.h, x:x+win.w, :], dim))
+        else:
+            y2 = win.y + win.h - 1
+            y = height - 1 - y2 
+            datalist.append(preprocess_img(img90[win.x:win.x+win.w, win.y:win.y+win.h, :], dim))
+    # network forward 
+
+    out = forward_caffe(datalist, net)
+    cls_prob = out['cls_prob'].data
+    bbox = out['bbox_reg_3'].data
+    rotate = out['rotate_cls_prob'].data
+
+    ret = []
+    for i in range(length):
+        if cls_prob[i, 1].item() > thres:
+            sn = bbox[i, 0].item()
+            xn = bbox[i, 1].item()
+            yn = bbox[i, 2].item()
+            cropX = winlist[i].x
+            cropY = winlist[i].y
+            cropW = winlist[i].w
+            img_tmp = img
+            if abs(winlist[i].angle - 180) < EPS:
+                cropY = height - 1 - (cropY + cropW -1)
+                img_tmp = img180
+            elif abs(winlist[i].angle - 90) < EPS:
+                cropX, cropY = cropY, cropX
+                img_tmp = img90
+            elif abs(winlist[i].angle + 90) < EPS:
+                cropX = winlist[i].y
+                cropY = width -1 - (winlist[i].x + winlist[i].w - 1)
+                img_tmp = imgNeg90
+    
+            w = int(sn * cropW)
+            x = int(cropX - 0.5 * sn * cropW + cropW * sn * xn + 0.5 * cropW)
+            y = int(cropY - 0.5 * sn * cropW + cropW * sn * yn + 0.5 * cropW)
+            angle = angleRange_ * rotate[i, 0].item()
+            if legal(x, y, img_tmp) and legal(x+w-1, y+w-1, img_tmp):
+                pass_legal += 1
+                if abs(winlist[i].angle) < EPS:
+                    ret.append(Window2(x, y, w, w, angle, winlist[i].scale, cls_prob[i, 1].item()))
+                elif abs(winlist[i].angle - 180) < EPS:
+                    ret.append(Window2(x, height-1-(y+w-1), w, w, 180-angle, winlist[i].scale, cls_prob[i, 1].item()))
+                elif abs(winlist[i].angle - 90) < EPS:
+                    ret.append(Window2(y, x, w, w, 90-angle, winlist[i].scale, cls_prob[i, 1].item()))
+                else:
+                    ret.append(Window2(width-y-w, x, w, w, -90+angle, winlist[i].scale, cls_prob[i, 1].item()))
+    return ret
 
 def detect_caffe():
     pass
@@ -147,9 +211,16 @@ if __name__ == "__main__":
     img = cv2.imread(imgpath)
     imgPad = pcn.pad_img(img)
     img180 = cv2.flip(imgPad, 0)
+    img90 = cv2.transpose(imgPad)
+    imgNeg90 = cv2.flip(img90, 0)
 
     pcn1 = caffe.Net('model/PCN-1.prototxt', 'model/PCN.caffemodel', caffe.TEST)
     pcn2 = caffe.Net('model/PCN-2.prototxt', 'model/PCN.caffemodel', caffe.TEST)
+    pcn3 = caffe.Net('model/PCN-3.prototxt', 'model/PCN.caffemodel', caffe.TEST)
     winlist = stage1_caffe(img, imgPad, pcn1, thres)
     winlist = pcn.NMS(winlist, True, pcn.nmsThreshold_[0])
     winlist = stage2_caffe(imgPad, img180, pcn2, pcn.classThreshold_[1], 24, winlist)
+    winlist = pcn.NMS(winlist, True, pcn.nmsThreshold_[1])
+    winlist = stage3_caffe(imgPad, img180, img90, imgNeg90, pcn3, pcn.classThreshold_[2], 48, winlist)
+    winlist = pcn.NMS(winlist, False, pcn.nmsThreshold_[2])
+    print(len(winlist))
