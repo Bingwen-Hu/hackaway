@@ -17,7 +17,6 @@ period_ = 30
 trackThreshold_ = .95
 augScale_ = 0.15
 
-
 class Window:
     def __init__(self, x, y, width, angle, score):
         self.x = x
@@ -37,9 +36,7 @@ class Window2:
         self.conf = conf
 
 
-# notation
-list_win2 = [Window2(1,1,1,1,1,1,1)]
-
+######################## code in PCN.h ###########################
 def rotate_point(x, y, centerX, centerY, angle):
     x -= centerX
     y -= centerY
@@ -48,11 +45,10 @@ def rotate_point(x, y, centerX, centerY, angle):
     ry = int(centerY + x * np.sin(theta) + y * np.cos(theta))
     return rx, ry
 
-
 def draw_line(img, pointlist):
     thick = 2
-    cyan = (0, 255, 255)
-    blue = (0, 0, 255)
+    cyan = (255, 255, 0)
+    blue = (255, 0, 0)
     cv2.line(img, pointlist[0], pointlist[1], cyan, thick)
     cv2.line(img, pointlist[1], pointlist[2], cyan, thick)
     cv2.line(img, pointlist[2], pointlist[3], cyan, thick)
@@ -73,10 +69,11 @@ def draw_face(img, face:Window):
     draw_line(img, pointlist)
 
 def crop_face(img, face:Window, cropsize):
+    "Implement it if you like"
     pass
 
-## that all above PCN.h
-## following is PCN.cpp
+
+######################## code in PCN.cpp #########################
 def loadModel():
     pcn1 = torch.load('pth/pcn1.pth')
     pcn2 = torch.load('pth/pcn2.pth')
@@ -107,15 +104,14 @@ def inside(x, y, rect:Window2):
 def smooth_angle(a, b):
     if a > b:
         a, b = b, a
-    # a <= b
     diff = (b - a) % 360
     if diff < 180:
         return a + diff // 2
     else:
         return b + (360 - diff) // 2
 
+# use global variable `prelist` to mimic static variable in C++
 prelist = []
-import copy
 def smooth_window(winlist):
     global prelist
     for win in winlist:
@@ -134,7 +130,7 @@ def smooth_window(winlist):
                 win.w = (win.w + pwin.w) // 2
                 win.h = (win.h + pwin.h) // 2
                 win.angle = smooth_angle(win.angle, pwin.angle)
-    prelist = copy.deepcopy(winlist)
+    prelist = winlist
     return winlist
 
 def IoU(w1:Window2, w2:Window2) -> float:
@@ -144,7 +140,7 @@ def IoU(w1:Window2, w2:Window2) -> float:
     unio = w1.w * w1.h + w2.w * w2.h - intersection
     return intersection / unio
 
-def NMS(winlist:list_win2, local:bool, threshold:float) -> list_win2:
+def NMS(winlist, local:bool, threshold:float):
     length = len(winlist)
     if length == 0:
         return winlist
@@ -161,7 +157,7 @@ def NMS(winlist:list_win2, local:bool, threshold:float) -> list_win2:
     ret = [winlist[i] for i in range(length) if not flag[i]]
     return ret
 
-def deleteFP(winlist:list_win2):
+def deleteFP(winlist):
     length = len(winlist)
     if length == 0:
         return winlist
@@ -182,7 +178,7 @@ def preprocess_img(img, dim=None):
         img = cv2.resize(img, (dim, dim))
     return img - np.array([104, 117, 123])
 
-# method overload allow input as vector
+# using if-else to mimic method overload in C++
 def set_input(img):
     if type(img) == list:
         img = np.stack(img, axis=0)
@@ -191,13 +187,14 @@ def set_input(img):
     img = img.transpose((0, 3, 1, 2))
     return torch.FloatTensor(img)
 
-def pad_img(img):
+def pad_img(img:np.array):
     row = min(int(img.shape[0] * 0.2), 100)
     col = min(int(img.shape[1] * 0.2), 100)
     ret = cv2.copyMakeBorder(img, row, row, col, col, cv2.BORDER_CONSTANT)
     return ret
 
-def trans_window(img, img_pad, winlist: list_win2):
+def trans_window(impad_imgg, img_pad, winlist):
+    """transfer Winpad_imgdow2 to Window1 in winlist"""
     row = (img_pad.shape[0] - img.shape[0]) // 2
     col = (img_pad.shape[1] - img.shape[1]) // 2
     ret = list()
@@ -209,29 +206,22 @@ def trans_window(img, img_pad, winlist: list_win2):
 def stage1(img, img_pad, net, thres):
     row = (img_pad.shape[0] - img.shape[0]) // 2
     col = (img_pad.shape[1] - img.shape[1]) // 2
-    print("row={}, col={}".format(row, col))
     winlist = []
     netSize = 24
     curScale = minFace_ / netSize
     img_resized = resizeImg(img, curScale)
-    print("thres={}".format(thres))
-    print("resizeIMG: rows={}, cols={}".format(img_resized.shape[0], img_resized.shape[1]))
-    print("before while: curScale={}, minFace_={}".format(curScale, minFace_))
-    print("here go in while\n")
+    layerdetect = 0
     while min(img_resized.shape[:2]) >= netSize:
         img_resized = preprocess_img(img_resized)
         net_input = set_input(img_resized)
         net.eval()
-        # reg -> bbox, prob -> cls_prob
-        cls_prob, rotate, bbox = net(net_input)
+        with torch.no_grad():
+            cls_prob, rotate, bbox = net(net_input)
         w = netSize * curScale
-        print('\nw = {:.3f}'.format(w))
-        print("prob shape: = ", cls_prob.shape)
-        print("prob->height = ", cls_prob.shape[2])
-        print("prob->width = ", cls_prob.shape[3])
-        for i in range(cls_prob.size()[2]): # cls_prob[2]->height        
-            for j in range(cls_prob.size()[3]): # cls_prob[3]->width
+        for i in range(cls_prob.shape[2]): # cls_prob[2]->height        
+            for j in range(cls_prob.shape[3]): # cls_prob[3]->width
                 if cls_prob[0, 1, i, j].item() > thres:
+                    layerdetect += 1
                     sn = bbox[0, 0, i, j].item()
                     xn = bbox[0, 1, i, j].item()
                     yn = bbox[0, 2, i, j].item()
@@ -239,21 +229,15 @@ def stage1(img, img_pad, net, thres):
                     ry = int(i * curScale * stride_ - 0.5 * sn * w + sn * yn * w + 0.5 * w) + row
                     rw = int(w * sn)
                     if legal(rx, ry, img_pad) and legal(rx + rw - 1, ry + rw -1, img_pad):
-                        if (rotate[0, 1, i, j].item() > 0.5):
+                        if rotate[0, 1, i, j].item() > 0.5:
                             winlist.append(Window2(rx, ry, rw, rw, 0, curScale, cls_prob[0, 1, i, j].item()))
                         else:
                             winlist.append(Window2(rx, ry, rw, rw, 180, curScale, cls_prob[0, 1, i, j].item()))
+        print("layer detect", layerdetect)
         img_resized = resizeImg(img_resized, scale_)                    
         curScale = img.shape[0] / img_resized.shape[0]
-        print('resize stage:')
-        print("resizeimg: \nrows={}\n cols={}".format(img_resized.shape[0], img_resized.shape[1]))
-        print("curScale = {:.3f}".format(curScale))
-        print("winlist count: ", len(winlist))
-        
     return winlist                
     
-
-
 def stage2(img, img180, net, thres, dim, winlist):
     length = len(winlist)
     if length == 0:
@@ -331,13 +315,18 @@ def stage3(img, img180, img90, imgNeg90, net, thres, dim, winlist):
             y2 = win.y + win.h - 1
             y = height - 1 - y2 
             datalist.append(preprocess_img(img90[win.x:win.x+win.w, win.y:win.y+win.h, :], dim))
+    # network forward 
     net_input = set_input(datalist)
     net.eval()
-    cls_prob, rotate, bbox = net(net_input)
-    ret = []
+    with torch.no_grad():
+        cls_prob, rotate, bbox = net(net_input)
 
+    pass_thres = pass_legal = 0
+
+    ret = []
     for i in range(length):
         if cls_prob[i, 1].item() > thres:
+            pass_thres += 1
             sn = bbox[i, 0].item()
             xn = bbox[i, 1].item()
             yn = bbox[i, 2].item()
@@ -361,6 +350,7 @@ def stage3(img, img180, img90, imgNeg90, net, thres, dim, winlist):
             y = int(cropY - 0.5 * sn * cropW + cropW * sn * yn + 0.5 * cropW)
             angle = angleRange_ * rotate[i, 0].item()
             if legal(x, y, img_tmp) and legal(x+w-1, y+w-1, img_tmp):
+                pass_legal += 1
                 if abs(winlist[i].angle) < EPS:
                     ret.append(Window2(x, y, w, w, angle, winlist[i].scale, cls_prob[i, 1].item()))
                 elif abs(winlist[i].angle - 180) < EPS:
@@ -369,10 +359,11 @@ def stage3(img, img180, img90, imgNeg90, net, thres, dim, winlist):
                     ret.append(Window2(y, x, w, w, 90-angle, winlist[i].scale, cls_prob[i, 1].item()))
                 else:
                     ret.append(Window2(width-y-w, x, w, w, -90+angle, winlist[i].scale, cls_prob[i, 1].item()))
+    print("pass legal", pass_legal, "pass thres", pass_thres)
     return ret
 
 def detect(img, img_pad):
-    img180 = cv2.flip(img, 0)
+    img180 = cv2.flip(img_pad, 0)
     img90 = cv2.transpose(img_pad)
     imgNeg90 = cv2.flip(img90, 0)
     
@@ -405,8 +396,12 @@ def pcn_detect(img):
     return trans_window(img, img_pad, winlist)
 
 if __name__ == '__main__':
+    import sys
+    if len(sys.argv) != 2:
+        print("Usage: python3 pcn.py /path/to/img")
+        sys.exit()
     loadModel()
-    img = cv2.imread('5.jpg') 
+    img = cv2.imread(sys.argv[1]) 
     faces = pcn_detect(img)
     for face in faces:
         draw_face(img, face)
