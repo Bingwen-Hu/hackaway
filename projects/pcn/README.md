@@ -1,6 +1,7 @@
 # PCN in Pytorch development repo
 
 [origin repo](https://github.com/Jack-CV/FaceKit/tree/master/PCN)
+[Pytorch repo](https://github.com/siriusdemon/pytorch-PCN)
 
 
 ## dependences
