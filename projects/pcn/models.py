@@ -1,7 +1,6 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from collections import OrderedDict
 
 
 
@@ -171,3 +170,9 @@ class PCN3(nn.Module):
 # fc6_3                       	 (2, 192) (2,)
 # bbox_reg_3                  	 (3, 192) (3,)
 # rotate_reg_3                	 (1, 192) (1,)
+
+def load_model():
+    pcn1 = torch.load('pth/pcn1.pth')
+    pcn2 = torch.load('pth/pcn2.pth')
+    pcn3 = torch.load('pth/pcn3.pth')
+    return pcn1, pcn2, pcn3

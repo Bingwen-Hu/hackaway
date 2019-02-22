@@ -48,9 +48,5 @@ class TestPCN(unittest.TestCase):
             print(win.x, win.y, win.w, win.h, win.angle, win.conf)
         self.assertTrue(True)
 
-
-
-
-
 if __name__ == '__main__':
     unittest.main()

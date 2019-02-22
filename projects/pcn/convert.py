@@ -26,7 +26,7 @@ def convert_PCN1():
     for k, layer in mappings.items():
         layer.weight.data.copy_(torch.from_numpy(caffe_params[k][0].data))
         layer.bias.data.copy_(torch.from_numpy(caffe_params[k][1].data))
-    torch.save(torch_net, 'pcn1.pth')
+    torch.save(torch_net, 'pth/pcn1.pth')
 
 
 def convert_PCN2():
@@ -48,7 +48,7 @@ def convert_PCN2():
     for k, layer in mappings.items():
         layer.weight.data.copy_(torch.from_numpy(caffe_params[k][0].data))
         layer.bias.data.copy_(torch.from_numpy(caffe_params[k][1].data))
-    torch.save(torch_net, 'pcn2.pth')
+    torch.save(torch_net, 'pth/pcn2.pth')
 
 def convert_PCN3():
     torch_net = PCN3()
@@ -70,5 +70,9 @@ def convert_PCN3():
     for k, layer in mappings.items():
         layer.weight.data.copy_(torch.from_numpy(caffe_params[k][0].data))
         layer.bias.data.copy_(torch.from_numpy(caffe_params[k][1].data))
-    torch.save(torch_net, 'pcn3.pth')
-convert_PCN3()
+    torch.save(torch_net, 'pth/pcn3.pth')
+
+if __name__ == "__main__":
+    convert_PCN1()
+    convert_PCN2()
+    convert_PCN3()

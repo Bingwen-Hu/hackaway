@@ -4,7 +4,7 @@ import cv2
 import pcn
 
 
-resizeImg = pcn.resizeImg
+resize_img = pcn.resize_img
 preprocess_img = pcn.preprocess_img
 legal = pcn.legal
 Window2 = pcn.Window2
@@ -12,7 +12,6 @@ Window2 = pcn.Window2
 EPS = pcn.EPS
 scale_ = pcn.scale_
 stride_ = pcn.stride_
-thres = pcn.classThreshold_[0]
 minFace_ = pcn.minFace_
 angleRange_ = pcn.angleRange_
 
@@ -42,7 +41,7 @@ def stage1_caffe(img, img_pad, net, thres):
     winlist = []
     netSize = 24
     curScale = round(minFace_ / netSize, 3)
-    img_resized = resizeImg(img, curScale)
+    img_resized = resize_img(img, curScale)
     layerdetect = 0
     while min(img_resized.shape[:2]) >= netSize:
         img_resized = preprocess_img(img_resized)
@@ -70,7 +69,7 @@ def stage1_caffe(img, img_pad, net, thres):
                         else:
                             winlist.append(Window2(rx, ry, rw, rw, 180, curScale, cls_prob[0, 1, i, j]))
         print("layer detect", layerdetect)
-        img_resized = resizeImg(img_resized, scale_)
+        img_resized = resize_img(img_resized, scale_)
 
         curScale = round(img.shape[0] / img_resized.shape[0],3)
     return winlist
@@ -192,7 +191,6 @@ def stage3_caffe(img, img180, img90, imgNeg90, net, thres, dim, winlist):
             y = int(cropY - 0.5 * sn * cropW + cropW * sn * yn + 0.5 * cropW)
             angle = angleRange_ * rotate[i, 0]
             if legal(x, y, img_tmp) and legal(x+w-1, y+w-1, img_tmp):
-                pass_legal += 1
                 if abs(winlist[i].angle) < EPS:
                     ret.append(Window2(x, y, w, w, angle, winlist[i].scale, cls_prob[i, 1] ))
                 elif abs(winlist[i].angle - 180) < EPS:
@@ -217,7 +215,7 @@ if __name__ == "__main__":
     pcn1 = caffe.Net('model/PCN-1.prototxt', 'model/PCN.caffemodel', caffe.TEST)
     pcn2 = caffe.Net('model/PCN-2.prototxt', 'model/PCN.caffemodel', caffe.TEST)
     pcn3 = caffe.Net('model/PCN-3.prototxt', 'model/PCN.caffemodel', caffe.TEST)
-    winlist = stage1_caffe(img, imgPad, pcn1, thres)
+    winlist = stage1_caffe(img, imgPad, pcn1, pcn.classThreshold_[0])
     winlist = pcn.NMS(winlist, True, pcn.nmsThreshold_[0])
     winlist = stage2_caffe(imgPad, img180, pcn2, pcn.classThreshold_[1], 24, winlist)
     winlist = pcn.NMS(winlist, True, pcn.nmsThreshold_[1])
