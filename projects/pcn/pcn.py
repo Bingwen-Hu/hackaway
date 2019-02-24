@@ -199,7 +199,7 @@ def stage2(img, img180, net, thres, dim, winlist):
         else:
             y2 = win.y + win.h -1
             y = height - 1 - y2
-            datalist.append(preprocess_img(img[y:y+win.h, win.x:win.x+win.w, :], dim))
+            datalist.append(preprocess_img(img180[y:y+win.h, win.x:win.x+win.w, :], dim))
     # net forward
     net_input = set_input(datalist)
     with torch.no_grad():
@@ -266,7 +266,7 @@ def stage3(imgPad, img180, img90, imgNeg90, net, thres, dim, winlist):
         else:
             y2 = win.y + win.h - 1
             y = height - 1 - y2
-            datalist.append(preprocess_img(img90[win.x:win.x+win.w, win.y:win.y+win.h, :], dim))
+            datalist.append(preprocess_img(img180[y:y+win.h, win.x:win.x+win.w], dim))
     # network forward
     net_input = set_input(datalist)
     with torch.no_grad():
