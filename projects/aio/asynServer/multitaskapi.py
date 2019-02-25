@@ -18,9 +18,8 @@ urls = {
 #               open('/home/mory/data/face_test/10.jpg', 'rb'),
 #               filename='image.png',
 #               content_type='image/jpeg')
-def requests_all():
-    # files = [{'image': open('/home/mory/data/face_test/10.jpg', 'rb')} for _ in urls]
-    files = [{'image': open('/home/mory/Downloads/1.jpg', 'rb')} for _ in urls]
+def requests_all(filepath):
+    files = [{'image': open(filepath, 'rb')} for _ in urls]
     results = {}
     async def requests(key, files):
         async with aiohttp.ClientSession() as session:
@@ -37,12 +36,12 @@ def face_parse(result):
     if not result_:
         return {'infotype': 'shezheng', 'rate': 0.0, 'content': ''}
     positive = [r for r in result_ if r['label'] != 'unknown']
+    if not positive:
+        return {'infotype': 'shezheng', 'rate': 0.0, 'content': ''}
     positive.sort(key=lambda x: x['distance'])
     rate = min(1, 1 - positive[0]['distance'] / 2 + (len(positive) - 1) * 0.1)
     content = " ".join(p['label'] for p in positive)
     return {'infotype':'shezheng', 'rate': rate, 'content': content} 
-
-
 
 def construct(results):
     rets = []
@@ -52,8 +51,15 @@ def construct(results):
         elif key == 'shehuang':
             ret = {'infotype':'shehuang', 'rate': result['pos'], 'content': ''} 
         rets.append(ret)
-    return json.dumps(rets)
+    return rets
+
+def multitask(filepath):
+    results = requests_all(filepath)
+    results = construct(results)
+    return results
 
 if __name__ == '__main__':
-    results = requests_all()
-    results = construct(results)
+    import pprint
+    filepath = 'zhou.jpg'
+    result = multitask(filepath)
+    pprint.pprint(result)
