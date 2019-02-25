@@ -4,6 +4,7 @@ OBJS=char_category locale function by_ref algorithms predicate
 OBJS+=lambda overload_fn cast doxygen struct class virtual
 OBJS+=functor search find_if replace_if exception noexcept
 OBJS+=function_template class_template template_special
+OBJS+=custom_comparator
 
 # in this makefile, latter script will appear later
 clean:
@@ -76,3 +77,6 @@ class_template: class_template.o
 
 template_special: template_special.o
 	$(CC) template_special.cpp $(CFLAGS) -o $@
+
+custom_comparator: custom_comparator.o
+	$(CC) custom_comparator.cpp $(CFLAGS) -o $@
