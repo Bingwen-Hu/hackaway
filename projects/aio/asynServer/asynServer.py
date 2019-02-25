@@ -2,6 +2,7 @@ from aiohttp import web
 import aiohttp_jinja2
 import jinja2
 
+import synmultitask
 
 routes = web.RouteTableDef()
 
@@ -26,7 +27,7 @@ class LoginView(web.View):
     async def get(self):
         return {}
 
-
+# adapt it to synmultitask
 @routes.view('/upload')
 class UploadView(web.View):
     async def post(self):
@@ -41,7 +42,8 @@ class UploadView(web.View):
                 if not chunk:
                     break
                 f.write(chunk)
-        return web.Response(text="haha")
+        result = synmultitask.multitask(field.filename)
+        return web.json_response(result)
 
     @aiohttp_jinja2.template('upload.html')
     async def get(self):
