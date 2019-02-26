@@ -112,3 +112,30 @@ Suppose that A is an m × n matrix. Then U is defined to be an m × m matrix, D 
 Each of these matrices is defined to have a special structure. The matrices U and V are both defined to be orthogonal matrices. The matrix D is defined to be a diagonal matrix. Note that D is not necessarily square.\
 The elements along the diagonal of D are known as the singular values of the matrix A. The columns of U are known as the left-singular vectors. The columns of V are known as as the right-singular vectors.\
 We can actually interpret the singular value decomposition of A in terms of the eigendecomposition of functions of A. The left-singular vectors of A are the eigenvectors of $AA^T$. The right-singular vectors of A are the eigenvectors of $A^TA$. The non-zero singular values of A are the square roots of the eigenvalues of $A^TA$. The same is true for $AA^T$.
+
+## 2.9 The Moore-Penrose Pseudoinverse
+Practical algorithms for computing the pseudoinverse are not based on this definition, but rather the formula
+$$ A^+ = V D^+ U^T $$
+where U, D and V are the singular value decomposition of A , and the pseudoinverse $D^+$ of a diagonal matrix D is obtained by taking the reciprocal of its non-zero elements then taking the transpose of the resulting matrix.
+
+When A has more columns than rows, then solving a linear equation using the pseudoinverse provides one of the many possible solutions. Specifically, it provides the solution x = A + y with minimal Euclidean norm $||x||_2$ among all possible solutions.\
+When A has more rows than columns, it is possible for there to be no solution. In this case, using the pseudoinverse gives us the x for which Ax is as close as possible to y in terms of Euclidean norm $||Ax − y||_2$.
+
+## 2.10 the trace operator
+The trace operator gives the sum of all of the diagonal entries of a matrix:
+$$ \large Tr(A) = \sum \limits_i A_{i,i}$$
+
+the trace operator provides an alternative way of writing the Frobenius norm of a matrix:
+$$ \large ||A||_F = \sqrt{Tr(AA^T)}$$
+
+the trace operator is invariant to the transpose operator:
+$$ Tr(A) = Tr(A^T) $$
+
+$$ Tr(AB) = Tr(BA) $$
+even though $AB \in \R^{m×m}$ and $B \in \R^{n×n}$
+
+for scalar
+$$ a = Tr(a) $$
+
+## 2.11 Determinant
+The determinant of a **square matrix**, denoted det (A ), is a function mapping matrices to real scalars. The determinant is equal to the product of all the eigenvalues of the matrix.
