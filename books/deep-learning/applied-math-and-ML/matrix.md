@@ -109,6 +109,6 @@ The singular value decomposition (SVD) provides another way to factorize a matri
 
 $$ A = UDV^T $$
 Suppose that A is an m × n matrix. Then U is defined to be an m × m matrix, D to be an m × n matrix, and V to be an n × n matrix.\
-Each of these matrices is defined to have a special structure. The matrices U and V are both defined to be orthogonal matrices. The matrix D is defined to be a diagonal matrix. Note that D is not necessarily square.
+Each of these matrices is defined to have a special structure. The matrices U and V are both defined to be orthogonal matrices. The matrix D is defined to be a diagonal matrix. Note that D is not necessarily square.\
 The elements along the diagonal of D are known as the singular values of the matrix A. The columns of U are known as the left-singular vectors. The columns of V are known as as the right-singular vectors.\
 We can actually interpret the singular value decomposition of A in terms of the eigendecomposition of functions of A. The left-singular vectors of A are the eigenvectors of $AA^T$. The right-singular vectors of A are the eigenvectors of $A^TA$. The non-zero singular values of A are the square roots of the eigenvalues of $A^TA$. The same is true for $AA^T$.
