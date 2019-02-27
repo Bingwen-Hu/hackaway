@@ -93,8 +93,26 @@ A closely related probability distribution that allows us to place a sharp peak 
 $$ \large Laplace(x; \mu, γ) = \frac{1}{2γ} exp (- \frac{|x-\mu|}{γ})$$
 
 + The Dirac Distribution and Empirical Distribution
-In some cases, we wish to specify that all of the mass in a probability distribution clusters around a single point. This can be accomplished by defining a PDF using the Dirac delta function, δ(x) :
+In some cases, we wish to specify that all of the mass in a probability distribution clusters around a single point. This can be accomplished by defining a PDF using the Dirac delta function, δ(x):
 $$ p(x) = δ (x − μ) $$
 
 A common use of the Dirac delta distribution is as a component of an empirical distribution,
 $$ \large \dot p(x) = \frac{1}{m} \sum \limits^m_{i=1} δ(x - x^{(i)}) $$
+
+## 3.8 useful properties of common functions
++ logistic sigmoid:
+$$ \large \sigma(x) = \frac{1}{1+exp(-x)}$$
+The logistic sigmoid is commonly used to produce the φ parameter of a Bernoulli distribution because its range is (0,1)
+softplus:
+$$ ζ(x) = log(1 + exp(x))$$
+
+The following properties are all useful enough that you may wish to memorize them
+$$\large σ(x) = \frac {exp(x)} {exp(x) + exp(0)} $$
+$$\large \frac{d}{dx}\sigma(x) = \sigma(x)(1-\sigma(x))$$
+$$ 1 - σ(x) = σ(-x)$$
+$$ log\ σ(x) = -ζ(-x)$$
+$$ \frac{d}{dx}ζ(x) = σ(x)$$
+$$ ∀ x ∈ (0 , 1) , σ^{-1}(x) = log(\frac{x}{1-x})$$
+$$ ∀x > 0 , ζ^{-1}(x) = log (exp(x)-1)$$
+$$ ζ(x) = \int^x_{-\infty} σ(y)dy$$
+$$ ζ(x) - ζ(-x)= x$$
