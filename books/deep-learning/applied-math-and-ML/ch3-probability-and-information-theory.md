@@ -116,3 +116,25 @@ $$ ∀ x ∈ (0 , 1) , σ^{-1}(x) = log(\frac{x}{1-x})$$
 $$ ∀x > 0 , ζ^{-1}(x) = log (exp(x)-1)$$
 $$ ζ(x) = \int^x_{-\infty} σ(y)dy$$
 $$ ζ(x) - ζ(-x)= x$$
+
+## 3.9 Information theory
+keys: 
++ Likely events should have low information content, and in the extreme case, events that are guaranteed to happen should have no information content whatsoever.
++ Less likely events should have higher information content.
++ Independent events should have additive information. For example, finding out that a tossed coin has come up as heads twice should convey twice as much information as finding out that a tossed coin has come up as heads once.
+self-information:
+$$ I(x) = - log\ P(x)$$
+In this book, we always use log to mean the natural logarithm, with base e. Our definition of I(x) is therefore written in units of nats . One nat is the amount of information gained by observing an event of probability $\frac{1}{e}$ . Other texts use base-2 logarithms and units called bits or shannons ; information measured in bits is just a rescaling of information measured in nats.
+
+self-information deals only with a single outcome. We can quantify the amount of uncertainty in an entire probability distribution using the Shannon entropy:
+$$ H(x) = E_{x~P}|I(x)| = -E_{x~P}|logP(x)|$$
+If we have two separate probability distributions P (x ) and Q(x) over the same random variable x, we can measure how different these two distributions are using the Kullback-Leibler (KL) divergence:
+$$ D_{KL}(P||Q) = E_{x~P}[log\frac{P(x)}{Q(x)}] = E_{x~P}[logP(x) - logQ(x)]$$
+$$ D_{KL}(P||Q) \ge 0 $$
+$$ D_{KL}(P||Q) \ne D_{KL}(Q||P) $$
+
+A quantity that is closely related to the KL divergence is the cross-entropy $H(P,Q) = H(P) + D_{KL}(P||Q)$, which is similar to the KL divergence but lacking the term on the left:
+$$ H(P, Q) = - E_{x~P}logQ(x)$$
+
+## 3.10 Structured Probabilistic Models
+## 3.11 Bayes’ Rule
