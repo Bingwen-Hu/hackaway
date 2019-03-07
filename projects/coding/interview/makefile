@@ -1,5 +1,6 @@
 CC=c++
-OBJS=duplicate search_matrix replace_space
+C=gcc
+OBJS=duplicate search_matrix replace_space reversePrint
 
 clean:
 	rm -rf *.o
@@ -14,3 +15,6 @@ search_matrix: search_matrix.o
 
 replace_space: replace_space.o
 	$(CC) replace_space.cpp -o $@
+
+reversePrint: reversePrint.o
+	$(C) reversePrint.c -o $@
