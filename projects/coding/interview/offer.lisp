@@ -8,7 +8,10 @@
       (if (> (aref hold i) 1)
           (return t)))))
 
-(defun replace-space (str))
+(defun replace-space (str)
+  (dolist (c str)
+    (if (char= c #\space)
+        ())))
 
 (defun search-matrix)
 
