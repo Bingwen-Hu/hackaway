@@ -1,11 +1,11 @@
 ## 3.1 probability
 1. three possible sources of uncertainty
-+ inherent stochasticity in the system being modeled.
-+ incomplete observability
-+ incomplete modeling   
+   + inherent stochasticity in the system being modeled.
+   + incomplete observability
+   + incomplete modeling   
 2. random variable 
-+ discrete
-+ continuous
+   + discrete
+   + continuous
 
 ## 3.2 probability distributions
 A probability distribution is a description of how likely a random variable or set of random variables is to take on each of its possible states. The way we describe probability distributions depends on whether the variables are discrete or continuous.
