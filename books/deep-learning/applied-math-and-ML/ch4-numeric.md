@@ -33,3 +33,29 @@ $$ \large x^{'} = x - \epsilon ∇_x f(x)$$
 where $\epsilon$ is the learning rate, a positive scalar determining the size of the step. We can choose in several different ways. A popular approach is to set to a small constant. Sometimes, we can solve for the step size that makes the directional derivative vanish. Another approach is to evaluate $f(x − \epsilon ∇_x f(x))$ for several values of and choose the one that results in the smallest objective function value. This last strategy is called a line search. 
 
 Steepest descent converges when every element of the gradient is zero (or, in practice, very close to zero). In some cases, we may be able to avoid running this iterative algorithm, and just jump directly to the critical point by solving the equation $∇_x f (x) = 0$ for x.
+
+### 4.3.1 beyond the gradient: Jacobian and Hessian Matrices
+## 4.4 Constrained Optimization
+## 4.5 Example: Linear Least Squares
+To minimizes:
+$$ f(x) = \frac{1}{2} ||Ax - b||^2_2$$
+First, obtain the gradient:
+$$ ∇_x f(x) = A^T (Ax - b) = A^T Ax - A^T b $$
+Then, using gradient descent:
+Set the step size ($\epsilon$) and tolerance (δ) to small, positive numbers.\
+
+while $||A^T Ax - A^Tb||_2 > δ$ do \
+$\quad  x = x − \epsilon(A^T Ax − A^T b)$ \
+end
+
+Now suppose we wish to minimize the same function, but subject to the constraint $x^Tx ≤ 1$. To do so, we introduce the Lagrangian
+$$\large L(x, λ) = f(x) + λ(x^T x − 1)$$
+We can now solve the problem
+$$\large \mathop{min}\limits_{x} \mathop{max}\limits_{λ,λ\ge0} L(x, λ)$$
+By differentiating the Lagrangian with respect to x , we obtain the equation
+$$\large  A^T Ax − A^T b + 2λx = 0$$
+This tells us that the solution will take the form
+$$\large x = (A^T A + 2λ I)^{-1} A^T b$$
+performing gradient ascent on λ
+$$\large \frac{∂}{∂λ} L(x, λ) = x^T x − 1$$
+When the norm of x exceeds 1, this derivative is positive, so to follow the derivative uphill and increase the Lagrangian with respect to λ, we increase λ. Because the coefficient on the $x^T x$ penalty has increased, solving the linear equation for x will now yield a solution with smaller norm. The process of solving the linear equation and adjusting λ continues until x has the correct norm and the derivative on λ is 0.
