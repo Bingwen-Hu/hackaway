@@ -80,3 +80,7 @@ htmlcov
 *.lnk
 temp.jpg
 simpleFace
+
+# build
+dist
+*.egg-info
