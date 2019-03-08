@@ -28,3 +28,6 @@
       (push e stack))
     (dolist (e stack)
       (print e))))
+
+(defun rebuild-binary-tree (preorder inorder)
+  )
