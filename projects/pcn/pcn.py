@@ -6,6 +6,7 @@ import torch
 from models import load_model
 from utils import Window, draw_face
 
+from utils import crop_face
 
 
 # global settings
