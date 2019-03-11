@@ -45,12 +45,12 @@ class VGG(nn.Module):
 
     def forward(self, x):
         in_size = x.shape[0]
-        x = self.vgg_conv(x)
+        x = self.conv(x)
         x = x.view(in_size, -1)
         x = self.fc1(x)
         x = self.fc2(x)
         x = self.cls(x)
-        x = F.softmax(x)
+        x = F.softmax(x, dim=1)
         return x
 
 class Gender(VGG):
@@ -62,7 +62,8 @@ class Age(VGG):
     def __init__(self, classes=101, channels=3):
         super().__init__()
         self.cls = nn.Linear(4096, classes)
-    
+
+
 
 if __name__ == '__main__':
     net = Gender()
