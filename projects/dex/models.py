@@ -24,11 +24,12 @@ def vgg_block(in_channels, out_channels, more=False):
 class VGG(nn.Module):
     def __init__(self, classes=1000, channels=3):
         super().__init__()
-        self.vgg_conv = nn.Sequential(
+        self.conv = nn.Sequential(
             vgg_block(channels, 64),
             vgg_block(64, 128),
             vgg_block(128, 256, True),
             vgg_block(256, 512, True),
+            vgg_block(512, 512, True),
         )
         self.fc1 = nn.Sequential(
             nn.Linear(512*7*7, 4096),
@@ -55,12 +56,12 @@ class VGG(nn.Module):
 class Gender(VGG):
     def __init__(self, classes=2, channels=3):
         super().__init__()
-        self.cls = nn.Linear(4096, 2)
+        self.cls = nn.Linear(4096, classes)
 
 class Age(VGG):
-    def __init__(self, classes, channels):
+    def __init__(self, classes=101, channels=3):
         super().__init__()
-        self.cls = nn.Linear(4096, 2)
+        self.cls = nn.Linear(4096, classes)
     
 
 if __name__ == '__main__':
