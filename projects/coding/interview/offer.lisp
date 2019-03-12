@@ -9,11 +9,37 @@
           (return t)))))
 
 (defun replace-space (str)
-  (dolist (c str)
-    (if (char= c #\space)
-        ())))
+  "ugly implementation in lisp"
+  (let ((longstr str))
+    (dotimes (s (length str))
+      (if (char= (char str s) #\space)
+          (setf longstr (concatenate 'string longstr "  "))))
+    (let ((p1 (- (length str) 1))
+          (p2 (- (length longstr) 1)))
+      (dotimes (i (length str))
+        (if (char= (char str p1) #\space)
+            (progn
+              (setf (char longstr p2) #\0)
+              (decf p2)
+              (setf (char longstr p2) #\2)
+              (decf p2)
+              (setf (char longstr p2) #\%)
+              (decf p2))
+            (progn
+              (setf (char longstr p2) (char str p1))
+              (decf p2)))
+        (decf p1)))
+    longstr))
 
-(defun search-matrix)
+
+(defparameter matrix #2A((1 4 7 11 15)
+                         (2 5 8 12 19)
+                         (3 6 9 16 22)
+                         (10 13 14 17 24)
+                         (18 21 23 26 30)))
+(defun search-matrix (matrix target)
+  (multiple-value-bind (rows cols) (array-dimensions matrix)
+    ))
 
 
 (defun reverse-print (lst)
