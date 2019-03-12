@@ -14,6 +14,9 @@ setuptools.setup(
     long_description_content_type='text/markdown',
     url = "https://github.com/siriusdemon/pytorch-pcn",
     packages=setuptools.find_packages(),
+    package_data = {
+        'pcn': ['pth/*.pth'],
+    },
     classifiers = [
         "Programming Language :: Python :: 3.5",
         "License :: OSI Approved :: BSD License",
