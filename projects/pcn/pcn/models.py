@@ -171,8 +171,13 @@ class PCN3(nn.Module):
 # bbox_reg_3                  	 (3, 192) (3,)
 # rotate_reg_3                	 (1, 192) (1,)
 
+import os
+from os.path import join as pjoin
+
 def load_model():
-    pcn1 = torch.load('pth/pcn1.pth')
-    pcn2 = torch.load('pth/pcn2.pth')
-    pcn3 = torch.load('pth/pcn3.pth')
+    cwd = os.path.dirname(__file__)
+    pcn1, pcn2, pcn3 = PCN1(), PCN2(), PCN3()
+    pcn1.load_state_dict(torch.load(pjoin(cwd, 'pth/pcn1_sd.pth')))
+    pcn2.load_state_dict(torch.load(pjoin(cwd, 'pth/pcn2_sd.pth')))
+    pcn3.load_state_dict(torch.load(pjoin(cwd, 'pth/pcn3_sd.pth')))
     return pcn1, pcn2, pcn3
