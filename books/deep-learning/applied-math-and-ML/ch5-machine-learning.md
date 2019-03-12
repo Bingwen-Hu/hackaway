@@ -45,3 +45,10 @@ We can also see that
 $$\Large MSE_{test} = \frac{1}{m} ||\hat{y}^{(test)} - y^{(test)}||_2^2$$
 
 minimize the mean squared error on the training set, $MSE_train$.
+
+## 5.5 capacity: overfitting and underfitting
+The factors determining how well a machine learning algorithm will perform are its ability to:
+1. Make the training error small.
+2. Make the gap between training and test error small.
+
+These two factors correspond to the two central challenges in machine learning: underfitting and overfitting. Underfitting occurs when the model is not able to obtain a sufficiently low error value on the training set. Overfitting occurs when the gap between the training error and test error is too large.
