@@ -96,6 +96,34 @@ class ConfigNet(object):
             {'net': 'conv', 'filters': 255, 'kernel_size': 3, 'stride': 1, 'padding': 1, 'act': 'linear', 'bn': 0},
             {'net': 'yolo', 'anchors': [(10, 13), (16, 30), (33, 23)], 'classes': 80, 'jitter': .3, 'ignore_thresh': .7, 'truth_thresh': 1, 'random': 1},
         ]
+        self.yolov3_tiny = [
+            {'net': 'conv', 'filters': 16, 'kernel_size': 3, 'stride': 1, 'padding': 1, 'act': 'leaky', 'bn': 1},
+            {'net': 'maxpool', 'kernel_size': 2, 'stride': 2}
+            {'net': 'conv', 'filters': 32, 'kernel_size': 3, 'stride': 1, 'padding': 1, 'act': 'leaky', 'bn': 1},
+            {'net': 'maxpool', 'kernel_size': 2, 'stride': 2}
+            {'net': 'conv', 'filters': 64, 'kernel_size': 3, 'stride': 1, 'padding': 1, 'act': 'leaky', 'bn': 1},
+            {'net': 'maxpool', 'kernel_si2e': 2, 'stride': 2}
+            {'net': 'conv', 'filters': 128, 'kernel_size': 3, 'stride': 1, 'padding': 1, 'act': 'leaky', 'bn': 1},
+            {'net': 'maxpool', 'kernel_si2e': 2, 'stride': 2}
+            {'net': 'conv', 'filters': 256, 'kernel_size': 3, 'stride': 1, 'padding': 1, 'act': 'leaky', 'bn': 1},
+            {'net': 'maxpool', 'kernel_si2e': 2, 'stride': 2}
+            {'net': 'conv', 'filters': 512, 'kernel_size': 3, 'stride': 1, 'padding': 1, 'act': 'leaky', 'bn': 1},
+            {'net': 'maxpool', 'kernel_si2e': 2, 'stride': 1}
+            {'net': 'conv', 'filters': 1024, 'kernel_size': 3, 'stride': 1, 'padding': 1, 'act': 'leaky', 'bn': 1},
+
+            {'net': 'conv', 'filters': 256, 'kernel_size': 1, 'stride': 1, 'padding': 1, 'act': 'leaky', 'bn': 1},
+            {'net': 'conv', 'filters': 512, 'kernel_size': 3, 'stride': 1, 'padding': 1, 'act': 'leaky', 'bn': 1},
+            {'net': 'conv', 'filters': 255, 'kernel_size': 1, 'stride': 1, 'padding': 1, 'act': 'linear', 'bn': 0},
+            {'net': 'yolo', 'anchors': [(81, 82), (135, 169), (344, 319)], 'classes': 80, 'jitter': .3, 'ignore_thresh': .7, 'truth_thresh': 1, 'random': 1},
+
+            {'net': 'route', 'layers': [-4]},
+            {'net': 'conv', 'filters': 128, 'kernel_size': 1, 'stride': 1, 'padding': 1, 'act': 'leaky', 'bn': 1},
+            {'net': 'upsample', 'stride': 2}
+            {'net': 'route', 'layers': [-1, 8]},
+            {'net': 'conv', 'filters': 256, 'kernel_size': 3, 'stride': 1, 'padding': 1, 'act': 'leaky', 'bn': 1},
+            {'net': 'conv', 'filters': 255, 'kernel_size': 1, 'stride': 1, 'padding': 1, 'act': 'linear', 'bn': 0},
+            {'net': 'yolo', 'anchors': [(10, 14), (23, 27), (37, 58)], 'classes': 80, 'jitter': .3, 'ignore_thresh': .7, 'truth_thresh': 1, 'random': 1},
+        ]
 
         self.yolov3 = self.flatten(self.yolov3)
 
