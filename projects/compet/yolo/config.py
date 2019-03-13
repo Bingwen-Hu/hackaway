@@ -1,4 +1,4 @@
-class ConfigBase(object):
+class ConfigHyper(object):
     def __init__(self, training=True):
         # data config
         self.classes = 5
@@ -26,3 +26,92 @@ class ConfigBase(object):
         self.scales = 0.1, 0.1
 
 
+class ConfigNet(object):
+    def __init__(self):
+        self.yolov3 = [
+            # input
+            {'net': 'conv', 'filters': 32, 'kernel_size': 3, 'stride': 1, 'padding': 1, 'act': 'leaky', 'bn': 1},
+            # first part -> 64
+            {'net': 'conv', 'filters': 64, 'kernel_size': 3, 'stride': 2, 'padding': 1, 'act': 'leaky', 'bn': 1},
+            [
+                {'net': 'conv', 'filters': 32, 'kernel_size': 1, 'stride': 1, 'padding': 1, 'act': 'leaky', 'bn': 1},
+                {'net': 'conv', 'filters': 64, 'kernel_size': 3, 'stride': 1, 'padding': 1, 'act': 'leaky', 'bn': 1},
+                {'net': 'shortcut', 'from': -3},
+            ] * 1, 
+            # second part -> 128
+            {'net': 'conv', 'filters': 128, 'kernel_size': 3, 'stride': 2, 'padding': 1, 'act': 'leaky', 'bn': 1},
+            [
+                {'net': 'conv', 'filters': 64, 'kernel_size': 1, 'stride': 1, 'padding': 1, 'act': 'leaky', 'bn': 1},
+                {'net': 'conv', 'filters': 128, 'kernel_size': 3, 'stride': 1, 'padding': 1, 'act': 'leaky', 'bn': 1},
+                {'net': 'shortcut', 'from': -3}
+            ] * 2,
+            # third part -> 256
+            {'net': 'conv', 'filters': 256, 'kernel_size': 3, 'stride': 2, 'padding': 1, 'act': 'leaky', 'bn': 1},
+            [
+                {'net': 'conv', 'filters': 128, 'kernel_size': 1, 'stride': 1, 'padding': 1, 'act': 'leaky', 'bn': 1},
+                {'net': 'conv', 'filters': 256, 'kernel_size': 3, 'stride': 1, 'padding': 1, 'act': 'leaky', 'bn': 1},
+                {'net': 'shortcut', 'from': -3},
+            ] * 8,
+            # fourth part -> 512
+            {'net': 'conv', 'filters': 512, 'kernel_size': 3, 'stride': 2, 'padding': 1, 'act': 'leaky', 'bn': 1},
+            [
+                {'net': 'conv', 'filters': 256, 'kernel_size': 1, 'stride': 1, 'padding': 1, 'act': 'leaky', 'bn': 1},
+                {'net': 'conv', 'filters': 512, 'kernel_size': 3, 'stride': 1, 'padding': 1, 'act': 'leaky', 'bn': 1},
+                {'net': 'shortcut', 'from': -3},
+            ] * 8,
+            # fifth part -> 1024
+            {'net': 'conv', 'filters': 1024, 'kernel_size': 3, 'stride': 2, 'padding': 1, 'act': 'leaky', 'bn': 1},
+            [
+                {'net': 'conv', 'filters': 512, 'kernel_size': 1, 'stride': 1, 'padding': 1, 'act': 'leaky', 'bn': 1},
+                {'net': 'conv', 'filters': 1024, 'kernel_size': 3, 'stride': 1, 'padding': 1, 'act': 'leaky', 'bn': 1},
+                {'net': 'shortcut', 'from': -3},
+            ] * 4,
+            # first yolo layer: detect larger object
+            [
+                {'net': 'conv', 'filters': 512, 'kernel_size': 1, 'stride': 1, 'padding': 1, 'act': 'leaky', 'bn': 1},
+                {'net': 'conv', 'filters': 1024, 'kernel_size': 3, 'stride': 1, 'padding': 1, 'act': 'leaky', 'bn': 1},
+            ] * 3,
+            {'net': 'conv', 'filters': 255, 'kernel_size': 3, 'stride': 1, 'padding': 1, 'act': 'linear', 'bn': 0},
+            {'net': 'yolo', 'anchors': [(116, 90), (156, 198), (373, 326)], 'classes': 80, 'jitter': .3, 'ignore_thresh': .7, 'truth_thresh': 1, 'random': 1},
+            # second yolo layer: detect medium object
+            {'net': 'route', 'layers': [-4]},
+            {'net': 'conv', 'filters': 256, 'kernel_size': 1, 'stride': 1, 'padding': 1, 'act': 'leaky', 'bn': 1},
+            {'net': 'upsample', 'stride': 2},
+            {'net': 'route', 'layers': [-1, 61]},
+            [
+                {'net': 'conv', 'filters': 256, 'kernel_size': 1, 'stride': 1, 'padding': 1, 'act': 'leaky', 'bn': 1},
+                {'net': 'conv', 'filters': 512, 'kernel_size': 3, 'stride': 1, 'padding': 1, 'act': 'leaky', 'bn': 1},
+            ] * 3, 
+            {'net': 'conv', 'filters': 255, 'kernel_size': 3, 'stride': 1, 'padding': 1, 'act': 'linear', 'bn': 0},
+            {'net': 'yolo', 'anchors': [(30, 61), (62, 45), (59, 119)], 'classes': 80, 'jitter': .3, 'ignore_thresh': .7, 'truth_thresh': 1, 'random': 1},
+            # third yolo layer: detect small object
+            {'net': 'route', 'layers': [-4]},
+            {'net': 'conv', 'filters': 128, 'kernel_size': 1, 'stride': 1, 'padding': 1, 'act': 'leaky', 'bn': 1},
+            {'net': 'upsample', 'stride': 2},
+            {'net': 'route', 'layers': [-1, 36]},
+            [
+                {'net': 'conv', 'filters': 128, 'kernel_size': 1, 'stride': 1, 'padding': 1, 'act': 'leaky', 'bn': 1},
+                {'net': 'conv', 'filters': 256, 'kernel_size': 3, 'stride': 1, 'padding': 1, 'act': 'leaky', 'bn': 1},
+            ] * 3, 
+            {'net': 'conv', 'filters': 255, 'kernel_size': 3, 'stride': 1, 'padding': 1, 'act': 'linear', 'bn': 0},
+            {'net': 'yolo', 'anchors': [(10, 13), (16, 30), (33, 23)], 'classes': 80, 'jitter': .3, 'ignore_thresh': .7, 'truth_thresh': 1, 'random': 1},
+        ]
+
+        self.yolov3 = self.flatten(self.yolov3)
+
+    def flatten(self, lst):
+        ret = []
+        for i in lst:
+            if type(i) == list:
+                ret.extend(i)
+            else:
+                ret.append(i)
+        return ret
+
+
+if __name__ == "__main__":
+    nets = ConfigNet()
+    yolov3 = nets.yolov3
+    for i, net in enumerate(yolov3):
+        print(i, net['net'], net.get('filters'))
+    
