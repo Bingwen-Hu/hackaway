@@ -1,5 +1,6 @@
 CC=c++
 OBJECTS=pointer_basic pointer2nothing list rvalue_explore
+OBJECTS+=unique_ptr
 
 clean:
 	rm -rf $(OBJECTS)
@@ -16,3 +17,6 @@ list: list.o
 	
 rvalue_explore: rvalue_explore.o
 	$(CC) rvalue_explore.cpp -o $@
+	
+unique_ptr: unique_ptr.o
+	$(CC) unique_ptr.cpp -o $@
