@@ -4,12 +4,12 @@ OBJS=char_category locale function by_ref algorithms predicate
 OBJS+=lambda overload_fn cast doxygen struct class virtual
 OBJS+=functor search find_if replace_if exception noexcept
 OBJS+=function_template class_template template_special
-OBJS+=custom_comparator
+OBJS+=custom_comparator test_debug
 
 # in this makefile, latter script will appear later
 clean:
 	rm -rf *.o
-	rm -rf $(OBJS)
+	rm -rf $(OBJS) debug.txt
 
 char_category: char_category.o
 	$(CC) char_category.cpp $(CFLAGS) -o $@
@@ -80,3 +80,6 @@ template_special: template_special.o
 
 custom_comparator: custom_comparator.o
 	$(CC) custom_comparator.cpp $(CFLAGS) -o $@
+
+test_debug: test_debug.o debug.o
+	$(CC) test_debug.cpp debug.cpp $(CFLAGS) -o $@
