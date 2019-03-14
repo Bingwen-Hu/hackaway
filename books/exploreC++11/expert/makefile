@@ -1,5 +1,5 @@
 CC=c++
-OBJECTS=pointer_basic pointer2nothing list
+OBJECTS=pointer_basic pointer2nothing list rvalue_explore
 
 clean:
 	rm -rf $(OBJECTS)
@@ -13,3 +13,6 @@ pointer2nothing: pointer2nothing.o
 
 list: list.o
 	$(CC) list.cpp -o $@
+	
+rvalue_explore: rvalue_explore.o
+	$(CC) rvalue_explore.cpp -o $@
