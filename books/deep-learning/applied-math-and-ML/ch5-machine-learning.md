@@ -52,3 +52,35 @@ The factors determining how well a machine learning algorithm will perform are i
 2. Make the gap between training and test error small.
 
 These two factors correspond to the two central challenges in machine learning: underfitting and overfitting. Underfitting occurs when the model is not able to obtain a sufficiently low error value on the training set. Overfitting occurs when the gap between the training error and test error is too large.
+
+### weight decay -> regularization
+We can increase one algorithms' capacity by adding functions from the hypothesis space of solutions the learning algorithms is able to choose. We can also give a learning algorithm a preference for one solution in its hypothesis space to another.
+
+For example, we can modify the training criterion for linear regression to include weight decay.
+$$ J(w) = MSE_{train} + \lambda w^T w$$
+
+Regularization is any modification we make to a learning algorithm that is intended to reduce its generalization error but not its training error.
+
+## 5.6 Hyperparameters and validation sets
+Since the validation set is used to “train” the hyperparameters, the validation set error will underestimate the generalization error, though typically by a smaller amount than the training error. After all hyperparameter optimization is complete, the generalization error may be estimated using the test set.
+
+The common used k-fold cross-validation procedure has one problem: there exist no unbiased estimators of the variance of the average error estimators used by this method.
+
+
+## 5.7 estimators, bias and variance
+
+### 5.7.1 point estimation
+Let {x(1), . . . , x(m)} be a set of m independent and identically distributed (i.i.d.) data points. A point estimator or statistic is any function of the data:
+$$ \hat θ_m = g(x^{(1)}, ...,x^{(m)})$$
+
+### 5.7.2 Function Estimation
+Here we are trying to predict a variable y given an input vector x. We assume that there is a function f(x) that describes the approximate relationship between y and x.
+
+For example, $y = f(x) + \epsilon$, where $\epsilon$ stands for the part of y that is not predictable from x.
+
+### bias
+The bias of an estimator is defined as:
+$$ bias(\hat θ_m) = E(\hat θ_m) - θ$$
+An estimator $\hat θ_m$ is said to be unbiased if bias($\hat θ_m) = 0$, which implies that $E(\hat θ_m) = θ$.
+
+**The example in this section is very easy to read and really useful!**
