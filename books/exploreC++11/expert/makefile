@@ -1,6 +1,6 @@
 CC=c++
 OBJECTS=pointer_basic pointer2nothing list rvalue_explore
-OBJECTS+=unique_ptr
+OBJECTS+=unique_ptr shared_ptr
 
 clean:
 	rm -rf $(OBJECTS)
@@ -20,3 +20,6 @@ rvalue_explore: rvalue_explore.o
 	
 unique_ptr: unique_ptr.o
 	$(CC) unique_ptr.cpp -o $@
+
+shared_ptr: shared_ptr.o
+	$(CC) shared_ptr.cpp -o $@
