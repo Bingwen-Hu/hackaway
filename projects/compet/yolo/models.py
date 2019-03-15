@@ -1,7 +1,9 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from collections import OrderedDict
+from collections import defaultdict
+
+from config import Hyper, Net
 
 class Upsample(nn.Module):
     def __init__(self, scale_factor, mode="nearest"):
@@ -11,6 +13,8 @@ class Upsample(nn.Module):
     def forward(self, x):
         return F.interpolate(x, scale_factor=self.scale_factor, mode=self.mode)
 
+
+# yolo layer need more exploration
 class Yolo(nn.Module):
     def __init__(self, anchors, nC, img_size):
         super().__init__()
@@ -34,6 +38,7 @@ class Yolo(nn.Module):
             loss_bce nn.BCEWithLogitsLoss()
             loss_ce = nn.CrossEntropyLoss()
 
+            # x comsist of x, y, w, h, obj_conf, then cls_conf of nC
             conf_ = x[..., 4]
             cls_ = x[..., 5:]
 
@@ -55,7 +60,7 @@ class Yolo(nn.Module):
             lconf = (k * 64) * loss_bce(conf_, mask.float())
 
             loss = lxy + lwh + lconf + lcls
-            return loss, loss.item(), lxy.itme(), lwh.item(), lconf.item(), lcls.item(), nT
+            return loss, loss.item(), lxy.item(), lwh.item(), lconf.item(), lcls.item(), nT
         else:
             x[..., 0:2] = xy + self.grid_xy
             x[..., 2:4] = torch.exp(wh) * self.anchor_wh
@@ -82,7 +87,7 @@ class EmptyLayer(nn.Module):
         return x
 
 # In this function, we need output_filters to construct convolution layer
-def create_modules(hyper_config, net_config):
+def create_modules(hyper_config:Hyper, net_config:Net):
     output_filters = [hyper_config.img_shape[-1]] # the input channels 
     module_list = nn.ModuleList()
     for i, net in enumerate(net_config):
@@ -128,8 +133,48 @@ def create_modules(hyper_config, net_config):
     return module_list
 
 class Darknet(nn.Module):
-    def __init__(self, image_size=416, channels=3):
+    def __init__(self, hyper_config:Hyper, net_config:Net):
         super().__init__()
+        self.net_config = net_config
+        self.hyper_config = hyper_config
+        self.module_list = create_modules(hyper_config, net_config)
+        self.img_size = hyper_config.img_shape[0]
+        self.loss_names = ['loss', 'xy', 'wh', 'conf', 'cls', 'nT']
+        self.losses = defaultdict(float)
+
+    def forward(self, x, targets=None, var=0):
+        img_size = x.shape[-1]        
+        layer_outputs = []
+        output = []
+        is_training = targets is not None
+
+        for i, (net, module) in enumerate(zip(self.net_config, self.module_list)):
+            mtype = net['type']
+            if mtype in ['conv', 'upsample', 'maxpool']:
+                x = module(x)
+            elif mtype == 'route':
+                layers = net['layers']
+                if len(layers) == 1:
+                    x = layer_outputs[layers[0]]
+                else:
+                    x = torch.cat([layer_outputs[i] for i in layers], 1)
+            elif mtype == 'shortcut':
+                layer = net['from']
+                x = layer_outputs[-1] + layer_outputs[layer]
+            elif mtype == 'yolo':
+                if is_training: # training
+                    x, *losses = module[0](x, img_size, targets, var)
+                    for name, loss in zip(self.loss_names, losses):
+                        self.losses[name] += loss
+                else:
+                    x = module[0](x, img_size)
+                output.append(x)
+            layer_outputs.append(x)
+
+        if is_training:
+            self.losses['nT'] /= 3
+
+        return sum(output) if is_training else torch.cat(output, 1)
 
 if __name__ == '__main__':
     net = Darknet()
