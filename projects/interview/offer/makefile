@@ -1,5 +1,6 @@
 CC=c++
 C=gcc
+CFLAGS=-g -Wall
 OBJS=duplicate search_matrix replace_space reversePrint
 
 clean:
@@ -17,4 +18,4 @@ replace_space: replace_space.o
 	$(CC) replace_space.cpp -o $@
 
 reversePrint: reversePrint.o
-	$(C) reversePrint.c -o $@
+	$(C) reversePrint.c $(CFLAGS) -o $@
