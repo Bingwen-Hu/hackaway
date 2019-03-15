@@ -41,6 +41,15 @@ void printList(List* list){
     printf("\n");
 }
 
+void freeList(List* list){
+    while (list->head != NULL) {
+        ListNode* p = list->head;
+        list->head = list->head->next;
+        free(p);
+    }
+    free(list);
+}
+
 int main()
 { 
     int values[] = {10, 9, 23, 42, 19, 25};
@@ -50,5 +59,6 @@ int main()
         addNode(list, values[i]);
     }
     printList(list);
+    freeList(list);
     return 0;
 }
