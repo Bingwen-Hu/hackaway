@@ -78,9 +78,34 @@ Here we are trying to predict a variable y given an input vector x. We assume th
 
 For example, $y = f(x) + \epsilon$, where $\epsilon$ stands for the part of y that is not predictable from x.
 
-### bias
+### 5.7.3 bias
 The bias of an estimator is defined as:
 $$ bias(\hat θ_m) = E(\hat θ_m) - θ$$
 An estimator $\hat θ_m$ is said to be unbiased if bias($\hat θ_m) = 0$, which implies that $E(\hat θ_m) = θ$.
 
 **The example in this section is very easy to read and really useful!**
+
+### 5.7.4 variance
+Variance is a property of the estimator that we might want to consider is how much we expect it to vary as a function of the data sample.
+$$ variance = Var(\hat \theta)$$
+$$ standard error = SE(\hat \theta) $$
+The variance or the standard error of an estimator provides a measure of how we would expect the estimate we compute from data to vary as we independently resample the dataset from the underlying data generating process. Just as we might like an estimator to exhibit low bias we would also like it to have relatively low variance.
+
+The standard error of the mean is very useful in machine learning experiments
+$$ SE(\hat \mu_m) = \sqrt{Var[\frac{1}{m} \sum \limits_{i=1}^m x^{(i)}]} = \frac{σ}{\sqrt m}$$
+This tells us why big data is needed.
+
+### 5.7.5 trade off
+Bias and variance measure two different sources of error in an estimator. Bias measures the expected deviation from the true value of the function or parameter. Variance on the other hand provides a measure of the deviation from the expected estimator value that any particular sampling of the data is likely to cause. 
+
+Evaluating the MSE incorporates both the bias and the variance
+$$ MSE = E[(\hat \theta_m - \theta)^2] = Bias(\hat \theta_m)^2 + Var(\hat \theta_m)$$
+Increasing capacity tends to increase variance and decrease bias.
+
+![](./graphs/capacity-bias-variance.png)
+
+### 5.7.6 consistency
+As the number of data points m in our dataset increases, our point estimates converge to the true value of the corresponding parameters. More formally, we would like that
+$$ \large \mathop{lim}\limits_{m \to \infty} \hat \theta_m → \theta$$
+
+## 5.8 maximum likelihood estimation
