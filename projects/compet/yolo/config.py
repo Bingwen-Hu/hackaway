@@ -1,4 +1,4 @@
-class ConfigHyper(object):
+class Hyper(object):
     def __init__(self, training=True):
         # data config
         self.classes = 5
@@ -9,7 +9,7 @@ class ConfigHyper(object):
         # training or testing config
         self.batch = 16 if training else 1
         self.subdivisions = 1
-        self.shape = (416, 416, 3)
+        self.img_shape = (416, 416, 3)
         
         self.mmomentum = 0.9
         self.decay = 0.0005
@@ -26,7 +26,7 @@ class ConfigHyper(object):
         self.scales = 0.1, 0.1
 
 
-class ConfigNet(object):
+class Net(object):
     def __init__(self):
         self.yolov3 = [
             # input
