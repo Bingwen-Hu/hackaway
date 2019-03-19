@@ -47,3 +47,6 @@ ffmpeg -f image2 -i face/%d.png -vcodec libx264 -r 30 -b 900k face.mp4
 # -r fps
 # -b image size
 ```
+
+### increase volume
+ffmpeg -i input.mp3 -af 'volume=10' input_10.mp3
