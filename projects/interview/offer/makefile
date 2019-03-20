@@ -2,7 +2,7 @@ CC=c++
 C=gcc
 CFLAGS=-g -Wall
 OBJS=duplicate search_matrix replace_space reversePrint
-OBJS+=reversePrint2
+OBJS+=reversePrint2 rebuildBinaryTree
 
 clean:
 	rm -rf *.o
@@ -23,3 +23,6 @@ reversePrint: reversePrint.o
 
 reversePrint2: reversePrint2.o
 	$(CC) reversePrint2.cpp  -o $@
+
+rebuildBinaryTree: rebuildBinaryTree.o
+	$(CC) rebuildBinaryTree.cpp  -o $@
