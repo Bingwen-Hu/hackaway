@@ -5,6 +5,9 @@ from collections import defaultdict
 
 from config import Hyper, Net
 
+
+
+
 class Upsample(nn.Module):
     def __init__(self, scale_factor, mode="nearest"):
         super().__init__()
@@ -42,7 +45,7 @@ class Yolo(nn.Module):
             conf_ = x[..., 4]
             cls_ = x[..., 5:]
 
-            txy, twh, mask, tcls = build_targets(targets, self.anchor_vec, self.nA, self.nC, nG)
+            txy, twh, mask, tcls = self.build_targets(targets, self.anchor_vec, self.nA, self.nC, nG)
 
             tcls = tcls[mask]
             # NOTE: leave cuda activate  
@@ -78,6 +81,28 @@ class Yolo(nn.Module):
         # build wh gains
         self.anchor_vec = self.anchors / self.stride
         self.anchor_wh = self.anchor_vec.view(1, self.nA, 1, 1, 2)
+    
+    def build_targets(self, target, anchor_wh, nA, nC, nG):
+        nB = len(target) # number of images in batch
+        txy = torch.zeros(nB, nA, nG, nG, 2)
+        twh = torch.zeros(nB, nA, nG, nG, 2)
+        tconf = torch.ByteTensor(nB, nA, nG, nG).fill_(0)
+        tcls = torch.ByteTensor(nB, nA, nG, nG, nC).fill_(0)
+
+        for b in range(nB):
+            t = target[b]
+            nTb = len(t)
+            if nTb == 0:
+                continue
+            
+            gxy, gwh = t[:, 1:3] * nG, t[:, 3:5] * nG
+            # prevent overflow
+            gi, gj = torch.clamp(gxy.long(), min=0, max=nG-1).t()
+
+            box1 = gwh
+            box2 = anchor_wh.unsqueeze(1)
+            inter_area = torch.min(box1, box2).prod(2)
+
 
 
 class EmptyLayer(nn.Module):
