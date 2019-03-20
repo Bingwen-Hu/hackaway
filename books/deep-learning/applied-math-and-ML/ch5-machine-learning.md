@@ -109,3 +109,13 @@ As the number of data points m in our dataset increases, our point estimates con
 $$ \large \mathop{lim}\limits_{m \to \infty} \hat \theta_m → \theta$$
 
 ## 5.8 maximum likelihood estimation
+Consider a set of m examples $X = \{x^{(1)}, ..., x^{(m)}\}$ drawn independently from the true but unknown data generating distribution $p_{data}(x)$.
+Let $p_{model}(x;θ)$ be a parametric family of probability distributions over the same space indexed by θ. In other words, $p_{model}(x;θ)$ maps any configuration x to a real number estimating the true probability $p_{data}(x)$.
+The maximum likelihood estimator for θ is then defined as
+$$\Large θ_{ML} = \mathop{argmax} \limits_{θ} p_{model}(X;θ) = \mathop{argmax} \limits_{θ} \prod \limits^m_{i=1}p_{model}(x^{(i)};θ)$$
+
+This product over many probabilities can be inconvenient for a variety of reasons. For example, it is prone to numerical underflow. To obtain a more convenient but equivalent optimization problem, we observe that taking the logarithm of the likelihood does not change its arg max but does conveniently transform a product into a sum:
+$$\Large θ_{ML} = \mathop{argmax} \sum^m_{i=1} log\ p_{model}(x^{(i)}; \theta) $$
+
+Because the argmax does not change when we rescale the cost function, we can divide by m to obtain a version of the criterion that is expressed as an expectation with respect
+$$\Large θ_{ML} = \mathop{argmax} E_{x ~ \hat p_{data}} log\ p_{model}(x; \theta)$$
