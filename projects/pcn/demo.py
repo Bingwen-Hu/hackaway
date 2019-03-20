@@ -18,7 +18,7 @@ if __name__ == '__main__':
     faces = pcn.pcn_detect(img, nets)
     # draw image
     for face in faces:
-        face_ = utils.crop_face(img, face)
+        face_ = utils.crop_face(img, face, 100)
     # show image
     cv2.imshow("pytorch-PCN", face_)
     cv2.waitKey(0)
