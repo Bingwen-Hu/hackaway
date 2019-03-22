@@ -2,7 +2,7 @@ CC=c++
 C=gcc
 CFLAGS=-g -Wall
 OBJS=duplicate search_matrix replace_space reversePrint
-OBJS+=reversePrint2 rebuildBinaryTree
+OBJS+=reversePrint2 rebuildBinaryTree prize
 
 clean:
 	rm -rf *.o
@@ -26,3 +26,6 @@ reversePrint2: reversePrint2.o
 
 rebuildBinaryTree: rebuildBinaryTree.o
 	$(CC) rebuildBinaryTree.cpp  -o $@
+
+prize: 
+	echo "prize is still incompleted!"	
