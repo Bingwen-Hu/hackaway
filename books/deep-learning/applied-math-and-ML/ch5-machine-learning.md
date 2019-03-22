@@ -119,3 +119,10 @@ $$\Large θ_{ML} = \mathop{argmax} \sum^m_{i=1} log\ p_{model}(x^{(i)}; \theta) 
 
 Because the argmax does not change when we rescale the cost function, we can divide by m to obtain a version of the criterion that is expressed as an expectation with respect
 $$\Large θ_{ML} = \mathop{argmax} E_{x ~ \hat p_{data}} log\ p_{model}(x; \theta)$$
+
+### 5.8.1 conditional log-likelihood and mean squared error
+The maximum likelihood estimator can readily be generalized to the case where our goal is to estimate a conditional probability $P(y|x;θ)$ in order to predict y given x. This is actually the most common situation because it forms the basis for most supervised learning. If X represents all our inputs and Y all our observed targets, then the conditional maximum likelihood estimator is
+$$\Large θ_{ML} = \mathop{argmax} \limits_{\theta} P(Y|X;\theta)$$
+
+If the examples are assumed to be i.i.d., then this can be decomposed into
+$$\Large θ_{ML} = \mathop{argmax} \limits_{\theta} \sum^m_{i=1} log\ P(y^{(i)}|x^{(i)}; \theta) $$
