@@ -126,3 +126,10 @@ $$\Large θ_{ML} = \mathop{argmax} \limits_{\theta} P(Y|X;\theta)$$
 
 If the examples are assumed to be i.i.d., then this can be decomposed into
 $$\Large θ_{ML} = \mathop{argmax} \limits_{\theta} \sum^m_{i=1} log\ P(y^{(i)}|x^{(i)}; \theta) $$
+
+## 5.9 bayesian statistics
+
+So far we have discussed frequentist statistics and approaches based on estimating a single value of θ, then making all predictions thereafter based on that one estimate. Another approach is to consider all possible values of θ when making a prediction. The latter is the domain of Bayesian statistics.
+
+Relative to maximum likelihood estimation, Bayesian estimation offers two important differences. First, unlike the maximum likelihood approach that makes predictions using a point estimate of θ, the Bayesian approach is to make predictions using a full distribution over θ. For example, after observing m examples, the predicted distribution over the next data sample, $x^(m+1)$, is given by
+$$ \Large p(x^{(m+1)}| x^{(1)}, ..., x^{(m)}) = \int p(x^{(m+1)}|θ) p(θ|x^{(1)}, ..., x^{(m)}) dθ$$
