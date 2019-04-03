@@ -133,3 +133,29 @@ So far we have discussed frequentist statistics and approaches based on estimati
 
 Relative to maximum likelihood estimation, Bayesian estimation offers two important differences. First, unlike the maximum likelihood approach that makes predictions using a point estimate of θ, the Bayesian approach is to make predictions using a full distribution over θ. For example, after observing m examples, the predicted distribution over the next data sample, $x^(m+1)$, is given by
 $$ \Large p(x^{(m+1)}| x^{(1)}, ..., x^{(m)}) = \int p(x^{(m+1)}|θ) p(θ|x^{(1)}, ..., x^{(m)}) dθ$$
+
+## 5.10.1 SVM
+SVM is similar to logistic regression in that it is driven by a linear function $w^Tx+b$, but it does not provide probabilities but onlyu outputs a class identity. \
+One key innovation associated with support vector machines is the kernel trick . The kernel trick consists of observing that many machine learning algorithms can be written exclusively in terms of dot products between examples. For example, it can be shown that the linear function used by the support vector machine can be re-written as
+$$ \Large w^T x + b = b + \sum \limits^m_{i=1}\alpha_i x^T x^{(i)}$$
+where $x^{(i)}$ is a training example and α is a vector of coefficients. Rewriting the learning algorithm this way allows us to replace x by the output of a given feature function φ(x) and the dot product with a function $\large k(x, x^{(i)}) = φ(x)· φ (x^{(i)})$ called a kernel . The · operator represents an inner product analogous to φ(x) > φ (x ( i ) ).
+
+After replacing dot products with kernel evaluations, we can make predictions using the function
+$$ \Large f(x) = b + \sum \limits_i α_i k(x, x^{(i)}) $$
+This function is nonlinear with respect to x, but the relationship between φ(x) and f(x) is linear. Also, the relationship between α and f(x) is linear. The kernel-based function is exactly equivalent to preprocessing the data by applying φ(x) to all inputs, then learning a linear model in the new transformed space.
+
+## 5.10.2 PCA
+This ability of PCA to transform data into a representation where the elements are mutually uncorrelated is a very important property of PCA. It is a simple example of a representation that attempt to disentangle the unknown factors of variation underlying the data. In the case of PCA, this disentangling takes the form of finding a rotation of the input space (described by W) that aligns the principal axes of variance with the basis of the new representation space associated with z.
+
+## 5.11 Stochastic Gradient Descent
+Nearly all of deep learning is powered by one very important algorithm: stochastic gradient descent or SGD.
+
+The negative conditional log-likelihood of the training data can be written as
+$$ \Large J(θ) = E_{x,y~\hat p_{data}} L(x,y,θ) = \frac{1}{m} \sum\limits^m_{i=1}L(x^{(i)}, y^{(i)}, θ)$$
+where L is the per-example loss $L(x,y,θ) = − log\ p(y|x;θ)$
+
+For these additive cost functions, gradient descent requires computing
+$$ \Large ∇_θ J(θ) = \frac{1}{m} \sum \limits^m_{i=1} ∇_θ L(x^{(i)}, y^{(i)}, θ) $$
+The computational cost of this operation is O(m). As the training set size grows to billions of examples, the time to take a single gradient step becomes prohibitively long.
+
+The insight of stochastic gradient descent is that the gradient is an expectation. The expectation may be approximately estimated using a small set of samples. We get a minibatch of example and compute its gradient, then using this gradient to estimated gradient downhill.
