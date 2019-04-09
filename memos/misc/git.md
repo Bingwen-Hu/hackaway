@@ -1,9 +1,11 @@
-git config --global alias.st status
+### set alias
+`git config --global alias.st status`
 
-git config credential.helper store
+### auto store password and account
+`git config credential.helper store`
 
 ### how to cancel last commit ?
-git rest HEAD~
+`git rest HEAD~`
 
 ### trace large file
 1. add package source
@@ -22,3 +24,5 @@ git rest HEAD~
 
 4. work as before 
 
+### setup upstream
+`git remote add upstream git@url`
