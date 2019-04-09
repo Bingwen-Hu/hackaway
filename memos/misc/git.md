@@ -26,3 +26,12 @@
 
 ### setup upstream
 `git remote add upstream git@url`
+
+### update local repo master branch from upstream
+`git pull upstream master`
+
+### go to certain commit
+`git reset --hard commit-signature`
+
+### push force
+`git push --force`
