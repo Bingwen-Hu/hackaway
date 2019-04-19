@@ -4,8 +4,10 @@ h1 {
 
 table {
     border-spacing:5;
-    width: 50%;
-    align-content: center;
+    width: 70%;
+    table-layout: fixed;
+    float: left;
+    margin-left: 15%;
 }
 
 table, th, td {
