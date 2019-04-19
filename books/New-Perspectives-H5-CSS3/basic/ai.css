@@ -13,8 +13,12 @@ table, th, td {
   border-collapse: collapse;
 }
 
-th, td {
+th {
   padding: 10px;
+}
+
+td {
+  padding: 20px;
 }
 
 body {
