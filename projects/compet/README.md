@@ -1,1 +1,0 @@
-# Jinan Competition in Tianchi
