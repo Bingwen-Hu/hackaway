@@ -1,8 +1,4 @@
-import sys
 import os
-
-import time
-import pprint
 
 import dlib
 import cv2
