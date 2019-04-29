@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-class LandMark(nn.Module):
+class Landmark(nn.Module):
     def __init__(self):
         super().__init__()
         self.conv1 = nn.Conv2d(1, 20, kernel_size=5, stride=1, padding=2)
@@ -17,26 +17,19 @@ class LandMark(nn.Module):
 
     def forward(self, x):
         x = self.conv1(x)
-        print('conv1', x.shape)
         x = torch.abs(torch.tanh(x))
         x = self.pool2x2(x)
-        print('pool1', x.shape)
 
         x = self.conv2(x)
-        print('conv2', x.shape)
         x = torch.abs(torch.tanh(x))
         x = self.pool2x2(x)
-        print('pool2', x.shape)
 
         x = self.conv3(x)
-        print('conv3', x.shape)
         x = torch.abs(torch.tanh(x))
         x = F.pad(x, (0, 1, 0, 1))
         x = self.pool3x2(x)
-        print('pool3', x.shape)
 
         x = self.conv4(x)
-        print('conv4', x.shape)
         x = torch.abs(torch.tanh(x))
         x = x.view(x.shape[0], -1)
         x = self.fc1(x)
@@ -47,6 +40,6 @@ class LandMark(nn.Module):
 
 if  __name__ == '__main__':
     data = torch.randn(1, 1, 60, 60) 
-    net = LandMark()
+    net = Landmark()
     net.train()
     outputs = net(data)
