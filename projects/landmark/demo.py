@@ -1,11 +1,15 @@
 import cv2
-from landmark import detect
+
+import landmark
 
 
-if __name__ == '__main__':
-    imgpath = 'images/timg.jpeg'
+def demo_show(image:str):
+    img = landmark.show(image)
+    return img
+
+def demo_detect(image:str):
     img = cv2.imread(imgpath)
-    result = detect(imgpath)
+    result = landmark.detect(imgpath)
     points = result['landmark']
     x1, y1, x2, y2 = result['bbox']
     for i in range(0, len(points), 2):
@@ -16,3 +20,8 @@ if __name__ == '__main__':
     cv2.imshow("image", img)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
+
+if __name__ == '__main__':
+    imgpath = 'images/timg.jpeg'
+    img = demo_show(imgpath)
+    demo_detect(imgpath)
