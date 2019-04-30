@@ -50,9 +50,4 @@ def detect(image:str):
             new_img = torch.FloatTensor(new_img[None, None, ...])
             torch_out = net(new_img)
         points = torch_out.numpy().squeeze()
-        point_pair_l = len(points)
-        for i in range(point_pair_l // 2):
-            x = points[2*i] * (x2 - x1) + x1
-            y = points[2*i+1] * (y2 - y1) + y1
-            cv2.circle(img, (int(x), int(y)), 1, (128, 255, 255), 2)
-    return img
+    return {'bbox': [x1, y1, x2, y2], 'landmark': points.tolist()}
