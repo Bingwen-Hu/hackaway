@@ -24,4 +24,5 @@ def demo_detect(image:str):
 if __name__ == '__main__':
     imgpath = 'images/timg.jpeg'
     img = demo_show(imgpath)
-    demo_detect(imgpath)
+    cv2.imwrite("results/timg.jpeg", img)
+    # demo_detect(imgpath)

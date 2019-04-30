@@ -1,7 +1,7 @@
 # Face Landmark Detection
 Convert Caffe model from this [repo](https://github.com/lsy17096535/face-landmark/blob/master/face_landmark.py)
 
-## dependences
+## Dependences
 + dlib
 + opencv
 + torch
@@ -11,6 +11,7 @@ Convert Caffe model from this [repo](https://github.com/lsy17096535/face-landmar
 ```
 python demo.py
 ```
+![](./results/timg.jpeg)
 
 ## Installation
 ```
