@@ -11,3 +11,9 @@ Convert Caffe model from this [repo](https://github.com/lsy17096535/face-landmar
 ```
 python demo.py
 ```
+
+## Installation
+```
+cd landmark
+pip install .
+```
