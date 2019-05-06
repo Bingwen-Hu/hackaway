@@ -9,16 +9,16 @@ def demo_show(image:str):
 
 def demo_detect(image:str):
     img = cv2.imread(imgpath)
-    result = landmark.detect(imgpath)
-    points = result['landmark']
-    x1, y1, x2, y2 = result['bbox']
-    for i in range(0, len(points), 2):
-        x = points[i] * (x2 - x1) + x1
-        y = points[i+1] * (y2 - y1) + y1
-        cv2.circle(img, (int(x), int(y)), 1, (128, 255, 255), 2)
-        cv2.putText(img, f"{i//2+1}", (int(x), int(y)), fontFace=cv2.FONT_HERSHEY_PLAIN, 
-            fontScale=1, color=(0, 255, 0), thickness=1), 
-    cv2.rectangle(img, (x1, y1), (x2, y2), (0, 0, 255), 2)
+    results = landmark.detect(imgpath)
+    for result in results:
+        points = result['landmark']
+        x1, y1, x2, y2 = result['bbox']
+        for i in range(0, len(points), 2):
+            x, y = int(points[i]), int(points[i+1])
+            cv2.circle(img, (x, y), 1, (128, 255, 255), 2)
+            cv2.putText(img, f"{i//2+1}", (x, y), fontFace=cv2.FONT_HERSHEY_PLAIN, 
+                fontScale=1, color=(0, 255, 0), thickness=1), 
+        cv2.rectangle(img, (x1, y1), (x2, y2), (0, 0, 255), 2)
     cv2.imshow("image", img)
     cv2.waitKey(0)
     cv2.destroyAllWindows()

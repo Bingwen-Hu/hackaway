@@ -28,6 +28,7 @@ def detect(image:str):
     # 1 time.  This will make everything bigger and allow us to detect more
     # faces.
     dets = detector(img, 1)
+    results = []
  
     for index, det in enumerate(dets):
         x1 = max(det.left(), 0)
@@ -50,18 +51,20 @@ def detect(image:str):
             new_img = torch.FloatTensor(new_img[None, None, ...])
             torch_out = net(new_img)
         points = torch_out.numpy().squeeze()
-    return {'bbox': [x1, y1, x2, y2], 'landmark': points.tolist()}
+        points[0::2] = points[0::2] * (x2-x1) + x1
+        points[1::2] = points[1::2] * (y2-y1) + y1
+        results.append({'bbox': [x1, y1, x2, y2], 'landmark': points.tolist()})
+    return results
 
 def show(image:str):
     img = cv2.imread(image)
-    result = detect(image)
-    points = result['landmark']
-    x1, y1, x2, y2 = result['bbox']
-    for i in range(0, len(points), 2):
-        x = points[i] * (x2 - x1) + x1
-        y = points[i+1] * (y2 - y1) + y1
-        cv2.circle(img, (int(x), int(y)), 1, (128, 255, 255), 2)
-    cv2.rectangle(img, (x1, y1), (x2, y2), (0, 0, 255), 2)
+    results = detect(image)
+    for result in results:
+        points = result['landmark']
+        x1, y1, x2, y2 = result['bbox']
+        for i in range(0, len(points), 2):
+            cv2.circle(img, (int(points[i]), int(points[i+1])), 1, (128, 255, 255), 2)
+        cv2.rectangle(img, (x1, y1), (x2, y2), (0, 0, 255), 2)
     cv2.imshow("image", img)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
