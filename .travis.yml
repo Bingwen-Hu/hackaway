@@ -1,1 +1,10 @@
-language: python3
+language: python
+
+python:
+    - "3.6"
+
+install:
+    - pip3 install numpy
+
+script:
+    - make test
