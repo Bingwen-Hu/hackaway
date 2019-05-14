@@ -1,0 +1,6 @@
+#!/bin/sh
+
+key=$1
+dir=$2
+
+grep -n -H -R $key $dir
