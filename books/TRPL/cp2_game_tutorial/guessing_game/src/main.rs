@@ -15,12 +15,20 @@ fn main(){
 
     let mut guess = String::new();
 
+    // io.stdin() return an instance `Stdin`
+    // `&` means reference, `mut` make i
+    // two line make it more readablet mutable
+    // expect return a type io::Result
+    // Result is an enum, and its variants are `Ok` and `Err`
+    // If read_line success, expect return the value directly to 
+    // the caller or an variable, else it cause program to crash
     io::stdin().read_line(&mut guess)
-        .expect("Failed to read line");
+        .expect("Failed to read line"); 
     
     let guess: u32 = guess.trim().parse()
         .expect("Please type a number!");
 
+    // placeholder in order
     println!("Your guessed: {}", guess);
 
     match guess.cmp(&secret_number) {
