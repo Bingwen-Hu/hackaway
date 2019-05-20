@@ -20,9 +20,12 @@ fn test_tuple(){
 
 
 fn test_array(){
-    let array = [1, 2, 3, 4, 5];
+    let _array = [1, 2, 3, 4, 5];
+    let array: [i32; 5] = [11, 12, 13, 14, 15];
+    let another = [3; 10];
 
-    println!("The fifth element of array is {}", array[3]);
+    println!("The fifth element of array is {}", array[4]);
+    println!("The array {:?}", another);
 }
 
 // so tuple can mix any type of data and access as tuple.index
