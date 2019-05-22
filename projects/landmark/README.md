@@ -30,3 +30,8 @@ python demo.py
 cd landmark
 pip install .
 ```
+
+## Reference
++ [Procrustes Analysis](https://www.cnblogs.com/nsnow/p/4745730.html)
++ [cv2 alignment](https://blog.csdn.net/oTengYue/article/details/79278572)
++ [swapface](https://matthewearl.github.io/2015/07/28/switching-eds-with-python/)
