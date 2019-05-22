@@ -45,7 +45,7 @@ fn basic() {
     let user2 = User {
         email: String::from("Memory@bodhicitta"),
         username: String::from("Jenny"),
-        ..user1
+        ..user1 // update shortcut
     };
 
     user1.email = String::from("Jenny2021@bodhicitta");
