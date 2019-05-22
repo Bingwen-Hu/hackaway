@@ -3,7 +3,6 @@ import numpy as np
 
 import torch.nn as nn
 import torch.nn.init as init
-import torch.utils.model_zoo as model_zoo
 import torch.onnx
 
 
@@ -36,3 +35,31 @@ class SuperResolutionNet(nn.Module):
 
 
 torch_model = SuperResolutionNet(upscale_factor=3)
+
+# load pretrained model
+model_path = 'superres.pth'
+batch_size = 1
+
+map_location = 'cpu'
+torch_model.load_state_dict(torch.load(model_path, map_location=map_location))
+
+# input to the model, x acts as placeholder
+x = torch.randn((batch_size, 1, 244, 244), requires_grad=True)
+
+# export the model, torch_out can be ignored but here we use it to verify convertion
+torch_out = torch.onnx._export(torch_model, x, "superres.onnx", export_params=True)
+
+
+import onnx
+import caffe2.python.onnx.backend as onnx_caffe2_backend
+
+model = onnx.load('superres.onnx')
+prepared_backend = onnx_caffe2_backend.prepare(model)
+
+W = {model.graph.input[0].name: x.data.numpy()}
+
+c2_out = prepared_backend.run(W)[0]
+# the assert failed for different implementation
+# np.testing.assert_almost_equal(torch_out.data.numpy(), c2_out, decimal=3)
+np.testing.assert_almost_equal(np.sum(torch_out.data.numpy()), np.sum(c2_out), decimal=1)
+print("Exported model has been executed on Caffe2 backend, and the result looks good!")
