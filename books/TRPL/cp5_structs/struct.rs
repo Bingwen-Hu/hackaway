@@ -1,26 +1,13 @@
-
-#[derive(Debug)]
-struct Rectangle{
-    length: u32,
-    width: u32,
-}
-
-
-fn main() {
-
-    basic();
-    let width = 39;
-    let length = 12;
-    let rect1 = Rectangle{width: 59, length: 29};
-    let rect2 = Rectangle{width, length};
-    println!("rect1 is {:?}", rect1);
-    println!("rect1 is {:#?}", rect2);
-}
-
-// Note 3
+// Note
 // 1. [derive(Debug)] is needed
 // 2. when the var name and field name is same, a shortcut can be used.
 // 3. {:#?} is a pprint.
+
+fn main() {
+    basic();
+    struct_tuple();
+}
+
 
 fn basic() {
     #[derive(Debug)]
@@ -51,4 +38,10 @@ fn basic() {
     user1.email = String::from("Jenny2021@bodhicitta");
     println!("user1 info {:#?}", user1);
     println!("user1 info {:#?}", user2);
+}
+
+fn struct_tuple() {
+    struct Color(u8, u8, u8);
+    let c = Color(255, 10, 20);
+    println!("Color is defined as struct tuple; c.1 is {}", c.1);
 }
