@@ -1,8 +1,11 @@
 RUST=rustc
-TARGETS=ipaddr
+TARGETS=ipaddr match
 
 clean:
 	rm -rf ${TARGETS}
 
 ipaddr:
+	${RUST} $@.rs
+
+match:
 	${RUST} $@.rs

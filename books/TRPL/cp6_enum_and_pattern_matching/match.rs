@@ -16,7 +16,7 @@ enum Coin {
     Quarter(UsState), // bind value here
 }
 
-
+// `_` works as a placeholder, which match any other thing
 fn placeholder() {
     let some_value = 9u8;
     match some_value {
