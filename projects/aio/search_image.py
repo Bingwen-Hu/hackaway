@@ -2,26 +2,32 @@ import re
 import asyncio
 import aiohttp
 import time
-
+from uuid import uuid1
 
 START_TIME = time.time()
 IMAEG_LIST = []
 
+def get_urls(html):
+    """ parse image from html page
+    html: html page from fetch
+    """
+    pattern = re.compile('(https?:[\/a-zA-Z0-9_\-\.]+.j?pn?e?g)')
+    urls = pattern.findall(html)
+    # for debug
+    IMAEG_LIST.append(urls)
+    return urls
+
+
+async def bing_search(word):
+    print(f'start fetch task {word} at: {time.time() - START_TIME}')
+    url = "https://cn.bing.com/images/search?q={}&FORM=BESBTB"
+    url = url.format(word)
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as resp:
+            text = await resp.text()
+            return get_urls(text)
 
 async def baidu_search(word):
-    """ return html page
-    word: kind
-    """
-    def get_urls(html):
-        """ parse image from html page
-        html: html page from fetch
-        """
-        pattern = re.compile('"objURL":"(https?:[\/a-zA-Z0-9_\-\.]+.jpg)"')
-        urls = pattern.findall(html)
-        # for debug
-        IMAEG_LIST.append(urls)
-        return urls
-
     print(f'start fetch task {word} at: {time.time() - START_TIME}')
     url = "https://image.baidu.com/search/index?tn=baiduimage&word={}"
     url = url.format(word)
@@ -29,7 +35,7 @@ async def baidu_search(word):
         async with session.get(url) as resp:
             text = await resp.text()
             return get_urls(text)
-            
+ 
 
 async def download(url, name):
     async with aiohttp.ClientSession() as session:
@@ -50,15 +56,44 @@ def main(engine='baidu'):
         '军人的笑容', '导演的笑容', '大学生的笑容', '暨南大学生的笑容', '农村孩子的笑容', 
         '贫困山区的人的笑容', '放牛娃的笑容', '古装女子的笑容'
     ]
+    words = [
+        'smile human','smile woman', 'smile man', 'smile boy', 'smile girl', 'smile student', 
+        'smile teacher', 'smile wife', 'smile couple', 'very happy woman'     
+    ]
+    words = [
+        '惊讶的妇女', '惊讶的女人', '惊讶的女生', '惊讶的小女孩', '惊讶的小男孩', '惊讶的男人', '惊讶的老人', 
+        '惊讶的美国人', '惊讶的老百姓', '惊讶的大学生',  '惊讶的小孩子'
+    ]
+    words = [
+        'surprising+woman', 'surprising+man', 'surprising+boy', 'surprising+girl', 'surprising+old+man'
+    ]
+
+    words = [
+        '伤心的妇女', '伤心的女人', '伤心的女生', '伤心的小女孩', '伤心的小男孩', '伤心的男人', '伤心的老人', 
+        '伤心的美国人', '伤心的老百姓', '伤心的大学生',  '伤心的小孩子'
+    ]
+
+    words = [
+        'sad+woman', 'sad+man', 'sad+girl', 'sad+boy', 'sad+old+man', 'sad+woman+widow'
+    ]
+
+    words = [
+        '生气的女人', '生气的女生', '生气的小女孩', '生气的小男孩', '生气的男人', '生气的老人', 
+        '生气的美国人', '生气的老百姓', '生气的大学生',  '生气的小孩子'
+    ]
+
+    words = [
+        'anger+woman', 'anger+man', 'anger+girl', 'anger+boy', 'anger+old+man', 'anger+woman+widow',
+    ]
+
+
     
     if engine == 'baidu':
         fetch_fn = baidu_search
     elif engine == 'bing':
         fetch_fn = bing_search
-    elif engine == 'soso':
-        fetch_fn = soso_search
     else:
-        raise KeyError("Select an engine in `baidu`, 'bing' or 'soso'")
+        raise KeyError("Select an engine in `baidu`, 'bing'")
 
     tasks = [asyncio.ensure_future(fetch_fn(word)) for word in words]
     loop = asyncio.get_event_loop()
@@ -66,48 +101,9 @@ def main(engine='baidu'):
     
     # download
     IMAEG_LIST = [url for lst in IMAEG_LIST for url in lst]
-    tasks = [asyncio.ensure_future(download(url, "%s.jpg" % i)) for i, url in enumerate(IMAEG_LIST)]
+    tasks = [asyncio.ensure_future(download(url, f"{i}-{uuid1()}.jpg")) for i, url in enumerate(IMAEG_LIST)]
     loop.run_until_complete(asyncio.wait(tasks))
-
-async def bing_search(word):
-    def get_urls(html):
-        """ parse image from html page
-        html: html page from fetch
-        """
-        pattern = re.compile('(https?:[\/a-zA-Z0-9_\-\.]+.j?pn?e?g)')
-        urls = pattern.findall(html)
-        # for debug
-        IMAEG_LIST.append(urls)
-        return urls
-
-    print(f'start fetch task {word} at: {time.time() - START_TIME}')
-    url = "https://cn.bing.com/images/search?q={}"
-    url = url.format(word)
-    async with aiohttp.ClientSession() as session:
-        async with session.get(url) as resp:
-            text = await resp.text()
-            return get_urls(text)
-
-async def soso_search(word):
-    def get_urls(html):
-        """ parse image from html page
-        html: html page from fetch
-        """
-        pattern = re.compile('(https?:[\/a-zA-Z0-9_\-\.]+.j?pn?e?g)')
-        urls = pattern.findall(html)
-        # for debug
-        IMAEG_LIST.append(urls)
-        return urls
-
-    print(f'start fetch task {word} at: {time.time() - START_TIME}')
-    url = "https://pic.sogou.com/pics?&query={}"
-    url = url.format(word)
-    async with aiohttp.ClientSession(proxy=proxydict) as session:
-        async with session.get(url) as resp:
-            text = await resp.text()
-            return get_urls(text)
-            
 
 
 if __name__ == '__main__':
-    main('soso')
+    main('baidu')
