@@ -3,10 +3,18 @@
 // and keep other number in the same order
 
 fn main() {
-    let mut array = [19, 2, 0, 3, 43, 2, 0, 1, 12, 0, 22, 42, 12];
+    let mut array: [i32; 13] = [19, 2, 0, 3, 43, 2, 0, 1, 12, 0, 22, 42, 12];
+    test(&mut array);
+
+    let mut array: [i32; 13] = [19, 2, 10, 3, 43, 2, 10, 1, 12, 10, 22, 42, 12];
+    test(&mut array);
+}
+
+fn test(array: &mut [i32; 13]) {
     println!("Origin: {:?}", array);
-    movezero(&mut array);
+    movezero(array);
     println!("Move: {:?}", array);
+
 }
 
 // very strange code
