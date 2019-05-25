@@ -86,7 +86,25 @@ def main(engine='baidu'):
         'anger+woman', 'anger+man', 'anger+girl', 'anger+boy', 'anger+old+man', 'anger+woman+widow',
     ]
 
+    words = [
+        '恐惧的女人', '恐惧的女生', '恐惧的小女孩', '恐惧的小男孩', '恐惧的男人', '恐惧的老人', 
+        '恐惧的美国人', '恐惧的老百姓', '恐惧的大学生',  '恐惧的小孩子'
+    ]
 
+    words = [
+        'fearwoman', 'fear+man', 'fear+girl', 'fear+boy', 'fear+old+man',
+    ]
+
+    words = [
+        '厌恶的表情 孩子', '厌恶的表情 女生', '厌恶的表情 小女孩', '厌恶的表情 小男孩', '厌恶的表情 男人', '厌恶的表情 老人', 
+        '厌恶的表情 美国人', '厌恶的表情 老百姓', '厌恶的表情 大学生',  '厌恶的表情 小孩子',
+        'disgust+woman', 'disgust+man', 'disgust+girl', 'disgust+boy', 'disgust+old+man',
+    ]
+    words = [
+        '正常脸 男人', '正常脸 女人', '正常脸 女孩', '正常脸 男孩', '正常脸 老人', 'neutral+woman+expression',
+        'neutral+man+expression', 'neutral+girl+expression', 'neutral+boy+expression', 'neutral+old+expression+chinese', 
+        'neutral+woman+expression+chinese', 'neutral+man+expression+chinese',
+    ]
     
     if engine == 'baidu':
         fetch_fn = baidu_search
