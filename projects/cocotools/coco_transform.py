@@ -1,3 +1,12 @@
+"""
+This python script is used to transform the raw annotations format to MS coco format
+the raw annotations format is:
+img_name,x1,y1,x2,y2,x3,y3,x4,y4,classid
+xxx.jpg,0,0,10,0,10,10,0,10,1
+xxx.jpg,0,0,10,0,10,10,0,10,2
+...
+
+"""
 import json
 import os
 import cv2
@@ -6,7 +15,7 @@ root = "/media/data/urun_tandong_video/data/signal"
 classes_path = 'classes.txt'
 images_dir = 'train'
 raw_annotations = 'train_label_fix.csv'
-save_json_filename = "signal.json"
+save_json_filename = "signal_train.json"
 
 # final save format
 dataset = {}

@@ -1,9 +1,16 @@
+"""
+This python script is used to create an annotation comparable to MS coco format for test images
+
+"""
+
 import json
 import os
 import cv2
 
-root = "/root/mmdetection/data/signal/"
 root = "/media/data/urun_tandong_video/data/signal/"
+classes_path = 'classes.txt'
+images_dir = 'test'
+save_json_filename = "signal_test.json"
 
 # final save format
 dataset = {}
@@ -15,7 +22,7 @@ dataset['info'] = {}
 
 
 
-with open(os.path.join(root, 'classes.txt')) as f:
+with open(os.path.join(root, classes_path)) as f:
     classes = f.read().strip().split('\n')
 print("number of classes is: ", len(classes))
 
@@ -23,20 +30,13 @@ print("number of classes is: ", len(classes))
 for i, cls in enumerate(classes):
     dataset['categories'].append({'id': i, 'name': cls, 'supercategory': 'mark'})
 
-image_names = [f for f in os.listdir(os.path.join(root, '0'))]
+image_names = [f for f in os.listdir(os.path.join(root, images_dir))]
 print("number of images is: ", len(image_names))
-
-
-# with open(os.path.join(root, 'train_label_fix.csv')) as f:
-#    annos = f.read().strip().split('\n')
-#    annos = annos[1:]
-
-# print("number of annotations is: ", len(annos))
 
 
 for image_i, image_name in enumerate(image_names):
     print(f"add {image_name}")
-    img = cv2.imread(f"{root}/test/{image_name}")
+    img = cv2.imread(f"{root}/{images_dir}/{image_name}")
     height, width, _ = img.shape
     # add image information
     dataset['images'].append({
@@ -46,6 +46,6 @@ for image_i, image_name in enumerate(image_names):
         'height': height
     })
 
-json_name = "test_all.json"
-with open(json_name, 'w') as f:
+
+with open(save_json_filename, 'w') as f:
     json.dump(dataset, f)
