@@ -38,6 +38,8 @@ def detect(img):
     return results
 
 def show(img):
+    if type(img) == str:
+        img = cv2.imread(img)
     results = detect(img)
     for result in results:
         x1, y1, x2, y2 = result['bbox']
