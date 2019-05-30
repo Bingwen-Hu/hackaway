@@ -32,8 +32,9 @@ def detect(img):
 
         res = net.predict(roi[None, :, :, None])
         class_id = np.argmax(res)
+        probability = res[0, class_id]
         label = LABELS[class_id]
-        results.append({'bbox': [x1, y1, x2, y2], 'emotion': label})
+        results.append({'bbox': [x1, y1, x2, y2], 'emotion': label, 'probability': probability})
 
     return results
 
