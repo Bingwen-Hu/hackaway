@@ -37,4 +37,14 @@ def detect(img):
 
     return results
 
-        
+def show(img):
+    results = detect(img)
+    for result in results:
+        x1, y1, x2, y2 = result['bbox']
+        emotion = result['emotion']
+        cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
+        cv2.putText(img, emotion, (x1, y1), cv2.FONT_HERSHEY_COMPLEX, fontScale=1, color=(0, 255, 0), thickness=2)
+
+    cv2.imshow("Emotion", img)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
