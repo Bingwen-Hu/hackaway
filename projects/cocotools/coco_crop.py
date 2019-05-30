@@ -1,13 +1,13 @@
-# this script crop down the target from image and use its class label as its name
-# for example:
-# name = "001_fdfdscdcb.jpg"
-# so
-# `int(001)`
-# will return the class label
+"""
+this script crops down the target from image and use its class label as its name
+for example:
+name = "001_fdfdscdcb.jpg"
+so `int(001)` will return the class label
 
 
-# To augment the images, a new image set and a new annotation file should be generated
-# see coco_augment.py
+To augment the images, a new image set and a new annotation file should be generated
+see coco_augment.py
+"""
 
 import os
 import cv2
@@ -18,17 +18,15 @@ from uuid import uuid1
 root = '/media/data/urun_tandong_video/data/signal'
 cropdir = os.path.join(root, 'crops')
 images_path = os.path.join(root, "train")
-json_path = "/media/data/urun_tandong_video/data/signal/signal.json"
-
+annotation_path = "/media/data/urun_tandong_video/data/signal/signal.json"
+# create a directory to save the cropped pieces
 os.makedirs(cropdir, exist_ok=True)
 
 
-with open(json_path) as f:
+with open(annotation_path) as f:
     js = json.load(f)
 
 anns = js['annotations']
-
-
 for ann in anns:
     x, y, w, h = ann['bbox']
     class_id = ann['category_id']
@@ -38,5 +36,3 @@ for ann in anns:
     prefix = f"{class_id:03}"
     cv2.imwrite(f'{cropdir}/{prefix}_{uuid1()}.jpg', crop)
     print(f"crop {image_name}")
-
-
