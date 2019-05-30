@@ -3,6 +3,10 @@ import os
 import cv2
 
 root = "/media/data/urun_tandong_video/data/signal"
+classes_path = 'classes.txt'
+images_dir = 'train'
+raw_annotations = 'train_label_fix.csv'
+save_json_filename = "signal.json"
 
 # final save format
 dataset = {}
@@ -13,29 +17,27 @@ dataset['licences'] = []
 dataset['info'] = {}
 
 
-
-with open(os.path.join(root, 'classes.txt')) as f:
+with open(os.path.join(root, classes_path)) as f:
     classes = f.read().strip().split('\n')
 print("number of classes is: ", len(classes))
 
 # build mapping between number and class
 for i, cls in enumerate(classes):
-    dataset['categories'].append({'id': i, 'name': cls, 'supercategory': 'mark'})
+    dataset['categories'].append({'id': i, 'name': cls, 'supercategory': 'mark'}) # value of supercategory varies to your problem
 
-image_names = [f for f in os.listdir(os.path.join(root, 'train'))]
+image_names = [f for f in os.listdir(os.path.join(root, images_dir))]
 print("number of images is: ", len(image_names))
 
 
-with open(os.path.join(root, 'train_label_fix.csv')) as f:
+with open(os.path.join(root, raw_annotations)) as f:
     annos = f.read().strip().split('\n')
-    annos = annos[1:]
-
+    annos = annos[1:] # skip the first line, which contains name of fields
 print("number of annotations is: ", len(annos))
 
 
 for image_i, image_name in enumerate(image_names):
-    img = cv2.imread(f"{root}/train/{image_name}")
-    height, width, _ = img.shape
+    img = cv2.imread(f"{root}/{images_dir}/{image_name}")
+    height, width = img.shape[:2]
     # add image information
     dataset['images'].append({
         'file_name': image_name,
@@ -61,6 +63,5 @@ for image_i, image_name in enumerate(image_names):
                 'segmentation': list(map(int, [x1,y1,x2,y2,x3,y3,x4,y4])),
             })
 
-json_name = "test.json"
-with open(json_name, 'w') as f:
+with open(save_json_filename, 'w') as f:
     json.dump(dataset, f)
