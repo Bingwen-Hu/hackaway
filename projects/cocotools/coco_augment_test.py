@@ -1,20 +1,27 @@
+"""
+Test the effection of augmenetation
+
+"""
+
 import os
 import json
 import cv2
 import random
 
 
-images_path = "/media/data/urun_tandong_video/data/signal/really_augment"
-json_path = "/home/mory/projects/really_augment.json"
+images_path = "/media/data/urun_tandong_video/data/signal/aug_images"
+annotation_path = "/home/mory/projects/aug_signal.json"
 savedir = "/home/mory/projects/test"
 
-with open(json_path) as f:
+
+with open(annotation_path) as f:
     js = json.load(f)
 
 anns = js['annotations']
 images = js['images']
 random.shuffle(images)
 
+# just test 5 image
 count = 0
 for image in images:
     image = image['file_name']
