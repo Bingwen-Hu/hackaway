@@ -6,7 +6,7 @@ fn main() {
     int_slice();
 
     let string = String::from("Mory and Ann");
-    let word = first_word(&string[..]);
+    let word = first_word(&string); // deref coercion
     println!("First word of string '{}' is {}", string, word);
 }
 

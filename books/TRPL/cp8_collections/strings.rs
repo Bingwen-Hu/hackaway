@@ -12,9 +12,11 @@ fn construct() {
 
 fn update() {
     let mut s = String::from("Foo");
-    s.push_str(" bar");
+    let s2 = "bar";
+    s.push_str(s2); // ownership is kept
     s.push('s');
     println!("{}", s);
+    println!("{}", s2);
 }
 
 fn update_move() {
@@ -25,6 +27,8 @@ fn update_move() {
     // println!("{}", s1); error
 }
 
+// format! is better because it is easier to read and 
+// have not take any ownership of its parameters.
 fn format() {
     let s1 = String::from("tic");
     let s2 = "Tac";
