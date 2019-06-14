@@ -167,7 +167,3 @@ if __name__ == '__main__':
 
     model.eval()
     lfw_test(model, img_paths, identity_list, opt.lfw_test_list, opt.test_batch_size)
-
-
-
-
