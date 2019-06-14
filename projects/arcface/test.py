@@ -159,7 +159,6 @@ if __name__ == '__main__':
         model = resnet50()
 
     model = DataParallel(model)
-    # load_model(model, opt.test_model_path)
     model.load_state_dict(torch.load(opt.test_model_path))
     model.to(torch.device("cuda"))
 
