@@ -16,11 +16,26 @@ def change(amount, coins):
                         ways.append(dict(zip(coins, [c1,c2,c3,c4])))
     return count, ways
 
+def change_dynamic(amount, coins):
+    if len(coins) and amount:
+        coin = coins[0]
+        many = amount // coin
+        with_coin = [change_dynamic(amount - i*coin, coins[1:]) for i in range(1, many+1)]
+        without_coin = change_dynamic(amount, coins[1:])
+        return sum(with_coin) + without_coin
+    elif amount == 0:
+        return 1
+    else:
+        return 0
+    
+
 if __name__ == '__main__':
-    amount = 7
+    amount = 21
     coins = [1, 2, 5, 10]
     num, ways = change(amount, coins)
     print(f"Change ${amount} into dollars of {coins} " 
         f"there are {num} ways")
     for way in ways[:10]:
         pprint(way)
+    
+    way = change_dynamic(amount, coins)
