@@ -190,12 +190,11 @@
 ;;; $ 100 to 5, 2, 1
 
 ; the mory version
-(defparameter available-coins '(1 2 5))
-
-
 (defun count-change (amount coins)
-  )
-
-(defun count-change-contain (amount the-coin rest-coins)
   (cond ((= amount 0) 1)
-        ((= ))))
+        ((or (< amount 0) (= (length coins) 0)) 0)
+        (t (+ (count-change (- amount (first coins))
+                            coins)
+              (count-change amount (rest coins))))))
+
+;;; 1.12 pascal's triangle
