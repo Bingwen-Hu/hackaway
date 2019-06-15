@@ -6,6 +6,7 @@ import numpy as np
 
 from .models import resnet_face18
 
+threshold = 0.25
 
 def load_model():
     cwd = os.path.dirname(__file__)
@@ -45,3 +46,14 @@ def featurize(img_path):
     fe2 = feature[1::2]
     feature = np.hstack([fe1, fe2]).squeeze()
     return feature
+
+
+def compare(f1, f2):
+    """compare two faces or two features
+    Args:
+        f1: face feature vector 1
+        f2: face feature vector 2
+    Returns:
+        face distance
+    """
+    return cosin_metric(f1, f2)
