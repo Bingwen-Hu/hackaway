@@ -198,3 +198,10 @@
               (count-change amount (rest coins))))))
 
 ;;; 1.12 pascal's triangle
+(defun pascal-triangle (n)
+  (labels ((pascal-tri (row col)
+             (cond ((or (= col 1) (= row col)) 1)
+                   (t (+ (pascal-tri (1- row) (1- col))
+                         (pascal-tri (1- row) col))))))
+    (loop for i from 1 to n
+         collect (pascal-tri n i))))
