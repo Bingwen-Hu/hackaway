@@ -36,8 +36,16 @@ def cosin_metric(x1, x2):
     return np.dot(x1, x2) / (np.linalg.norm(x1) * np.linalg.norm(x2))
 
 
-def featurize(img_path):
-    image = load_image(img_path)
+def featurize(image):
+    """transform an image into vector-representation format
+
+    Args:
+        image: numpy-format image or str
+    
+    Returns:
+        a 1024-dimension embedding of input face
+    """
+    image = load_image(image)
     image = torch.from_numpy(image)
     with torch.no_grad():
         feature = net(image)
