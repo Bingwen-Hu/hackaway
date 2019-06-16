@@ -12,8 +12,6 @@ class Facedb(object):
         self.db = None  # store face embedding
         self.info = None # store face information
     
-    def load_directory(self, directory):
-        pass
 
     def update(self, id):
         pass
