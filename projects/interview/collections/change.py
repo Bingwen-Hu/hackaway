@@ -29,6 +29,23 @@ def change_dynamic(amount, coins):
         return 0
     
 
+def change_less_coins_easy(amount, num=0):
+    """change amount by coins but use less nubmer of coins"""
+    if amount == 0:
+        return num
+    if amount < 0:
+        return 999
+    # coins = [1, 2, 5]
+    print("call!")
+    number = min([
+        change_less_coins_easy(amount-1, num+1),
+        change_less_coins_easy(amount-2, num+1),
+        change_less_coins_easy(amount-5, num+1),
+    ])
+    return number
+    
+
+
 if __name__ == '__main__':
     amount = 21
     coins = [1, 2, 5, 10]
