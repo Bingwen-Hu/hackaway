@@ -2,11 +2,6 @@
 """
 import json
 import numpy as np
-from uuid import uuid1
-
-
-def generate_id():
-    return uuid1().hex[:8]
 
 
 def cosin_metric(f1, f2):
@@ -24,15 +19,10 @@ class Facedb(object):
     def __len__(self):
         return len(self.info)
 
-    def update(self, id):
-        pass
-
     def insert(self, im_emb, jsoninfo):
         self.emb.append(im_emb)
-        jsoninfo = json.loads(jsoninfo)
-        jsoninfo["id"] = generate_id()
         self.info.append(jsoninfo)
-        assert len(self.emb) == len(self.info), "nonInsistent happen!"
+        assert len(self.emb) == len(self.info), "inconsistent happen!"
         return True
     
     def search(self, im_emb):
@@ -43,9 +33,3 @@ class Facedb(object):
             return ""
         else:
             return self.info[min_i]
-    
-    def delete(self, id):
-        pass
-
-    def backup(self):
-        pass

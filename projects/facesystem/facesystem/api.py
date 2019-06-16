@@ -1,20 +1,29 @@
 """api.py provide face detection and face recognition utilities"""
 import os
+import json
 import cv2
 import pcn
 import arcface
+from uuid import uuid1
 from .facedb import Facedb
+
+
+
 
 
 
 
 # create directory to save face and information
 data = 'facesystem_data'
+data_face = f"{data}/face"
+data_info = f"{data}/info"
 os.makedirs(data, exist_ok=True)
-os.makedirs(f"{data}/face", exist_ok=True)
-os.makedirs(f"{data}/info", exist_ok=True)
+os.makedirs(data_face, exist_ok=True)
+os.makedirs(data_info, exist_ok=True)
 
 
+def generate_id():
+    return uuid1().hex[:8]
 
 def face_detect(image_path):
     """detect a face from an image, 
@@ -82,11 +91,16 @@ def face_register(image_path, jsoninfo, facedb:Facedb):
     """
     face = face_detect(image_path)
     if face:
-        emb = arcface.featurize(emb)
+        emb = arcface.featurize(face)
         info = facedb.search(emb)
         if info: # already exist
             return {"state": 10010, "message": "already exists"}
+        # insert into facedb and save it
+        jsoninfo = json.loads(jsoninfo)
+        faceid = generate_id()
+        jsoninfo['id'] = faceid
         facedb.insert(emb, jsoninfo)
+        cv2.imwrite(f"{data_face}/{faceid}.jpg", face)
         return {'state': 10000, "message": "succeed"}
     # register failed
     return {"state": 10011, "message": "no face detected"}
