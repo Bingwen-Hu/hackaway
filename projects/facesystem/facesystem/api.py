@@ -3,10 +3,17 @@ import os
 import cv2
 import pcn
 import arcface
-from facedb import Facedb
+from .facedb import Facedb
 
 
-__all__ = ['face_detect', 'face_recognize', 'load_database_from_directory']
+
+
+# create directory to save face and information
+data = 'facesystem_data'
+os.makedirs(data, exist_ok=True)
+os.makedirs(f"{data}/face", exist_ok=True)
+os.makedirs(f"{data}/info", exist_ok=True)
+
 
 
 def face_detect(image_path):
@@ -16,19 +23,14 @@ def face_detect(image_path):
         image_path: path to the image
         
     Returns:
-        A numpy-array-format face. Shape is (128x128x3) for RGB image
-        and (128x128x1) for signal channels image.
-
-    Raises:
-        IOError: when more than one face is detected
+        If exactly one face is found, return a numpy-array-format face. Shape is (128x128x3) 
+        for RGB image and (128x128x1) for signal channels image. Else return None or the first
+        found face.
     """
     image = cv2.imread(image_path)
     winlist = pcn.detect(image)
     crops = pcn.crop(image, winlist, size=128) # 128 is the input size of arcface
-    if len(crops) != 1:
-        raise IOError("two many face detected!")
-    face = crops[0]
-    return face
+    return crops[0] if crops else None
 
 
 def face_recognize(image_path, facedb:Facedb):
@@ -50,3 +52,44 @@ def load_database_from_directory(directory, facedb:Facedb, mode='append'):
     assert mode in ('overwrite', 'append'), "only 'overwrite' and 'append' mode support"
     info = os.path.join(directory, 'info.txt')
     images = os.path.join(directory, 'images')
+    pass
+
+
+def load_database_from_backup(backup, facedb:Facedb, mode='overwrite'):
+    """load already face and informations from certain backup
+
+    Args:
+        backup: path of backup directory
+        mode: `overwrite` mode to refresh the database with new directory content
+            or `append` mode to append new data to existed ones
+    """
+    assert mode in ('overwrite', 'append'), "only 'overwrite' and 'append' mode support"
+    pass
+ 
+
+def face_register(image_path, jsoninfo, facedb:Facedb):
+    """register a face into face system, namely facedb
+
+    Args:
+        image_path: path of input image 
+        jsoninfo: inforamtion in JSON key-value format, for example:
+            {'name': 'xxx', 'QQ': 23241432}
+        facedb: instance of Facedb
+    Returns:
+        a dictionary contain operation state and message, for example:
+            {'state': 10000, 'message': 'succeed'}
+            {'state': 10010, 'message': 'already exists'}
+    """
+    face = face_detect(image_path)
+    if face:
+        emb = arcface.featurize(emb)
+        info = facedb.search(emb)
+        if info: # already exist
+            return {"state": 10010, "message": "already exists"}
+        facedb.insert(emb, jsoninfo)
+        return {'state': 10000, "message": "succeed"}
+    # register failed
+    return {"state": 10011, "message": "no face detected"}
+
+
+__all__ = ['face_detect', 'face_recognize', 'face_register']
