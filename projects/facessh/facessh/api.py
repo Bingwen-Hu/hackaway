@@ -57,3 +57,17 @@ def detect(filepath):
     return cls_dets_single
 
 
+def show(filepath):
+    results = detect(filepath).tolist()
+    img = cv2.imread(filepath)
+    h, w = img.shape[:2]
+    def draw(bbox):
+        x1 = max(0, int(bbox[0]))
+        y1 = max(0, int(bbox[1]))
+        x2 = min(w, int(bbox[2]))
+        y2 = min(w, int(bbox[3]))
+        cv2.rectangle(img, (x1, y1), (x2, y2), color=(0, 255, 0), thickness=2)
+    list(map(lambda x: draw(x[:4]), results))
+    cv2.imshow("face SSH", img)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()

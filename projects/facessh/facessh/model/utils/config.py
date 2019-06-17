@@ -170,10 +170,10 @@ __C.TEST = edict()
 
 # Scale to use during testing (can NOT list multiple scales)
 # The scale is the pixel size of an image's shortest side
-__C.TEST.SCALES = (1200,)
+__C.TEST.SCALES = (300,)
 
 # Max pixel size of the longest side of a scaled input image
-__C.TEST.MAX_SIZE = 1600
+__C.TEST.MAX_SIZE = 400
 
 __C.TEST.ORIG_SIZE = False
 # Overlap threshold used for non-maximum suppression (suppress boxes with
