@@ -34,11 +34,38 @@ def load_model():
 net = load_model()
 
 
-def detect(filepath):
+scales = {
+    'fastest': [50, 66],
+    'faster': [100, 133],
+    'fast': [300, 400],
+    'normal': [600, 800],
+    'large': [1200, 1600],
+}
+
+
+def detect(im, scale_mode='faster'):
+    """detect face on image
+    Args:
+        im: path of image or numpy-format image 
+        scale_mode: scale of input image, larger the mode, 
+            more accurate the detection, but slower
+    Returns:
+        numpy-array detection results, for example:
+            [
+                [x1, y1, x2, y2, confidence],
+                [x1, y1, x2, y2, confidence],
+            ]
+    """
     global device
+    if type(im) == str:
+        im = cv2.imread(im)
+
+    assert scale_mode in ('fastest', 'faster', 'fast', 'normal', 'large'), ("only `fastest`, " 
+            "`faster`, 'fast', `normal`, `large` support")
+    scale, max_size = scales[scale_mode]
     with torch.no_grad():
-        im = cv2.imread(filepath)
-        im_scale = _compute_scaling_factor(im.shape, cfg.TEST.SCALES[0], cfg.TEST.MAX_SIZE)
+        # im_scale = _compute_scaling_factor(im.shape, cfg.TEST.SCALES[0], cfg.TEST.MAX_SIZE)
+        im_scale = _compute_scaling_factor(im.shape, scale, max_size)
         im_blob = _get_image_blob(im, [im_scale])[0]
         im_info = np.array([[im_blob['data'].shape[2], im_blob['data'].shape[3], im_scale]])
         im_data = im_blob['data']
@@ -57,17 +84,22 @@ def detect(filepath):
     return cls_dets_single
 
 
-def show(filepath):
-    results = detect(filepath).tolist()
-    img = cv2.imread(filepath)
-    h, w = img.shape[:2]
+def draw(im, detections):
+    h, w = im.shape[:2]
     def draw(bbox):
         x1 = max(0, int(bbox[0]))
         y1 = max(0, int(bbox[1]))
         x2 = min(w, int(bbox[2]))
         y2 = min(w, int(bbox[3]))
-        cv2.rectangle(img, (x1, y1), (x2, y2), color=(0, 255, 0), thickness=2)
-    list(map(lambda x: draw(x[:4]), results))
-    cv2.imshow("face SSH", img)
+        cv2.rectangle(im, (x1, y1), (x2, y2), color=(0, 255, 0), thickness=2)
+    list(map(lambda x: draw(x[:4]), detections))
+    return im
+ 
+def show(im):
+    if type(im) == str:
+        im = cv2.imread(im)
+    detections = detect(im).tolist()
+    im = draw(im, detections)
+    cv2.imshow("face SSH", im)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
