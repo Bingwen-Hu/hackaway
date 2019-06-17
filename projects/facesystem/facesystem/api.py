@@ -81,7 +81,7 @@ def face_register(image_path, jsoninfo, facedb:Facedb):
 
     Args:
         image_path: path of input image 
-        jsoninfo: inforamtion in JSON key-value format, for example:
+        jsoninfo: inforamtion in JSON key-value format or python dict, for example:
             {'name': 'xxx', 'QQ': 23241432}
         facedb: instance of Facedb
     Returns:
@@ -96,7 +96,8 @@ def face_register(image_path, jsoninfo, facedb:Facedb):
         if info: # already exist
             return {"state": 10010, "message": "already exists"}
         # insert into facedb and save it
-        jsoninfo = json.loads(jsoninfo)
+        if type(jsoninfo) == str:
+            jsoninfo = json.loads(jsoninfo)
         faceid = generate_id()
         jsoninfo['id'] = faceid
         facedb.insert(emb, jsoninfo)
