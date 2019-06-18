@@ -26,12 +26,16 @@ class Facedb(object):
         return True
     
     def search(self, im_emb):
+        """
+        Returns:
+            dict
+        """
         if len(self.emb) == 0:
-            return ""
+            return {}
         distances = list(map(lambda emb: cosin_metric(emb, im_emb), self.emb))
         max_i = np.argmax(distances)
         distance = distances[max_i] 
         if distance > 0.2557: # threshold for arcface
             return self.info[max_i]
         else:
-            return ""
+            return {}
