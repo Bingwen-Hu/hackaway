@@ -45,6 +45,8 @@ def face_recognize(image_path):
     """Recogniton face in the input image"""
     global facedb
     face = face_detect(image_path)
+    if face is None:
+        return {}
     emb = arcface.featurize(face)
     info = facedb.search(emb)
     return info
