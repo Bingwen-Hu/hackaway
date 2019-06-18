@@ -26,6 +26,8 @@ class Facedb(object):
         return True
     
     def search(self, im_emb):
+        if len(self.emb) == 0:
+            return ""
         distances = list(map(lambda emb: cosin_metric(emb, im_emb), self.emb))
         max_i = np.argmax(distances)
         distance = distances[max_i] 
