@@ -20,7 +20,7 @@ net = load_model()
 
 def load_image(image):
     if type(image) == str:
-        image = cv2.imread(image, 0)
+        image = cv2.imread(image)
     image = cv2.resize(image, (128, 128))
     image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     image = np.dstack((image, np.fliplr(image)))
