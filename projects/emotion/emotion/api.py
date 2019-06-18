@@ -38,6 +38,21 @@ def detect(img):
 
     return results
 
+
+def detect_cropped(img):
+    """input a face and detect its emotion"""
+    if type(img) == str:
+        img = cv2.imread(img)
+    roi = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    roi = cv2.resize(roi, (64, 64))
+    roi = preprocess_input(roi)
+    res = net.predict(roi[None, :, :, None])
+    class_id = np.argmax(res)
+    probability = res[0, class_id]
+    label = LABELS[class_id]
+    return label, probability
+
+ 
 def show(img):
     if type(img) == str:
         img = cv2.imread(img)

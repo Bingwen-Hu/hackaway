@@ -43,7 +43,7 @@ scales = {
 }
 
 
-def detect(im, scale_mode='faster'):
+def detect(im, scale_mode='faster', margin=0):
     """detect face on image
     Args:
         im: path of image or numpy-format image 
@@ -81,7 +81,8 @@ def detect(im, scale_mode='faster'):
             ssh_roi_single = ssh_roi_keep[i].cpu().numpy()
             nms_keep = nms(ssh_roi_single, cfg.TEST.RPN_NMS_THRESH, force_cpu=True)
             cls_dets_single = ssh_roi_single[nms_keep, :]
-    return cls_dets_single
+    detections = cls_dets_single.tolist()
+    return detections
 
 
 def draw(im, detections):
@@ -95,10 +96,11 @@ def draw(im, detections):
     list(map(lambda x: draw(x[:4]), detections))
     return im
  
+
 def show(im):
     if type(im) == str:
         im = cv2.imread(im)
-    detections = detect(im).tolist()
+    detections = detect(im)
     im = draw(im, detections)
     cv2.imshow("face SSH", im)
     cv2.waitKey(0)
