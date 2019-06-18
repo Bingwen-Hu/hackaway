@@ -88,14 +88,14 @@ def facedb_backup(backup):
         pickle.dump(facedb.info, f)
 
 
-def face_register(image_path, jsoninfo, duplicate=False):
+def face_register(image_path, jsoninfo, duplicate=True):
     """register a face into face system, namely facedb
 
     Args:
         image_path: path of input image 
         jsoninfo: inforamtion in JSON key-value format or python dict, for example:
             {'name': 'xxx', 'QQ': 23241432}
-        facedb: instance of Facedb
+        duplicate: if face already exists, stop register
     Returns:
         a dictionary contain operation state and message, for example:
             {'state': 10000, 'message': 'succeed'}
