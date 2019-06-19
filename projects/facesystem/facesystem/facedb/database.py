@@ -15,9 +15,13 @@ class Facedb(object):
     def __init__(self):
         self.emb = []  # store face embedding
         self.info = [] # store face information
+        self._threshold = 0.4
     
     def __len__(self):
         return len(self.info)
+    
+    def set_similar_threshold(self, threshold):
+        self._threshold = threshold
 
     def insert(self, im_emb, jsoninfo):
         self.emb.append(im_emb)
@@ -35,7 +39,7 @@ class Facedb(object):
         distances = list(map(lambda emb: cosin_metric(emb, im_emb), self.emb))
         max_i = np.argmax(distances)
         distance = distances[max_i] 
-        if distance > 0.4: # threshold for arcface
+        if distance > self._threshold: # threshold for arcface
             return self.info[max_i]
         else:
             return {}
