@@ -48,7 +48,7 @@ class RecognizeView(web.View):
                 result = {
                     'state': 10010,
                     'message': "face unregistered",
-                    'data': {},
+                    'data': [],
                 }
 
         # (可选)移除所保存的文件
