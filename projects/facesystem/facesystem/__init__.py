@@ -1,1 +1,1 @@
-from .api import face_register, face_recognize
+from .api import face_register, face_recognize, face_detect

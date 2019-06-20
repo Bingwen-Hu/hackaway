@@ -29,18 +29,28 @@ class RecognizeView(web.View):
                 f.write(chunk)
 
         # 将文件路径传给api功能函数
-        result = {
-            'state': 10010,
-            'message': "not found",
-            'data': {},
-        }
-        info = facesystem.face_recognize(filename)
-        if info:
+        face = facesystem.face_detect(filename)
+        if face is None:
             result = {
-                'state': 10000,
-                'message': 'succeed',
-                'data': info,
+                "state": 10011, 
+                "message": 'no faces detected',
+                "data": [],
             }
+        else:
+            info = facesystem.face_recognize(face)
+            if info: 
+                result = {
+                    'state': 10000,
+                    'message': 'success',
+                    'data': [info],
+                }
+            else:
+                result = {
+                    'state': 10010,
+                    'message': "face unregistered",
+                    'data': {},
+                }
+
         # (可选)移除所保存的文件
         os.remove(filename)
         # 以json的格式返回结果
@@ -67,15 +77,35 @@ class RegisterView(web.View):
                     break
                 f.write(chunk)
         # parse other information        
-        jsoninfo = {} 
-        while True:
-            field = await reader.next()
-            if field is None:
-                break
-            content = await field.read()
-            jsoninfo[field.name] = content.decode()
-        # perform recognization
-        result = facesystem.face_register(filename, jsoninfo)
+        face = facesystem.face_detect(filename)
+        if face is None:
+            result = {
+                "state": 10011, 
+                "message": 'no faces detected',
+                'data': []
+            }
+        else:
+            jsoninfo = {} 
+            while True:
+                field = await reader.next()
+                if field is None:
+                    break
+                content = await field.read()
+                jsoninfo[field.name] = content.decode()
+            
+            # perform recognization
+            if facesystem.face_register(face, jsoninfo):
+                result = {
+                    "state": 10000, 
+                    "message": 'success',
+                    'data': [],
+                }
+            else:
+                result = {
+                    "state": 10010, 
+                    "message": 'face already exists',
+                    'data': []
+                }
         # remove it
         os.remove(filename)        
         return web.json_response(result)

@@ -24,48 +24,32 @@ os.makedirs(data_info, exist_ok=True)
 def generate_id():
     return uuid1().hex[:8]
 
-def face_detect(image_path):
+def face_detect(image):
     """detect a face from an image, 
 
     Args:
-        image_path: path to the image
+        image: numpy-format image or path to the image
         
     Returns:
         If exactly one face is found, return a numpy-array-format face. Shape is (128x128x3) 
         for RGB image and (128x128x1) for signal channels image. Else return None or the first
         found face.
     """
-    image = cv2.imread(image_path)
+    if type(image) == str:
+        image = cv2.imread(image)
     winlist = pcn.detect(image)
     crops = pcn.crop(image, winlist, size=128) # 128 is the input size of arcface
     return crops[0] if crops else None
 
 
-def face_recognize(image_path):
+def face_recognize(face):
     """Recogniton face in the input image"""
     global facedb
-    face = face_detect(image_path)
-    if face is None:
-        return {}
     emb = arcface.featurize(face)
     info = facedb.search(emb)
     return info
 
     
-def load_database_from_directory(directory, facedb:Facedb, mode='append'):
-    """load already face and informations from certain directory
-
-    Args:
-        directory: path of directory contains face images and information
-        mode: `overwrite` mode to refresh the database with new directory content
-            or `append` mode to append new data to existed ones
-    """
-    assert mode in ('overwrite', 'append'), "only 'overwrite' and 'append' mode support"
-    info = os.path.join(directory, 'info.txt')
-    images = os.path.join(directory, 'images')
-    pass
-
-
 def load_database_from_backup(backup, facedb:Facedb):
     """load already face and informations from certain backup
 
@@ -90,38 +74,32 @@ def facedb_backup(backup):
         pickle.dump(facedb.info, f)
 
 
-def face_register(image_path, jsoninfo, duplicate=True):
+def face_register(face, jsoninfo):
     """register a face into face system, namely facedb
 
     Args:
-        image_path: path of input image 
-        jsoninfo: inforamtion in JSON key-value format or python dict, for example:
+        face: numpy-format image
+        jsoninfo: inforamtion in JSON key-value format or python dict, 
+        for example:
             {'name': 'xxx', 'QQ': 23241432}
         duplicate: if face already exists, stop register
     Returns:
-        a dictionary contain operation state and message, for example:
-            {'state': 10000, 'message': 'succeed'}
-            {'state': 10010, 'message': 'already exists'}
+        True if register success else False for the case that the 
+            face already exists
     """
     global facedb
-    face = face_detect(image_path)
-    if face is not None:
-        emb = arcface.featurize(face)
-        if duplicate:
-            info = facedb.search(emb)
-            if info: # already exist
-                return {"state": 10010, "message": "already exists"}
-        # insert into facedb and save it
-        if type(jsoninfo) == str:
-            jsoninfo = json.loads(jsoninfo)
-        faceid = generate_id()
-        jsoninfo['id'] = faceid
-        facedb.insert(emb, jsoninfo)
-        cv2.imwrite(f"{data_face}/{faceid}.jpg", face)
-        facedb_backup("backup") # TODO: fix overwrite problem
-        return {'state': 10000, "message": "succeed"}
-    # register failed
-    return {"state": 10011, "message": "no face detected"}
+    emb = arcface.featurize(face)
+    if facedb.search(emb): # already exists
+        return False
+    # insert into facedb and save it
+    if type(jsoninfo) == str:
+        jsoninfo = json.loads(jsoninfo)
+    faceid = generate_id()
+    jsoninfo['id'] = faceid
+    facedb.insert(emb, jsoninfo)
+    cv2.imwrite(f"{data_face}/{faceid}.jpg", face)
+    facedb_backup("backup") # TODO: fix overwrite problem
+    return True
 
 
 # restore facedb
