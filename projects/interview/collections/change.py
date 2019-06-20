@@ -45,7 +45,7 @@ def change_less_coins_easy(amount, num=0):
     return number
   
 # how to reduce useless search?
-# NOTE: perhaps use GSD of all coins
+# NOTE: perhaps use  of all coins
 def change_less_coins(amount, coins, num=0):
     """change amount by coins but use less nubmer of coins"""
     if amount == 0:
