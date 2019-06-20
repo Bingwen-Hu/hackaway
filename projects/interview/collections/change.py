@@ -28,7 +28,7 @@ def change_dynamic(amount, coins):
     else:
         return 0
     
-
+ 
 def change_less_coins_easy(amount, num=0):
     """change amount by coins but use less nubmer of coins"""
     if amount == 0:
@@ -43,7 +43,16 @@ def change_less_coins_easy(amount, num=0):
         change_less_coins_easy(amount-5, num+1),
     ])
     return number
-    
+  
+# how to reduce useless search?
+# NOTE: perhaps use GSD of all coins
+def change_less_coins(amount, coins, num=0):
+    """change amount by coins but use less nubmer of coins"""
+    if amount == 0:
+        return num
+    number = min([change_less_coins(amount - coin, coins, num+1) for coin in coins if amount - coin >= 0])
+    return number
+  
 
 
 if __name__ == '__main__':
@@ -56,3 +65,5 @@ if __name__ == '__main__':
         pprint(way)
     
     way = change_dynamic(amount, coins)
+    number = change_less_coins(100, coins)
+    print(number)
