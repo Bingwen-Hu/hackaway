@@ -5,7 +5,7 @@
 `git config credential.helper store`
 
 ### how to cancel last commit ?
-`git rest HEAD~`
+`git reset HEAD~`
 
 ### trace large file
 1. add package source
