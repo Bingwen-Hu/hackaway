@@ -22,8 +22,8 @@ class RecognizeView(web.View):
 
         # 将post过来的文件保存在当前路径下
         # 获取原文件的拓展名，并生成一个随机字符串来保存文件
-        ext = os.path.splitext(field.filename)
-        filename = f"{uuid1()}/{ext}"
+        _, ext = os.path.splitext(field.filename)
+        filename = f"{uuid1()}{ext}"
         with open(filename, 'wb') as f:
             while True:
                 chunk = await field.read_chunk() # 每次读一小块
