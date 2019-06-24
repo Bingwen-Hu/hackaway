@@ -53,17 +53,30 @@ def detect(image:str):
         points = torch_out.numpy().squeeze()
         points[0::2] = points[0::2] * (x2-x1) + x1
         points[1::2] = points[1::2] * (y2-y1) + y1
-        results.append({'bbox': [x1, y1, x2, y2], 'landmark': points.tolist()})
+        coutour = points[0:17*2].tolist()
+        left_eyebrow = points[17*2:22*2].tolist()
+        right_eyebrow = points[22*2:27*2].tolist()
+        nose = points[27*2:36*2].tolist()
+        left_eye = points[36*2:42*2].tolist()
+        right_eye = points[42*2:48*2].tolist()
+        mouse = points[49*2:].tolist()
+        landmark = {
+            'coutour': coutour, 'left_eyebrow': left_eyebrow, 'right_eyebrow': right_eyebrow,
+            'left_eye': left_eye, 'right_eye': right_eye, 'mouth': mouse, 'nose': nose,
+        }
+        results.append({'bbox': [x1, y1, x2, y2], 'landmark': landmark})
     return results
 
 def show(image:str):
     img = cv2.imread(image)
     results = detect(image)
     for result in results:
-        points = result['landmark']
+        landmark_ = result['landmark']
         x1, y1, x2, y2 = result['bbox']
-        for i in range(0, len(points), 2):
-            cv2.circle(img, (int(points[i]), int(points[i+1])), 1, (128, 255, 255), 2)
+        for k in landmark_:
+            points = landmark_[k]
+            for i in range(0, len(points), 2):
+                cv2.circle(img, (int(points[i]), int(points[i+1])), 1, (128, 255, 255), 2)
         cv2.rectangle(img, (x1, y1), (x2, y2), (0, 0, 255), 2)
     cv2.imshow("image", img)
     cv2.waitKey(0)
