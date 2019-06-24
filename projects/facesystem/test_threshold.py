@@ -3,6 +3,7 @@
 import os
 import facesystem
 import arcface
+import itertools
 from imutils import paths
 
 # there are sevaral directory that content image
@@ -27,3 +28,20 @@ def test_threshold(dirs):
                 if sim < 0.4: 
                     print(sim, dir_, f, f_)
 
+def test_threshold_cross(dirs):
+    combines = itertools.combinations(dirs, 2)
+    for d1, d2 in combines:
+        print('test {} {}'.format(d1, d2))
+        file1 = list(paths.list_files(d1))
+        file2 = list(paths.list_files(d2))
+        for f1 in file1:
+            for f2 in file2:
+                fe1 = arcface.featurize(f1)
+                fe2 = arcface.featurize(f2)
+                sim = arcface.compare(fe1, fe2)
+                if sim > 0.4:
+                    print(sim, f1, f2)
+        
+
+if __name__ == '__main__':
+    test_threshold_cross(['mayun', 'obama', 'trump', 'xijinping'])
