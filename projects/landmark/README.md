@@ -4,21 +4,22 @@ Convert Caffe model from this [repo](https://github.com/lsy17096535/face-landmar
 
 ## Getting Started
 This repo use the following package, make sure you have already installed all of them.
-+ dlib
 + opencv
 + torch
++ facessh
 
 ```bash
-pip install dlib opencv-python torch
+pip install opencv-python torch
 ```
-Note that `cmake` is needed to compile `dlib`. For `ubuntu`, you can install it as follow:
+To install `facessh`, switch to `facessh` then run 
 ```bash
-sudo apt install cmake
+python setup.py develop
 ```
+
 
 ## Usage
 We provide two function `show` and `detect`. Refer to `demo.py` for usage. 
-```
+```bash
 python demo.py
 ```
 
@@ -26,7 +27,7 @@ python demo.py
 ![](./results/timg.jpeg)
 
 ## Installation
-```
+```bash
 cd landmark
 pip install .
 ```
