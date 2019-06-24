@@ -1,18 +1,16 @@
 import os
 import cv2
 
-import dlib
 import torch
 import numpy as np
+
+import facessh
 
 from .models import Landmark
 
 
 
-detector = dlib.get_frontal_face_detector()
-
-
-def load_model():
+def load_model(): 
     net = Landmark()
     cwd = os.path.dirname(__file__) 
     net.load_state_dict(torch.load(os.path.join(cwd, 'sd_landmark.pth')))
@@ -21,20 +19,17 @@ def load_model():
 
 net = load_model()
 
-def detect(image:str):
+def detect(image:str, mode='fast'):
     global net
     img = cv2.imread(image)
-    # The 1 in the second argument indicates that we should upsample the image
-    # 1 time.  This will make everything bigger and allow us to detect more
-    # faces.
-    dets = detector(img, 1)
+    dets = facessh.detect(img, scale_mode=mode)
     results = []
  
     for index, det in enumerate(dets):
-        x1 = max(det.left(), 0)
-        y1 = max(det.top(), 0)
-        x2 = min(det.right(), img.shape[1])
-        y2 = min(det.bottom(), img.shape[0])
+        x1 = max(int(det[0]), 0)
+        y1 = max(int(det[1]), 0)
+        x2 = min(int(det[2]), img.shape[1])
+        y2 = min(int(det[3]), img.shape[0])
         roi = img[y1:y2 + 1, x1:x2 + 1, ]
         gray_img = cv2.cvtColor(roi, cv2.COLOR_RGB2GRAY)
         w = 60
