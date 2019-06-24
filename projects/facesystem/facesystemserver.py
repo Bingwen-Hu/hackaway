@@ -2,6 +2,7 @@ import os
 import jinja2
 import aiohttp_jinja2
 from aiohttp import web
+from uuid import uuid1
 
 import facesystem
 
@@ -19,7 +20,8 @@ class RecognizeView(web.View):
         assert field.name == 'image'
 
         # 将post过来的文件保存在当前路径下
-        filename = os.path.basename(field.filename)
+        _, ext = os.path.splitext(field.filename)
+        filename = f"{uuid1()}{ext}"
         with open(filename, 'wb') as f:
             while True:
                 chunk = await field.read_chunk() # 每次读一小块
