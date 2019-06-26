@@ -31,7 +31,10 @@ class RecognizeView(web.View):
                 f.write(chunk)
 
         # 将文件路径传给api功能函数
-        face = facesystem.face_detect(filename)
+        try:
+            face, points = facesystem.face_detect(filename)
+        except:
+            face = None
         if face is None:
             result = {
                 "state": 10011, 
@@ -41,6 +44,7 @@ class RecognizeView(web.View):
         else:
             info = facesystem.face_recognize(face)
             if info: 
+                info['points'] = points
                 result = {
                     'state': 10000,
                     'message': 'success',
@@ -79,7 +83,10 @@ class RegisterView(web.View):
                     break
                 f.write(chunk)
         # parse other information        
-        face = facesystem.face_detect(filename)
+        try:
+            face, points = facesystem.face_detect(filename)
+        except:
+            face = None
         if face is None:
             result = {
                 "state": 10011, 
