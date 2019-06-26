@@ -31,9 +31,9 @@ def face_detect(image):
         image: numpy-format image or path to the image
         
     Returns:
-        If exactly one face is found, return a numpy-array-format face. Shape is (128x128x3) 
-        for RGB image and (128x128x1) for signal channels image. Else return None or the first
-        found face.
+        If exactly one face is found, return a numpy-array-format face and its location. 
+        Shape is (128x128x3) for RGB image and (128x128x1) for signal channels image. 
+        Else return None or the first found face.
     """
     if type(image) == str:
         image = cv2.imread(image)

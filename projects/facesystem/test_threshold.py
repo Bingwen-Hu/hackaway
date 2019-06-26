@@ -12,7 +12,7 @@ def crop(dirs):
         files = list(paths.list_images(dir_))
         for file in files:
             _, label, filename = file.split(os.path.sep)
-            crop = facesystem.face_detect(filename)
+            crop, _ = facesystem.face_detect(filename)
             os.makedirs(label, exist_ok=True)
             cv2.imwrite(f"{label}/{filename}")
 
