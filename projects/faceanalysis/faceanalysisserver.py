@@ -10,7 +10,7 @@ import facerec
 routes = web.RouteTableDef()
 
 # 通过url指定不同的检测模式
-@routes.view('/facerec/{mode}/detect')
+@routes.view('/faceanalysis/{mode}/detect')
 class RecognizeView(web.View):
     async def post(self):
         # 读取post请求中上传的文件，可以是图片、视频等
@@ -54,7 +54,7 @@ class RecognizeView(web.View):
 
 
 # 通过gunicorn来运行：gunicorn facerecserver:facerec_server --worker-class aiohttp.GunicornWebWorker
-async def facerec_server():
+async def faceanalysis_server():
     """配置服务端应用，包括创建`app`对象，配置模板和路由。"""
     app = web.Application()
     aiohttp_jinja2.setup(app, loader=jinja2.FileSystemLoader('templates')) # 配置jinja2所渲染的模板文件
