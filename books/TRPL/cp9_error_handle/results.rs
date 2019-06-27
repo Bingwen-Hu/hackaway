@@ -1,4 +1,9 @@
 // recoverable error
+// In summary:
+// the basic function is a start point
+// and unwrap wrap the match expression without any custom error message
+// while expect do the same except that it allow custom error message
+// shortcut ? can only used in function return Result
 
 use std::fs::File;
 use std::io::ErrorKind;
@@ -71,12 +76,22 @@ fn read_username_from_file() -> Result<String, io::Error> {
     }
 }
 
+// yes, the code above return error message to the calling code
+// and it is so common to propagate error upward so a shortcut 
+// `?` is provided.
 fn progegating_error_improved() -> Result<String, io::Error> {
     let mut f = File::open("hello.txt")?;
     let mut s = String::new();
     f.read_to_string(&mut s)?;
     Ok(s)
 }
+
+// more shorter
+use std::fs;
+fn read_username_from_file_shortest() -> Result<String, io::Error> {
+    fs::read_to_string("Hello.txt")
+}
+
 
 fn main() {
     // basic();
