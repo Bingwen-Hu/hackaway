@@ -3,7 +3,7 @@ import jinja2
 import aiohttp_jinja2
 from aiohttp import web
 
-import facerec
+import faceanalysis
 
 
 # routes对象提供修饰器，用于配置路由
@@ -35,7 +35,7 @@ class RecognizeView(web.View):
             'message': "not found",
             'data': [],
         }
-        info = facerec.detect(filename, mode=self.request.match_info['mode'])
+        info = faceanalysis.detect(filename, mode=self.request.match_info['mode'])
         if info:
             result = {
                 'state': 10000,
@@ -53,7 +53,7 @@ class RecognizeView(web.View):
         return {'mode': self.request.match_info['mode']}
 
 
-# 通过gunicorn来运行：gunicorn facerecserver:facerec_server --worker-class aiohttp.GunicornWebWorker
+# 通过gunicorn来运行：gunicorn faceanalysisserver:faceanalysis_server --worker-class aiohttp.GunicornWebWorker
 async def faceanalysis_server():
     """配置服务端应用，包括创建`app`对象，配置模板和路由。"""
     app = web.Application()
