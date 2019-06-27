@@ -5,7 +5,7 @@ import cv2
 import pcn
 
 
-def detect(im, mode='faster'):
+def detect(im, mode='fast'):
     if type(im) == str:
         im = cv2.imread(im)
     bboxes = facessh.detect(im, scale_mode=mode)
@@ -24,7 +24,7 @@ def _analyse(im, bbox):
     crop = im[y1_:y2_, x1_:x2_]
     winlist = pcn.detect(crop)
     if len(winlist) != 0:
-        crop_pcn = pcn.crop(crop, winlist)[0]
+        crop_pcn, _ = pcn.crop(crop, winlist)[0] # ignore points
     else:
         crop_pcn = crop
     age, woman, _ = dex.estimate(crop_pcn)
