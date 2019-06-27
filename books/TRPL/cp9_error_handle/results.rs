@@ -39,6 +39,19 @@ fn multi_error() {
     };
 }
 
+// the following code perform the same as the one above but more concise
+fn multi_error_expert() {
+    let f = File::open("multi_error.rs").unwrap_or_else(|error| {
+        if error.kind() == ErrorKind::NotFound {
+            File::create("multi_error.rs").unwrap_or_else(|error| {
+                panic!("Tried to create file but there was a problem: {:?}", error);
+            })
+        } else {
+            panic!("There was a problem opening the file: {:?}", error);
+        }
+    })
+}
+
 use std::io;
 use std::io::Read;
 
