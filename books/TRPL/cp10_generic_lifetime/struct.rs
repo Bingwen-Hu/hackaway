@@ -5,6 +5,8 @@ struct Point<T, U> {
     y: U,
 }
 
+// this example show that generic type can be different in 
+// struct definition and method
 impl<T, U> Point<T, U> {
     fn mixup<V, W>(self, other: Point<V, W>) -> Point<T, W> {
         Point {
@@ -21,6 +23,6 @@ fn main() {
     let p3 = p1.mixup(p2);
 
     println!("p3.x = {}, p3.y = {}", p3.x, p3.y);
-    // println!("p1.x = {}, p1.y = {}", p1.x, p1.y); move
-    // println!("p2.x = {}, p2.y = {}", p2.x, p2.y); move
+    // println!("p1.x = {}, p1.y = {}", p1.x, p1.y); 
+    // println!("p2.x = {}, p2.y = {}", p2.x, p2.y); // move
 }
