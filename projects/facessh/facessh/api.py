@@ -97,10 +97,10 @@ def draw(im, detections):
     return im
  
 
-def show(im):
+def show(im, mode='faster'):
     if type(im) == str:
         im = cv2.imread(im)
-    detections = detect(im)
+    detections = detect(im, scale_mode=mode)
     im = draw(im, detections)
     cv2.imshow("face SSH", im)
     cv2.waitKey(0)
