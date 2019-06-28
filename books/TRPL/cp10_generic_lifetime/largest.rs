@@ -11,6 +11,8 @@ fn largest<T: PartialOrd + Copy>(list: &[T]) -> T {
     largest
 }
 
+// TODO: use reference to avoid Copy traits
+
 fn main() {
     let lst_f: [f64; 4] = [20.0, 1.3, 94f64, 3.4];
     let lst_i: [i32; 5] = [12, 32, 0, 34, 93];

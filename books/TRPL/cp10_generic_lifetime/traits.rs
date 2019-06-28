@@ -1,6 +1,16 @@
+// A trait tells the Rust compiler about functionality a particular type has 
+// and can share with other types. We can use traits to define shared behavior 
+// in an abstract way. We can use trait bounds to specify that a generic can 
+// be any type that has certain behavior.
+
+
+
 // trait function can have a default implementation  and can be 
 // override by concrete type implement it.
+
+// summarize is a behavior that can be defined in Article and Tweet
 pub trait Summarizable {
+    // this define a default method
     fn summary(&self) -> String {
         String::from("(Read more...)")
     }
@@ -51,6 +61,25 @@ pub fn yanotify<T>(item: &T)
     println!("Breaking news! {}", item.summary());
 }
 
+// it is so happy we have another choice
+// this is a move version
+pub fn yanotify2(item: impl Summarizable) {
+    println!("Breaking news! {}", item.summary());
+}
+
+
+// return type with traits
+// Returning a type that is only specified by the trait it implements 
+// is especially useful in the context of closures and iterators
+fn returns_summarizable() -> impl Summarizable {
+    Tweet {
+        username: String::from("horsebooks"),
+        content: String::from("of course, as you probably already know"),
+        reply: false,
+        retweet: false,
+    }
+}
+
 fn main() {
     let tweet = Tweet {
         username: String::from("Mory"),
@@ -66,4 +95,5 @@ fn main() {
 
     notify(&surpasser);
     yanotify(&surpasser);
+    yanotify2(surpasser); // note that surpasser move in
 }
