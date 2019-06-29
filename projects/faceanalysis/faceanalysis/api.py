@@ -4,9 +4,15 @@ import cv2
 
 
 def analyse(im):
+    """
+    Returns:
+        empty list or list of dictionary
+    """
     if type(im) == str:
         im = cv2.imread(im)
     ga_bbox = insight.estimate(im) 
+    if len(ga_bbox) == 0:
+        return []
     emotions = [analyse_emotion(im, bbox) for (_, bbox) in ga_bbox]
     results = construct_result(ga_bbox, emotions)
     return results
