@@ -10,7 +10,7 @@ import faceanalysis
 routes = web.RouteTableDef()
 
 # 通过url指定不同的检测模式
-@routes.view('/faceanalysis/{mode}/detect')
+@routes.view('/faceanalysis/detect')
 class RecognizeView(web.View):
     async def post(self):
         # 读取post请求中上传的文件，可以是图片、视频等
@@ -35,7 +35,7 @@ class RecognizeView(web.View):
             'message': "not found",
             'data': [],
         }
-        info = faceanalysis.detect(filename, mode=self.request.match_info['mode'])
+        info = faceanalysis.analyse(filename)
         if info:
             result = {
                 'state': 10000,
@@ -50,7 +50,7 @@ class RecognizeView(web.View):
     # get方法，因为不需要传递变量给模板进行渲染，所以直接返回空字典
     @aiohttp_jinja2.template('detect.html')
     async def get(self):
-        return {'mode': self.request.match_info['mode']}
+        return {}
 
 
 # 通过gunicorn来运行：gunicorn faceanalysisserver:faceanalysis_server --worker-class aiohttp.GunicornWebWorker
