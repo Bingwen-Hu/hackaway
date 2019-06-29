@@ -20,8 +20,8 @@ fn main() {
     });
 
     if let Err(e) = greprs::run(config) {
-        writeln!(&mut stderr, "Application error: {}", e)
-            .expect("could not write to stderr");
+        // new way to print error!
+        eprintln!("Application error: {}", e);
         process::exit(1);
     }
 }

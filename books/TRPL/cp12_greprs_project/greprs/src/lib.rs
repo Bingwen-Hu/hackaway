@@ -52,6 +52,7 @@ pub fn run(config: Config) -> Result<(), Box<Error>> {
 }
 
 fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
+    // rust know what specific type of Vector
     let mut results = Vec::new();
 
     for line in contents.lines() {
