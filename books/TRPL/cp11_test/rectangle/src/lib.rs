@@ -68,6 +68,7 @@ mod tests {
         let result = greeting("carol");
         assert!(
             result.contains("carol"),
+            // custom message
             "Greeting did not contains name, value was `{}`", "carol"
         );
     }
