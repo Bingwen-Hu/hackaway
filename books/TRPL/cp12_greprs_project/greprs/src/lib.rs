@@ -10,6 +10,8 @@ pub struct Config {
 }
 
 impl Config {
+    // here, when we meet an error, we use Result to avoid 
+    // unfriendly error message
     pub fn new(args: &[String]) -> Result<Config, &'static str> {
         if args.len() < 3 {
             return Err("not enough arguments")
