@@ -33,9 +33,9 @@ fn intro() {
 fn main() {
     intro();
 
-    let sum: u32 = Counter::new().take(5)
+    let sum: u32 = Counter::new()
         .zip(Counter::new().skip(1))
-        .map(|(a, b)| a * b)
+        .map(|(a, b)| {println!("{} {}", a, b); a * b})
         .filter(|x| x % 3 == 0)
         .sum();
     println!("{}", sum);
