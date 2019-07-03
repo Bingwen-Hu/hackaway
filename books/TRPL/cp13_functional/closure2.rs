@@ -58,7 +58,7 @@ fn generate_workout(intensity: u32, random_number: u32) {
         );
         println!(
             "TOday, do {} situps", 
-            expensive_result.value(intensity)
+            expensive_result.value(intensity) // here we use cache
         );
     } else {
         if random_number == 3 {
