@@ -14,4 +14,27 @@
 fn main() {
     let b = Box::new(5);
     println!("b = {}", b);
+
+
+    // refer demo, so you can see box is like pointer in C/C++
+    refer();
+    box_as_refer();
 }
+
+
+fn refer() {
+    let x = 5;
+    let y = &x; 
+
+    assert_eq!(5, x);
+    assert_eq!(5, *y);
+}
+
+fn box_as_refer() {
+    let x = 5;
+    let y = Box::new(x); 
+
+    assert_eq!(5, x);
+    assert_eq!(5, *y);
+}
+
