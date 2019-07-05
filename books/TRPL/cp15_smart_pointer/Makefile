@@ -1,5 +1,5 @@
 RUST=rustc
-OBJS=box list
+OBJS=box list drops rcs
 
 clean: 
 	rm -rf $(OBJS) 
@@ -9,3 +9,9 @@ box:
 
 list:
 	$(RUST) list.rs
+
+drops:
+	$(RUST) drops.rs
+
+rcs:
+	$(RUST) rcs.rs
