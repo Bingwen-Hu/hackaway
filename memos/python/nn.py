@@ -30,7 +30,7 @@ def init_layers(nn_architecture, seed = 99):
             layer_output_size, layer_input_size) * 0.1
         params_values['b' + str(layer_idx)] = np.random.randn(
             layer_output_size, 1) * 0.1
-        return params_values
+    return params_values
 
 # activation functions
 def sigmoid(Z):
