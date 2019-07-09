@@ -88,9 +88,15 @@ def get_cost_value(Y_hat, Y):
     cost = -1 / m * (np.dot(Y, np.log(Y_hat).T) * np.dot(1-Y, np.log(1-Y_hat).T))
     return np.squeeze(cost)
 
-# def get_accuracy_value(Y_hat, Y):
-#     Y_hat_ = convert_prob_into_class(Y_hat)
-#     return (Y_hat_ == Y).all(axis=0).mean()
+def convert_prob_into_class(probs):
+    probs_ = np.copy(probs)
+    probs_[probs_ > 0.5] = 1
+    probs_[probs_ <= 0.5] = 0
+    return probs_
+
+def get_accuracy_value(Y_hat, Y):
+    Y_hat_ = convert_prob_into_class(Y_hat)
+    return (Y_hat_ == Y).all(axis=0).mean()
 
 # backward propagation
 def single_layer_backward_propagation(dA_curr, W_curr, b_curr, Z_curr, A_prev, activation="relu"):
@@ -140,8 +146,8 @@ def full_backward_propagation(Y_hat, Y, memory, params_values, nn_architecture):
     
 def update(params_values, grads_values, nn_architecture, learning_rate):
     for layer_idx, _ in enumerate(nn_architecture):
-        params_values["W" + str(layer_idx)] -= learning_rate * grads_values["dW" + str(layer_idx)]
-        params_values["b" + str(layer_idx)] -= learning_rate * grads_values["db" + str(layer_idx)]
+        params_values["W" + str(layer_idx+1)] -= learning_rate * grads_values["dW" + str(layer_idx+1)]
+        params_values["b" + str(layer_idx+1)] -= learning_rate * grads_values["db" + str(layer_idx+1)]
     return params_values
 
 
