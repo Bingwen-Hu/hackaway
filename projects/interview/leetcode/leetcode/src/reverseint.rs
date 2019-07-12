@@ -1,5 +1,7 @@
 // reverse integer
-
+// 基本思路： 
+// 将整数按个位拆来，一边拆一边组成新的数。每次生成下一个新数之前，都要先判断一下现在
+// 的新数乘10之后会不会溢出。
 pub fn reverse(x: i32) -> i32 {
     let mut ans = 0;
     let mut x = x;

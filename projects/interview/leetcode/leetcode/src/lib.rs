@@ -1,6 +1,7 @@
 mod twosum;
 mod longestsubstr;
 mod reverseint;
+mod atoi;
 
 #[cfg(test)]
 mod tests {
@@ -36,6 +37,21 @@ mod tests {
         let res = crate::reverseint::reverse(-2147483648); 
         assert_eq!(0, res);
     }
+    #[test]
+    fn test_atoi() {
+        let res = crate::atoi::atoi("123".to_string());
+        assert_eq!(123, res);
+        let res = crate::atoi::atoi("   123v".to_string());
+        assert_eq!(123, res);
+        let res = crate::atoi::atoi("fd123".to_string());
+        assert_eq!(0, res);
+        let res = crate::atoi::atoi("-123fdf".to_string());
+        assert_eq!(-123, res);
+        let res = crate::atoi::atoi("-2147483649fdf".to_string());
+        assert_eq!(-2147483648, res);
+        let res = crate::atoi::atoi("2147483649fdf".to_string());
+        assert_eq!(2147483647, res);
+        let res = crate::atoi::atoi("-91283472332".to_string());
+        assert_eq!(-2147483648, res);
+    }
 }
-
-
