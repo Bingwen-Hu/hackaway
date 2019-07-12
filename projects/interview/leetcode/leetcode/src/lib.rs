@@ -2,6 +2,9 @@ mod twosum;
 mod longestsubstr;
 mod reverseint;
 mod atoi;
+mod palindrone;
+mod roman;
+mod duplicate;
 
 #[cfg(test)]
 mod tests {
@@ -53,5 +56,29 @@ mod tests {
         assert_eq!(2147483647, res);
         let res = crate::atoi::atoi("-91283472332".to_string());
         assert_eq!(-2147483648, res);
+    }
+
+    #[test]
+    fn test_palindrone() {
+        let res = crate::palindrone::is_palindrome(123);
+        assert_eq!(false, res);
+        let res = crate::palindrone::is_palindrome(121);
+        assert_eq!(true, res);
+        let res = crate::palindrone::is_palindrome(-121);
+        assert_eq!(false, res);
+    }
+
+    #[test]
+    fn test_roman_to_int() {
+        let res = crate::roman::roman_to_int("III".to_string());
+        assert_eq!(3, res);
+        let res = crate::roman::roman_to_int("IVII".to_string());
+        assert_eq!(6, res);
+    }
+
+    #[test]
+    fn test_remove_duplicate() {
+        let res = crate::duplicate::remove_duplicates(&mut [1, 1, 2, 2, 3, 3].to_vec());
+        assert_eq!(3, res);
     }
 }
