@@ -21,3 +21,10 @@ pub fn length_of_longest_substring(s: String) -> i32 {
     }        
     return ans as i32;
 }
+
+
+pub fn longest_common_prefix(strs: Vec<String>) -> String {
+    let num = strs.len();
+     
+
+}
