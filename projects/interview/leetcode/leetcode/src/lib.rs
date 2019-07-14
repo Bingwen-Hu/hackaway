@@ -98,4 +98,5 @@ mod tests {
         let res = crate::duplicate::remove_element(&mut [1, 1, 2, 2, 3, 3].to_vec(), 2);
         assert_eq!(4, res);
     }
+
 }
