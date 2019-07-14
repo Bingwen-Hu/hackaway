@@ -28,6 +28,18 @@ mod tests {
     fn test_longest_substr_b() {
         let res = crate::longestsubstr::length_of_longest_substring("abba".to_string());
         assert_eq!(2, res);
+    }
+    #[test]
+    fn test_longest_common_prefix() {
+        let input = vec!["mory".to_string(), "morning".to_string()];
+        let res = crate::longestsubstr::longest_common_prefix(input);
+        assert_eq!("mor".to_string(), res);
+        let input = vec!["mory".to_string(), "morning".to_string(), String::new()];
+        let res = crate::longestsubstr::longest_common_prefix(input);
+        assert_eq!("".to_string(), res);
+        let input = vec!["aa".to_string(), "a".to_string()];
+        let res = crate::longestsubstr::longest_common_prefix(input);
+        assert_eq!("a".to_string(), res);
     }  
     #[test]
     fn test_reverse() {

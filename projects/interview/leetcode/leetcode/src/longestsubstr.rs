@@ -24,7 +24,22 @@ pub fn length_of_longest_substring(s: String) -> i32 {
 
 
 pub fn longest_common_prefix(strs: Vec<String>) -> String {
-    let num = strs.len();
-     
+    let len = strs.len();
+    if len == 0 { return String::new(); }
+    let mut prefix = &strs[0][..]; 
 
+    for i in 1..len {
+        let mut index = 0;
+        let string = &strs[i];
+        if string.len() == 0 { return String::new(); }
+        for (c1, c2) in string.chars().zip(prefix.chars()) {
+            if c1 == c2 {
+                index += 1;
+            } else {
+                break
+            }
+        }
+        prefix = &prefix[0..index];
+    }
+    prefix.to_string()
 }
