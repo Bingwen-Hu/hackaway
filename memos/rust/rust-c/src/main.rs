@@ -22,7 +22,10 @@ fn main() {
         let x = b"    -8147483649\0";
         let res = myatoi(x.as_ptr());
         println!("{}", res);
-        let x = b"    8147483649\0";
+        let x = b"    2147483646\0";
+        let res = myatoi(x.as_ptr());
+        println!("{}", res);
+        let x = b"   -2147483648\0";
         let res = myatoi(x.as_ptr());
         println!("{}", res);
     }

@@ -26,9 +26,9 @@ int myatoi(char *s) {
             start_parse = 1;
         } else if (*p >= '0' && *p <= '9') {
             // overflow check
-            if (sign == 1 && (ans > INT_MAX / 10 || (ans == INT_MAX / 10 && *p > 7))) {
+            if (sign == 1 && (ans > INT_MAX / 10 || (ans == INT_MAX / 10 && *p >= '7'))) {
                 return INT_MAX;
-            } else if (sign == -1 && (ans > INT_MAX / 10 || (ans == INT_MAX / 10 && *p > 8))) {
+            } else if (sign == -1 && (-ans < INT_MIN / 10 || (-ans == INT_MIN / 10 && *p >= '8'))) {
                 return INT_MIN;
             }
             start_parse = 1;
