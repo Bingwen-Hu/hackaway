@@ -2,6 +2,7 @@
 extern {
     pub fn puts(s: *const u8) -> i32;
     fn hello();
+    fn double_it(x: i32) -> i32;
 }
 
 fn main() {
@@ -9,5 +10,7 @@ fn main() {
     unsafe {
         puts(x.as_ptr());
         hello();
+        let x = double_it(19);
+        println!("{}", x);
     }
 }
