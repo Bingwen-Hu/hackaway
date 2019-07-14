@@ -6,6 +6,11 @@ mod palindrone;
 mod roman;
 mod duplicate;
 
+
+extern {
+    fn c_atoi(string: *const u8) -> i32;
+}
+
 #[cfg(test)]
 mod tests {
     #[test]
@@ -69,7 +74,25 @@ mod tests {
         let res = crate::atoi::atoi("-91283472332".to_string());
         assert_eq!(-2147483648, res);
     }
-
+    #[test]
+    fn test_c_atoi() {
+        unsafe {
+            let res = crate::c_atoi(b"123\0".as_ptr());
+            assert_eq!(123, res);
+            let res = crate::c_atoi(b"   123v\0".as_ptr());
+            assert_eq!(123, res);
+            let res = crate::c_atoi(b"fd123\0".as_ptr());
+            assert_eq!(0, res);
+            let res = crate::c_atoi(b"-123fdf\0".as_ptr());
+            assert_eq!(-123, res);
+            let res = crate::c_atoi(b"-2147483649fdf\0".as_ptr());
+            assert_eq!(-2147483648, res);
+            let res = crate::c_atoi(b"2147483649fdf\0".as_ptr());
+            assert_eq!(2147483647, res);
+            let res = crate::c_atoi(b"-91283472332\0".as_ptr());
+            assert_eq!(-2147483648, res);
+        }
+    }
     #[test]
     fn test_palindrone() {
         let res = crate::palindrone::is_palindrome(123);
