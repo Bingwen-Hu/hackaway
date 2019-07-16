@@ -22,30 +22,61 @@
 #include <stdio.h>
 
 void compute_next(char *P, int *next, int len){
-    int i=0, j=-1;
-    next[0] = 0;
+    // i 指向当前要计算next值的字符
+    // j指向用来对比的字符
+    int i=1, j=0;
+    next[1] = 0;
 
-    while(i < len-1){
-        if (j <= 0 || P[i] == P[j]){
+    while(i <= len){
+        if (j == 0 || P[i] == P[j]){
             ++i; ++j; 
             next[i] = j;
         } else {
             j = next[j]; 
         }
-    
     }
 }
 
+// for test
+void compute_single_next() {
+    char str[] = "abaabcac"; 
+    int len = 8;
+    int next[9] = {0, 0, 1, 1, 2, 2, 3, 0, 0};
+    int i = 7;
+
+    printf("next[i] = %i\n", next[i]);
+    int j = next[i - 1];
+    printf("start compute from i-1\n\n");
+    printf("value of next[i-1] = %i\n", j);
+    while (1) {
+        printf("%c compare with %c\n", str[i-1], str[j]);
+        if (j == 0 || str[i-1] == str[j]) {
+            j++;
+            next[i] = j;
+            break;
+        } else {
+            printf("next[j] change from %i to %i\n", j, next[j]);
+            j = next[j];  
+        }
+    }
+    printf("next[i] = %i\n", next[i]);
+}
 
 int main(){
-    char str[] = "ababaaaba"; 
+    char str[] = "abaabcac"; 
+    // index:   1  2  3  4  5  6  7  8
+    // orginal: a  b  a  a  b  c  a  c
+    // next be: 0, 1, 1, 2, 2, 3, 1, 2
     int len = sizeof(str);
+    printf("len is %i\n", len);
     int next[9] = {0};
     
     compute_next(str, next, len);
 
-    for (int i=0; i<len; i++){
+    for (int i=1; i<len+1; i++){
         printf("%2d", next[i]); 
     }
     puts("");
+
+    compute_single_next();
 }
