@@ -13,6 +13,8 @@
 
 // 有一些资料并没有+1这个项，因为本例中的next数据是从索引的。而有些教程为了
 // 计算的方便，就从1开始，原理上是一样的。
+
+// TODO: a KMP.md is needed for future.
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -20,7 +22,7 @@ void compute_next(char *P, int *next, int len){
     int i=0, j=0;
     next[0] = 0;
 
-    while(i < len){
+    while(i < len-1){ // 目前是求i+1位，so在len-1位求len位
         if (j == 0 || P[i] == P[j-1]){
             ++i; ++j; 
             next[i] = j;
@@ -55,11 +57,13 @@ int strStr(char * haystack, char * needle){
     int j = 0;
     while (haystack[i] != '\0') {
         while (j != len && haystack[i] != '\0') {
+            // printf("compare h[i]=%c, n[i]%c \n", haystack[i], needle[j]);
             if (haystack[i] == needle[j]) {
                 if (j == 0) index = i;
                 i++; j++;
             } else if (j > 0) { 
                 j = next[j] - 1; 
+                index = i - j;
             } else {
                 // j == 0
                 i++;
@@ -98,6 +102,12 @@ void test_kmp() {
     int find3 = strStr(haystack3, needle3);
     printf("test 3:\n haystack=%s\n needle='%s'\n find in position %d\n\n", 
         haystack3, needle3, find3
+    );
+    char haystack4[] = "mississippi";
+    char needle4[] = "issip";
+    int find4 = strStr(haystack4, needle4);
+    printf("test 3:\n haystack=%s\n needle='%s'\n find in position %d\n\n", 
+        haystack4, needle4, find4
     );
 }
 

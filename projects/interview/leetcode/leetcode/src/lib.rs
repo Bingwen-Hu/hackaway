@@ -5,7 +5,7 @@ mod atoi;
 mod palindrone;
 mod roman;
 mod duplicate;
-
+mod kmp;
 
 extern {
     fn c_atoi(string: *const u8) -> i32;
@@ -122,4 +122,13 @@ mod tests {
         assert_eq!(4, res);
     }
 
+    #[test]
+    fn test_kmp_next() {
+        let res = crate::kmp::compute_next("needle".to_string());
+        let left: Vec<usize> = vec![0, 1, 1, 1, 1, 1];
+        assert_eq!(left, res);
+        let res = crate::kmp::compute_next("abcabcde".to_string());
+        let left: Vec<usize> = vec![0, 1, 1, 1, 2, 3, 4, 1];
+        assert_eq!(left, res);
+    }
 }
