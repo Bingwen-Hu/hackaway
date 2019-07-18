@@ -124,11 +124,34 @@ mod tests {
 
     #[test]
     fn test_kmp_next() {
-        let res = crate::kmp::compute_next("needle".to_string());
+        let res = crate::kmp::compute_next(&"needle".to_string());
         let left: Vec<usize> = vec![0, 1, 1, 1, 1, 1];
         assert_eq!(left, res);
-        let res = crate::kmp::compute_next("abcabcde".to_string());
+        let res = crate::kmp::compute_next(&"abcabcde".to_string());
         let left: Vec<usize> = vec![0, 1, 1, 1, 2, 3, 4, 1];
         assert_eq!(left, res);
+        let res = crate::kmp::compute_next(&"".to_string());
+        let left: Vec<usize> = vec![];
+        assert_eq!(left, res);
+    }
+    fn test_kmp() {
+        let res = crate::kmp::str_str(
+            "hello".to_string(), "ll".to_string());
+        assert_eq!(2, res);
+        let res = crate::kmp::str_str(
+            "a".to_string(), "".to_string());
+        assert_eq!(0, res);
+        let res = crate::kmp::str_str(
+            "aississipa".to_string(), "issip".to_string());
+        assert_eq!(4, res);
+        let res = crate::kmp::str_str(
+            "".to_string(), "".to_string());
+        assert_eq!(0, res);
+        let res = crate::kmp::str_str(
+            "Jenny".to_string(), "Mory".to_string());
+        assert_eq!(-1, res);
+        let res = crate::kmp::str_str(
+            "".to_string(), "Mory".to_string());
+        assert_eq!(-1, res);
     }
 }
