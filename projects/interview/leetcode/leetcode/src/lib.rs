@@ -1,6 +1,6 @@
 mod twosum;
 mod longestsubstr;
-mod reverseint;
+mod reverse;
 mod atoi;
 mod palindrone;
 mod roman;
@@ -9,6 +9,7 @@ mod kmp;
 
 extern {
     fn c_atoi(string: *const u8) -> i32;
+    fn reverseString(s: *mut u8, size: i32);
 }
 
 #[cfg(test)]
@@ -47,16 +48,28 @@ mod tests {
         assert_eq!("a".to_string(), res);
     }  
     #[test]
-    fn test_reverse() {
-        let res = crate::reverseint::reverse(123);
+    fn test_reverse_int() {
+        let res = crate::reverse::reverse_int(123);
         assert_eq!(321, res);
-        let res = crate::reverseint::reverse(2147483647);
+        let res = crate::reverse::reverse_int(2147483647);
         assert_eq!(0, res);
-        let res = crate::reverseint::reverse(-123); 
+        let res = crate::reverse::reverse_int(-123); 
         assert_eq!(-321, res);
-        let res = crate::reverseint::reverse(-2147483648); 
+        let res = crate::reverse::reverse_int(-2147483648); 
         assert_eq!(0, res);
     }
+    #[test]
+    fn test_reverse_string() {
+        let mut input: Vec<char> = "hello".chars().collect();
+        crate::reverse::reverse_string(&mut input); 
+        let left: Vec<char> = "olleh".chars().collect();
+        assert_eq!(left, input);
+        let mut input: Vec<char> = "".chars().collect();
+        crate::reverse::reverse_string(&mut input); 
+        let left: Vec<char> = "".chars().collect();
+        assert_eq!(left, input);
+    }
+
     #[test]
     fn test_atoi() {
         let res = crate::atoi::atoi("123".to_string());
@@ -91,6 +104,15 @@ mod tests {
             assert_eq!(2147483647, res);
             let res = crate::c_atoi(b"-91283472332\0".as_ptr());
             assert_eq!(-2147483648, res);
+        }
+    }
+
+    #[test]
+    fn test_c_reverse_string() {
+        unsafe {
+            let mut strs = b"hello\n".to_owned();
+            crate::reverseString(strs.as_mut_ptr(), 5);
+            assert_eq!(b"olleh\n".to_owned(), strs);
         }
     }
     #[test]

@@ -1,4 +1,5 @@
 #include <limits.h>
+#include <stdio.h>
 
 int c_atoi(char *str) {
     char *p = str;
@@ -24,4 +25,25 @@ int c_atoi(char *str) {
         p++;
     }
     return ans;
+}
+
+// https://leetcode-cn.com/problems/reverse-string/
+void reverseString(char *s, int sSize) {
+
+    // bounder check
+    if (sSize == 0) { return; }
+
+    char *head = s;
+    char *tail = sSize + s - 1; // move point to last char
+    char t = ' ';
+
+    printf("head of string is %c\n", *head);
+    printf("tail of string is %c\n", *tail);
+    for (int i = 0; i < sSize / 2; i++) {
+        t = *head;
+        *head = *tail;
+        *tail = t;    
+        head++;
+        tail--;
+    }
 }

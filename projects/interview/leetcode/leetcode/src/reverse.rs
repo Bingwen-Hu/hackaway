@@ -2,7 +2,7 @@
 // 基本思路： 
 // 将整数按个位拆来，一边拆一边组成新的数。每次生成下一个新数之前，都要先判断一下现在
 // 的新数乘10之后会不会溢出。
-pub fn reverse(x: i32) -> i32 {
+pub fn reverse_int(x: i32) -> i32 {
     let mut ans = 0;
     let mut x = x;
     println!("x {}", x);
@@ -19,4 +19,15 @@ pub fn reverse(x: i32) -> i32 {
         println!("ans {} pop {} x {}", ans, pop, x);
     }
     return ans;
+}
+
+pub fn reverse_string(s: &mut Vec<char>) {
+    let len = s.len();
+    let mut t: char = ' '; 
+
+    for i in 0..len/2 {
+        t = s[i];
+        s[i] = s[len - i - 1];
+        s[len - i - 1] = t;
+    }
 }
