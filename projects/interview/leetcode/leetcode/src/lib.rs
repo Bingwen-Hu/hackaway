@@ -6,6 +6,7 @@ mod palindrone;
 mod roman;
 mod duplicate;
 mod kmp;
+mod dp;
 
 extern {
     fn c_atoi(string: *const u8) -> i32;
@@ -176,4 +177,43 @@ mod tests {
             "".to_string(), "Mory".to_string());
         assert_eq!(-1, res);
     }
+
+    #[test]
+    fn test_max_sub_array() {
+        let mut input = [-3, -2, -1, 0, 1, 2].to_vec();
+        assert_eq!(3, crate::dp::max_sub_array(input));
+        let mut input = [-3].to_vec();
+        assert_eq!(-3, crate::dp::max_sub_array(input));
+    }
+
+    #[test] 
+    fn test_climb_stairs() {
+        assert_eq!(3, crate::dp::climb_stairs(3));
+    }
+
+    #[test] 
+    fn test_stock_once() {
+        let profit = crate::dp::max_profit_once([7,1,5,3,6,4].to_vec());
+        assert_eq!(5, profit);
+    }
+
+    #[test] 
+    fn test_stock_infinite() {
+        let profit = crate::dp::max_profit_infinite([7,1,5,3,6,4].to_vec());
+        assert_eq!(7, profit);
+    }
+
+    #[test] 
+    fn test_stock_twice() {
+        let profit = crate::dp::max_profit_twice([3,3,5,0,0,3,1,4].to_vec());
+        assert_eq!(6, profit);
+    }
+
+    #[test]
+    fn test_stock_k() {
+        let profit = crate::dp::max_profit_k(2, [3,2,6,5,0,3].to_vec());
+        assert_eq!(7, profit);
+    }
+
+
 }
