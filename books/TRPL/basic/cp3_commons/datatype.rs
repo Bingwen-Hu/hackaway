@@ -20,8 +20,10 @@ fn test_tuple(){
 
 
 fn test_array(){
+    const K: usize = 2;
     let _array = [1, 2, 3, 4, 5];
     let array: [i32; 5] = [11, 12, 13, 14, 15];
+    let _matrix: [[i32; K]; 3] = [[1, 2], [3, 4], [5, 6]];
     let another = [3; 10];
 
     println!("The fifth element of array is {}", array[4]);
