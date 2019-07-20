@@ -119,13 +119,13 @@ pub fn max_profit_k_memory_consume(k: i32, prices: Vec<i32>) -> i32 {
 // memory efficient version
 pub fn max_profit_k(k: i32, prices: Vec<i32>) -> i32 {
     // here if k in unreasonable large, switch to infinite version
+    let k: usize = k as usize;
     if k > prices.len()/2 {
         return max_profit_infinite(prices);
     }
 
     let mut s_trade: [i32; 2] = [std::i32::MIN, std::i32::MIN]; // trade state: empty or keep
     let mut s_times: Vec<[i32;2]> = Vec::new(); 
-    let k: usize = k as usize;
     for i in 0..k+1 {
         s_times.push(s_trade.clone());
     }

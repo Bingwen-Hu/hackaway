@@ -7,6 +7,7 @@ mod roman;
 mod duplicate;
 mod kmp;
 mod dp;
+mod stack;
 
 extern {
     fn c_atoi(string: *const u8) -> i32;
@@ -218,4 +219,11 @@ mod tests {
     }
 
 
+    #[test]
+    fn test_is_valid() {
+        let valid = crate::stack::is_valid("({{}})".to_string());
+        assert_eq!(true, valid);
+        let valid = crate::stack::is_valid("(]".to_string());
+        assert_eq!(false, valid);
+    }
 }
