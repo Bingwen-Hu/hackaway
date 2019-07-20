@@ -207,11 +207,13 @@ mod tests {
     fn test_stock_twice() {
         let profit = crate::dp::max_profit_twice([3,3,5,0,0,3,1,4].to_vec());
         assert_eq!(6, profit);
+        let profit = crate::dp::max_profit_twice([3,2,6,5,0,3].to_vec());
+        assert_eq!(7, profit);
     }
 
     #[test]
     fn test_stock_k() {
-        let profit = crate::dp::max_profit_k(2, [3,2,6,5,0,3].to_vec());
+        let profit = crate::dp::max_profit_k_memory_consume(2, [3,2,6,5,0,3].to_vec());
         assert_eq!(7, profit);
     }
 

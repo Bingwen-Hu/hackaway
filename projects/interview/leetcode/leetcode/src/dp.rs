@@ -91,14 +91,50 @@ pub fn max_profit_twice(prices: Vec<i32>) -> i32 {
 }
 
 
-pub fn max_profit_k(k: i32, prices: Vec<i32>) -> i32 {
+// this one works but consume too much memory
+pub fn max_profit_k_memory_consume(k: i32, prices: Vec<i32>) -> i32 {
     // from example above, we know the initial value is 0
     // here, k become a variable, some we need a matrix to
     // store different status
     // how many status we have?
-    // keep or empty => 2
+    // empty or keep => 2
     // trade times => k
     // so we have 2k status
-    let mut states: [[i32]]
-        
+    let mut s_trade: [i32; 2] = [std::i32::MIN, std::i32::MIN]; // trade state: empty or keep
+    let mut s_times: Vec<[i32;2]> = Vec::new(); 
+    let k: usize = k as usize;
+    for i in 0..k+1 {
+        s_times.push(s_trade.clone());
+    }
+    s_times[0][0] = 0;
+    for price in prices {
+        for j in 0..k {
+            s_times[j+1][1] = std::cmp::max(s_times[j+1][1], s_times[j][0] - price);
+            s_times[j+1][0] = std::cmp::max(s_times[j+1][0], s_times[j+1][1] + price);
+        }
+    }
+    return std::cmp::max(0, s_times[k][0]);        
+}
+
+// memory efficient version
+pub fn max_profit_k(k: i32, prices: Vec<i32>) -> i32 {
+    // here if k in unreasonable large, switch to infinite version
+    if k > prices.len()/2 {
+        return max_profit_infinite(prices);
+    }
+
+    let mut s_trade: [i32; 2] = [std::i32::MIN, std::i32::MIN]; // trade state: empty or keep
+    let mut s_times: Vec<[i32;2]> = Vec::new(); 
+    let k: usize = k as usize;
+    for i in 0..k+1 {
+        s_times.push(s_trade.clone());
+    }
+    s_times[0][0] = 0;
+    for price in prices {
+        for j in 0..k {
+            s_times[j+1][1] = std::cmp::max(s_times[j+1][1], s_times[j][0] - price);
+            s_times[j+1][0] = std::cmp::max(s_times[j+1][0], s_times[j+1][1] + price);
+        }
+    }
+    return std::cmp::max(0, s_times[k][0]);        
 }
