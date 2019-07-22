@@ -138,3 +138,9 @@ pub fn max_profit_k(k: i32, prices: Vec<i32>) -> i32 {
     }
     return std::cmp::max(0, s_times[k][0]);        
 }
+
+// shortest path
+// https://leetcode-cn.com/problems/minimum-path-sum/
+pub fn min_path_sum(grid: Vec<Vec<i32>>) -> i32 {
+    return 0;
+}

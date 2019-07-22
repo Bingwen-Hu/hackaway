@@ -218,6 +218,12 @@ mod tests {
         assert_eq!(7, profit);
     }
 
+    #[test]
+    fn test_min_path_sum() {
+        let input = [ [1,3,1].to_vec(), [1,5,1].to_vec(), [4,2,1].to_vec() ].to_vec();
+        let res = crate::dp::min_path_sum(input);
+        assert_eq!(7, res);
+    }
 
     #[test]
     fn test_is_valid() {
