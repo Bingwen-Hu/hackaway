@@ -1,39 +1,29 @@
+use std::collections::HashMap;
+
 pub fn is_valid(s: String) -> bool {
+    if s.len() == 0 { return true; }
+    let mut map = HashMap::new();
+    map.insert(')', '(');
+    map.insert(']', '[');
+    map.insert('}', '{');
     let mut stack: Vec<char> = Vec::new();
-    let mut top = 0;
-    
     for c in s.chars() {
-        if top == 0 {
-            stack.push(c);
-        } else {
-            match c {
-                ')' => {
-                    if stack[top] != '(' {
-                        return false;
-                    } else {
-                        top -= 1;
+        let pair = map.get(&c);
+        match pair {
+            Some(&p) => {
+                if stack.len() == 0 {
+                    return false;
+                } else {
+                    match stack.pop() {
+                        Some(x) => {
+                            if x != p { return false; }
+                        },
+                        _ => {},
                     }
-                },
-                '}' => {
-                    if stack[top] != '{' {
-                        return false;
-                    } else {
-                        top -= 1;
-                    }
-                },
-                ']' => {
-                    if stack[top] != '[' {
-                        return false;
-                    } else {
-                        top -= 1;
-                    }
-                },
-                _ => {
-                    stack.push(c);
-                    top += 1;
                 }
-            }  
+            },
+            _ => stack.push(c),
         }
     }
-    return top == 0;
+    return stack.len() == 0;
 }
