@@ -11,6 +11,7 @@ deepfree/
 
 ### dependences
 + Cython
++ opencv
 + numpy
 + matplotlib
 + pycocotools

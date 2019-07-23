@@ -6,7 +6,7 @@ import numpy as np
 
 from .models import resnet_face18
 
-threshold = 0.25
+threshold = 0.4
 
 def load_model():
     cwd = os.path.dirname(__file__)
