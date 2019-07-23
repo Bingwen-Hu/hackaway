@@ -7,3 +7,10 @@ deepfree/
     ├── coco
     ├── preprocess
     └── utils
+
+
+### dependences
++ Cython
++ numpy
++ matplotlib
++ pycocotools
