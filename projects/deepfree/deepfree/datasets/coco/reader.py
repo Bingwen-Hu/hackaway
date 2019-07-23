@@ -7,6 +7,12 @@ import pycocotools.coco as coco
 class COCO(object):
 
     def __init__(self, images_directory, annotation_file):
+        """initialize datasets
+
+        Args:
+            images_directory: string, usually as 'COCO/images/'
+            annotations_file: string, usually a json file
+        """
         self.coco = coco.COCO(annotation_file)
         self.im_dir = images_directory
         self.im_ids = np.array(list(self.coco.imgs.keys()))
