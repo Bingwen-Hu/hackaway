@@ -1,4 +1,9 @@
+import sys
 import os.path as osp
+
+sys.path.insert(0, os.path.join(os.path.abspath('..'), 'source_test'))
+
+
 
 from deepfree.datasets.coco import reader
 
