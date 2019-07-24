@@ -3,6 +3,14 @@ import numpy as np
 
 
 def plot_keypoints(im, keypoints, ngroup, output):
+    """plot keypoint of COCO images
+
+    Args:
+        im: image return by cv2.imread
+        keypoints: comes from COCO annotation's `keypoint` field    
+        ngroup: number of point group in keypoints. In COCO is 17
+        output: filename to write out.
+    """
     parts = np.split(np.array(keypoints), ngroup)
     for (i, part) in enumerate(parts):
         x, y = part[:2]
