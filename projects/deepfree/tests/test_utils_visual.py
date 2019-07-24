@@ -18,7 +18,7 @@ keys = list(coco.imgs.keys())
 
 # search for a good key with 17 keypoints
 find = False
-for key in keys:
+for key in keys[1000:]:
     ann_ids = coco.getAnnIds(key)
     ann_metas = coco.loadAnns(ann_ids)
     if len(ann_metas) > 0:
