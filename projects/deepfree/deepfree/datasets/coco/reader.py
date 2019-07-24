@@ -18,7 +18,16 @@ class COCO(object):
         self.im_ids = np.array(list(self.coco.imgs.keys()))
         self.size = len(self.im_ids)
     
-    def fetch(self, batch_size, random=False):
+    def make_generator(self, batch_size, random=False):
+        """make a data generator with certain batch size
+
+        Args:
+            batch_size: int number of batch size
+            random: if True, shuffle the image id       
+        Returns:
+            a batch of image meta and annoations meta
+        NOTE: one image may contains 0 or some annotations 
+        """
         if random:
             self.im_ids = np.random.shuffle(self.im_ids)
         
@@ -34,4 +43,13 @@ class COCO(object):
     def __len__(self):
         return self.size
 
-        
+    def __getitem__(self, i):
+        im_id = self.im_ids[i]
+        ann_id = self.coco.getAnnIds(im_id)
+        im_meta = self.coco.loadImgs(im_id)
+        ann_meta = self.coco.loadAnns(ann_id)
+        return im_meta, ann_meta
+
+class KeyPoint(COCO):
+    """A class for pose estimation"""
+    pass
