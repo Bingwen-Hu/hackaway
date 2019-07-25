@@ -41,7 +41,7 @@ def create_miniCOCO_keypoints(
     os.makedirs(output_annotations, exist_ok=False)
     os.makedirs(output_images, exist_ok=False)
     basename = f"mini_{osp.basename(annotations_file)}"
-    miniCOCO_filename = osp.join(output_directory, basename)
+    miniCOCO_filename = osp.join(output_annotations, basename)
     with open(miniCOCO_filename, 'w') as f:
         json.dump(miniCOCO, f)
     print("Done!")
