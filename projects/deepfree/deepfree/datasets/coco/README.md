@@ -17,5 +17,4 @@ MS COCO annotation order:
 9: l wrist      10: r wrist     11: l hip   12: r hip   13: l knee
 14: r knee      15: l ankle     16: r ankle
 ```
-Example 
 ![](./graphs/example.png)

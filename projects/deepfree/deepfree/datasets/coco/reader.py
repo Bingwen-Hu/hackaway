@@ -50,6 +50,14 @@ class COCO(object):
         ann_meta = self.coco.loadAnns(ann_id)
         return im_meta, ann_meta
 
+
 class KeyPoint(COCO):
-    """A class for pose estimation"""
-    pass
+    """A class for pose estimation, especially for this paper
+    link: https://arxiv.org/abs/1611.08050
+
+    """
+    def make_confidence_map(self):
+        pass
+
+    def make_part_affinity_field(self):
+        pass
