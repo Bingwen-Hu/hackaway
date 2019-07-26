@@ -1,9 +1,11 @@
 import cv2
 import numpy as np
 
+from pycocotools import coco
+
 
 def plot_keypoints(im, keypoints, ngroup, output):
-    """plot keypoint of COCO images
+    """General function to plot keypoint of COCO images
 
     Args:
         im: image return by cv2.imread

@@ -1,26 +1,28 @@
 import sys
 import os
 import os.path as osp
-# add into PYTHONPATH
-sys.path.insert(0, os.path.join(os.path.abspath('..'), 'source_test'))
+import unittest
 
-
+# enable import deepfree
+sys.path.insert(0, os.path.abspath('..'))
 from deepfree.datasets.coco import reader
 
-import unittest
 
 
 class TestDatasets(unittest.TestCase):
     def setUp(self):
-        COCO_DIR = "/media/data/urun_tandong_video/data/COCO/"
-        images_directory = osp.join(COCO_DIR, 'images/train2014/')
-        annotations_file = osp.join(COCO_DIR, "annotations/person_keypoints_train2014.json")
+        COCO_DIR = "/data/minicoco"
+        images_directory = osp.join(COCO_DIR, 'images')
+        annotations_file = osp.join(COCO_DIR, "annotations/mini_person_keypoints_val2014.json")
         self.reader = reader.COCO(images_directory, annotations_file)
     
-    def test_fetch(self):
-        data_generator = self.reader.fetch(batch_size=10)
+    def test_make_generator(self):
+        data_generator = self.reader.make_generator(batch_size=10)
         im_metas, ann_metas = next(data_generator)
-        self.assertEquals(len(im_metas), 10)
-        self.assertEquals(len(ann_metas), 10)
+        self.assertEqual(len(im_metas), 10)
+        self.assertEqual(len(ann_metas), 10)
         self.assertIsNotNone(im_metas[0])
         
+
+if __name__ == '__main__':
+    unittest.main()
