@@ -310,6 +310,8 @@ class KeyPoint(COCO):
         pafs = self.make_PAFs(im, poses)
         return im, mask, heatmaps, pafs
 
+
+    # 这里开始是可视化相关的函数
     @staticmethod 
     def plot_ignore_mask(im, mask, color=(0, 0, 1)):
         """visualize mask genrated by Class Keypoint
@@ -376,3 +378,52 @@ class KeyPoint(COCO):
                 cv2.circle(im, (x, y), radius=3, color=color, thickness=-1) 
 
         return im.astype(np.uint8)
+
+    @staticmethod
+    def overlay_PAF(im, paf):
+        """Pad PAF layer on image"""
+        # 首先，创建HSV层
+        x, y = paf
+        # 这一句是什么意思呢？看不懂
+        hue = np.arctan2(y, x) / np.pi / -2 + 0.5
+        # 饱和度的取值为0-1
+        saturation = np.sqrt(x ** 2 + y ** 2)
+        saturation[saturation > 1.0] = 1.0
+        value = saturation.copy()
+        # None的作用等同np.newaxis
+        hsv_paf = np.vstack([hue[None], saturation[None], value[None]]).transpose(1, 2, 0)
+        hsv_paf = (hsv_paf * 255).astype(np.uint8)
+        rgb_paf = cv2.cvtColor(hsv_paf, cv2.COLOR_HSV2BGR)
+        # alpha = 0.6, beta = 0.4, gamma = 0
+        im = cv2.addWeighted(im, 0.6, rgb_paf, 0.4, 0)
+        return im
+    
+    @staticmethod
+    def overlay_PAFs(im, pafs): 
+        # 这里的思路是先将PAFs合成一个，然后再与im合并
+        mix_paf = np.zeros((2,) + im.shape[:2])
+        paf_overlay = np.zeros_like(mix_paf)
+
+        channels, height, width = pafs.shape
+        new_shape = channels // 2, 2, height, width
+        pafs = pafs.reshape(new_shape)
+        for paf in pafs:
+            mix_paf += paf
+            paf_overlay = paf != 0
+            paf_overlay += np.broadcast_to(paf_overlay[0] | paf_overlay[1], paf.shape)
+        mix_paf[paf_overlay > 0] /= paf_overlay[paf_overlay > 0]
+        im = KeyPoint.overlay_PAF(im, mix_paf)
+        return im
+
+    @staticmethod
+    def overlay_heatmap(im, heatmap):
+        heatmap = (heatmap * 255).astype(np.uint8)
+        rgb_heatmap = cv2.applyColorMap(heatmap, cv2.COLORMAP_JET)
+        im = cv2.addWeighted(im, 0.6, rgb_heatmap, 0.4, 0)
+        return im
+    
+    @staticmethod
+    def overlay_ignore_mask(im, mask):
+        mask = (mask == 0).astype(np.uint8)
+        im = im * np.repeat(mask[:, :, None], 3, axis=2)
+        return im
