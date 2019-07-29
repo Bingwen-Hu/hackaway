@@ -89,5 +89,8 @@ class KeyPointParams(Params):
     ]
 
     # TODO: add comments
+    insize = 368
     min_area = 32 * 32
     min_keypoints = 5
+    heatmap_sigma = 7
+    paf_sigma = 8 # aka `limb width`
