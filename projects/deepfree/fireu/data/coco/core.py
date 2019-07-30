@@ -7,7 +7,7 @@ import pycocotools.coco as coco
 
 from .entity import KeyPointParams # for KeyPoint
 
-
+import pysnooper
 
 class COCO(object):
 
@@ -21,7 +21,7 @@ class COCO(object):
         self.coco = coco.COCO(annotation_file)
         self.root = osp.dirname(images_directory.rstrip(osp.sep))
         self.im_dir = images_directory
-        self.im_ids = sorted(self.coco.imgs.keys())
+        self.im_ids = list(self.coco.imgs.keys())
         self.size = len(self.im_ids)
     
     def __len__(self):
@@ -90,11 +90,10 @@ class KeyPoint(COCO):
             pose = np.zeros((joint_len, 3), dtype=np.int32)
 
             # 将COCO的顺序映射为我们自己的顺序
-            for i, joint_i in enumerate(self.params['coco_keypoints']):
+            for i, joint_i in enumerate(self.params.coco_keypoints):
                 pose[joint_i] = ann_pose[i]
-
             # 通过取左右双肩的平均，计算出脖子的位置
-            if pose[joint.LShoulder][2] > 0 and pose[joint.RShoulder] > 0:
+            if pose[joint.LShoulder][2] > 0 and pose[joint.RShoulder][2] > 0:
                 pose[joint.Neck][0] = int((pose[joint.LShoulder][0] + pose[joint.RShoulder][0])/2)
                 pose[joint.Neck][1] = int((pose[joint.LShoulder][1] + pose[joint.RShoulder][1])/2)
                 pose[joint.Neck][2] = 2
@@ -127,25 +126,24 @@ class KeyPoint(COCO):
     def make_confidence_maps(self, im, poses):
         """generate confidence map for single image"""
         # init heatmaps as (0, h, w) 
-        im_shape = im.shape[:2]
-        heatmap_shape = (0, ) + im_shape
-        heatmaps = np.zeros(heatmap_shape)
+        im_h, im_w = im.shape[:2]
+        heatmaps = np.zeros([0, im_h, im_w])
         # 为了计算背景，需要把所有heatmap进行累加
-        heatmap_sum = np.zeros(im_shape)
+        heatmap_sum = np.zeros([im_h, im_w])
         # 这里的思路是，将所有相同关键点放到一个heatmap中
         # 所以是先遍历关键点，再遍历每个人的pose
         for joint_i in range(len(self.params.joint)):
-            heatmap = np.zeros(im_shape)
+            heatmap = np.zeros([im_h, im_w])
             for pose in poses:
                 # 查看每一个关节点的v值，大于0说明该点有标签
                 if pose[joint_i, 2] > 0:
-                    jointmap = self.make_confidence_map(im_shape, pose[joint_i][:2])
+                    jointmap = self.make_confidence_map([im_h, im_w], pose[joint_i][:2])
                     # 这里是论文中的对不同人的关节点的max运算，以保留峰值
                     heatmap[jointmap > heatmap] = jointmap[jointmap > heatmap]
                     heatmap_sum[jointmap > heatmap_sum] = jointmap[jointmap > heatmap_sum]
             # 将这个关键点的热力图添加进返回值中
-            heatmaps = np.vstack([heatmaps, heatmap.reshape((1, ) + heatmap.shape)])
-        heatmap_bg = 1 - heatmap_sum # 背景
+            heatmaps = np.vstack([heatmaps, heatmap.reshape([1, im_h, im_w])])
+        heatmap_bg = (1 - heatmap_sum).reshape([1, im_h, im_w]) # 背景
         heatmaps = np.vstack([heatmaps, heatmap_bg])
         return heatmaps.astype(np.float32)
 
@@ -187,6 +185,14 @@ class KeyPoint(COCO):
         return paf * paf_flag # 仅返回那些需要的点
 
     def make_PAFs(self, im, poses):
+        """generate PAFs for input image
+
+        Args:
+            im: image object return by cv2.imread
+            poses: poses for im, return by convert_joint_order
+        Returns:
+            PAFs shape as (2 * len(limbs), im_h, im_w)
+        """
         im_h, im_w = im.shape[:2]
         pafs = np.zeros([0, im_h, im_w])
 
@@ -257,6 +263,7 @@ class KeyPoint(COCO):
             # but use PNG for its lossless compression
             file_path = self.get_im_path(im_id=im_id).replace('.jpg', '.png')
             mask_path = osp.join(self.mask_dir, osp.basename(file_path))
+            print(mask.shape)
             cv2.imwrite(mask_path, mask)
             
     def get_ignore_mask(self, im_id):
@@ -264,7 +271,7 @@ class KeyPoint(COCO):
         path = self.get_im_path(im_id=im_id)
         name = osp.basename(path).replace('.jpg', '.png')
         mask_path = osp.join(self.mask_dir, name)
-        mask = cv2.imread(mask_path)
+        mask = cv2.imread(mask_path, cv2.IMREAD_GRAYSCALE)
         if mask is not None:
             return mask == 255
         # 如果没有mask，则根据原图片尺寸创建一个
@@ -424,6 +431,7 @@ class KeyPoint(COCO):
     
     @staticmethod
     def overlay_ignore_mask(im, mask):
-        mask = (mask == 0).astype(np.uint8)
-        im = im * np.repeat(mask[:, :, None], 3, axis=2)
+        with pysnooper.snoop():
+            mask = (mask == 0).astype(np.uint8)
+            im = im * np.repeat(mask[:, :, None], 3, axis=2)
         return im
