@@ -431,7 +431,6 @@ class KeyPoint(COCO):
     
     @staticmethod
     def overlay_ignore_mask(im, mask):
-        with pysnooper.snoop():
-            mask = (mask == 0).astype(np.uint8)
-            im = im * np.repeat(mask[:, :, None], 3, axis=2)
+        mask = (mask == 0).astype(np.uint8)
+        im = im * np.repeat(mask[:, :, None], 3, axis=2)
         return im
