@@ -11,7 +11,7 @@ def create_miniCOCO_keypoints(
         annotations_file, 
         images_directory, 
         number=1000,
-        output_directory="mini"):
+        output_directory="minicoco"):
     """Create a mini version of MS COCO dateset for pose estimation
 
     Args:
