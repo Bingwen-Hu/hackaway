@@ -1,7 +1,7 @@
-deepfree
-========
+fireu
+=====
 
 .. toctree::
    :maxdepth: 4
 
-   deepfree
+   fireu

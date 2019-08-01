@@ -1,13 +1,13 @@
-deepfree.datasets.coco package
-==============================
+fireu.data.preprocess package
+=============================
 
 Submodules
 ----------
 
-deepfree.datasets.coco.reader module
+fireu.data.preprocess.heatmap module
 ------------------------------------
 
-.. automodule:: deepfree.datasets.coco.reader
+.. automodule:: fireu.data.preprocess.heatmap
     :members:
     :undoc-members:
     :show-inheritance:
@@ -16,7 +16,7 @@ deepfree.datasets.coco.reader module
 Module contents
 ---------------
 
-.. automodule:: deepfree.datasets.coco
+.. automodule:: fireu.data.preprocess
     :members:
     :undoc-members:
     :show-inheritance:

@@ -21,7 +21,7 @@ class COCO(object):
         self.coco = coco.COCO(annotation_file)
         self.root = osp.dirname(images_directory.rstrip(osp.sep))
         self.im_dir = images_directory
-        self.im_ids = list(self.coco.imgs.keys())
+        self.im_ids = sorted(self.coco.imgs.keys())
         self.size = len(self.im_ids)
     
     def __len__(self):
@@ -74,6 +74,9 @@ class KeyPoint(COCO):
     
     def convert_joint_order(self, ann_metas):
         """convert the joint order from COCO to ours
+
+        Args:
+            ann_metas: annotations of COCO
         
         Returns:
             a numpy array (N, 18, 3) encodes keypoints for single image
@@ -124,7 +127,14 @@ class KeyPoint(COCO):
         return heatmap
 
     def make_confidence_maps(self, im, poses):
-        """generate confidence map for single image"""
+        """generate confidence map for single image
+        
+        Args:
+            im: image object return by cv2.imread
+            poses: poses for im, return by convert_joint_order
+        Returns:
+            comfidence map with shape (len(joint), h, w)
+        """
         # init heatmaps as (0, h, w) 
         im_h, im_w = im.shape[:2]
         heatmaps = np.zeros([0, im_h, im_w])
@@ -213,7 +223,7 @@ class KeyPoint(COCO):
                     limb_paf_flags = limb_paf != 0
                     # limb_paf_flags[0]代表from节点，[1]代表to节点，将两个节点合在一起
                     paf_overlay += np.broadcast_to(limb_paf_flags[0] | limb_paf_flags[1], limb_paf.shape)
-            # 将倍数除去
+            # 将倍数除去，对应论文公式9
             paf[paf_overlay > 0] /= paf_overlay[paf_overlay > 0]
             pafs = np.vstack([pafs, paf])
         return pafs.astype(float)
@@ -227,7 +237,7 @@ class KeyPoint(COCO):
         Returns:
             mask_all: mask contains all the sample, only used to visualization
             mask_ignore: mask contains the sample that should be ignored, used 
-                to train the network
+            to train the network
         """
         mask_all = np.zeros(shape, 'bool')
         mask_ignore = np.zeros(shape, 'bool')
@@ -431,6 +441,7 @@ class KeyPoint(COCO):
     
     @staticmethod
     def overlay_ignore_mask(im, mask):
+        """set ignore region dark"""
         mask = (mask == 0).astype(np.uint8)
         im = im * np.repeat(mask[:, :, None], 3, axis=2)
         return im

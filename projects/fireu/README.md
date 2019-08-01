@@ -5,11 +5,13 @@ Portable codes between different deep learning framework like `Pytorch`, `Tensor
 If you don't like somethin such as you boss, you can fire him/her with the help of this repo.
 
 ### Architecture
+```sh
 fireu/
-└── datasets
+└── data
     ├── coco
     ├── preprocess
     └── utils
+```
 
 
 ### dependences

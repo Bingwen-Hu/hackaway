@@ -1,17 +1,17 @@
-deepfree package
-================
+fireu package
+=============
 
 Subpackages
 -----------
 
 .. toctree::
 
-    deepfree.datasets
+    fireu.data
 
 Module contents
 ---------------
 
-.. automodule:: deepfree
+.. automodule:: fireu
     :members:
     :undoc-members:
     :show-inheritance:

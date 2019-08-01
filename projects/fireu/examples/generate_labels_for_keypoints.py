@@ -29,10 +29,12 @@ if __name__ == '__main__':
         mask = cv2.resize(mask.astype(np.uint8) * 255, shape) == 255
 
         # overlay labels
+        # 以下三个分别是PAF，heatmap和mask的效果
+        # 你可以注释掉其中的语句来看效果
         img_to_show = im.copy()
         img_to_show = dataset.overlay_PAFs(img_to_show, pafs)
-        img_to_show = dataset.overlay_heatmap(img_to_show, heatmaps[:-1].max(axis=0))
-        img_to_show = dataset.overlay_ignore_mask(img_to_show, mask)
+        # img_to_show = dataset.overlay_heatmap(img_to_show, heatmaps[:-1].max(axis=0))
+        # img_to_show = dataset.overlay_ignore_mask(img_to_show, mask)
         # cv2.imwrite("resized_img.png", resized_img)
         # cv2.imwrite('img_to_show.png', img_to_show)
         cv2.imshow('w', np.hstack((im, img_to_show)))
