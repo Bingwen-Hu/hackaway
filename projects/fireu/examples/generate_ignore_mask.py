@@ -1,7 +1,4 @@
 # 在姿态估计中，如何使用本库来生成mask
-import sys
-sys.path.append('..')
-
 import cv2
 import argparse
 import numpy as np

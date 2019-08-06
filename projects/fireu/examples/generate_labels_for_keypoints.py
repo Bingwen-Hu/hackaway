@@ -1,9 +1,6 @@
 # example for usage of KeyPoint
 # 本脚本假定ignore_mask已经生成了
 
-import sys
-sys.path.append('..')
-
 import cv2
 import numpy as np
 
