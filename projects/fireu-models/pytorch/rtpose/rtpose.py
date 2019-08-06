@@ -31,10 +31,16 @@ class PoseNet(nn.Module):
     def __init__(self, arch: Pose):
         super().__init__()
         self.arch = arch
-        # bulid the network
+        # bulid the network, if you are confused,
+        # refer to the forward method, which show 
+        # the whole network architecture
         self.build_backbone()
         self.build_network() 
     
+    def build_backbone(self):
+        backbone = self.arch.backbone
+        self.backbone = build_block(backbone)
+
     def build_network(self):
         stages = [f'stage{i}' for i in range(1, 7)]
         for stage in stages:
@@ -45,6 +51,35 @@ class PoseNet(nn.Module):
             setattr(self, f"{stage}_PAF", PAF)
             setattr(self, f"{stage}_CFM", CFM)
 
-    def build_backbone(self):
-        backbone = self.arch.backbone
-        self.backbone = build_block(backbone)
+    def forward(self, x):
+        filter_map = self.backbone(x)
+        # stage1
+        PAF_1 = self.stage1_PAF(filter_map)
+        CFM_1 = self.stage1_CFM(filter_map)
+        out_1 = torch.cat([PAF_1, CFM_1, filter_map], dim=1)
+        # stage2
+        PAF_2 = self.stage2_PAF(out_1)
+        CFM_2 = self.stage2_CFM(out_1)
+        out_2 = torch.cat([PAF_2, CFM_2, filter_map], dim=1)
+        # stage3
+        PAF_3 = self.stage3_PAF(out_2)
+        CFM_3 = self.stage3_CFM(out_2)
+        out_3 = torch.cat([PAF_3, CFM_3, filter_map], dim=1)
+        # stage4
+        PAF_4 = self.stage4_PAF(out_3)
+        CFM_4 = self.stage4_CFM(out_3)
+        out_4 = torch.cat([PAF_4, CFM_4, filter_map], dim=1)
+        # stage5
+        PAF_5 = self.stage3_PAF(out_4)
+        CFM_5 = self.stage3_CFM(out_4)
+        out_5 = torch.cat([PAF_5, CFM_5, filter_map], dim=1)
+        # stage6
+        PAF_6 = self.stage3_PAF(out_5)
+        CFM_6 = self.stage3_CFM(out_5)
+        
+        # because loss is computed in every stage, 
+        # so we need to return all of them
+        PAFs = [PAF_1, PAF_2, PAF_3, PAF_4, PAF_5, PAF_6]
+        CFMs = [CFM_1, CFM_2, CFM_3, CFM_4, CFM_5, CFM_6]
+
+        return PAFs, CFMs

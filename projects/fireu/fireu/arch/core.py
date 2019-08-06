@@ -8,16 +8,11 @@ class Arch(object):
 
     def __init__(self):
         self.description = "This is base class of network architecture"
+        # same as pytorch, but you can rearange it as you want
         self.parameter_order = {
-            'convolution' : [
-                'in', # input channels, aka in_filters
-                'out', # output channels, aka out_filters
-                'ksize', # kernel size
-                'stride', # stride
-                'pad', # padding
-                'dilation', # spacing between kernel points
-                'group', # channels groups
-                'bias', # True of False, whether to contains bias
+            'convolution': [
+                'channels_in', 'channels_out', 'ksize', 'stride', 
+                'pad', 'dilation', 'group', 'bias'
             ],
             'pooling': ['ksize', 'stride', 'pad'],
         }
@@ -76,6 +71,7 @@ class PoseEstimation(Arch):
                 PE1_conv5_5_L2 = [512, 19, 1, 1, 0]),
         )
         # stage2至stage6的网络结构完全一致，这里我们采用动态生成的方式
+        # 这里的i代码第i个stage
         self.stage2_6 = OrderedDict(
             PAF = OrderedDict(
                 PEi_conv1_L1 = [185, 128, 7, 1, 3],
