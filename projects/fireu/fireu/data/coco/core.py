@@ -7,6 +7,7 @@ import pycocotools.coco as coco
 
 from .entity import KeyPointParams # for KeyPoint
 
+# NOTE: for debug, should be removed
 import pysnooper
 
 class COCO(object):
@@ -271,9 +272,9 @@ class KeyPoint(COCO):
             mask = mask.astype(np.uint8) * 255
             # save beside to images directory, same name of image
             # but use PNG for its lossless compression
+            # 这里将图片保存在原来images目录的同一级上，但使用无损的png格式保存
             file_path = self.get_im_path(im_id=im_id).replace('.jpg', '.png')
             mask_path = osp.join(self.mask_dir, osp.basename(file_path))
-            print(mask.shape)
             cv2.imwrite(mask_path, mask)
             
     def get_ignore_mask(self, im_id):
@@ -307,6 +308,8 @@ class KeyPoint(COCO):
         return im, mask, poses
 
     def augment_data(self, im, mask, poses):
+        """Augment strategy for Pose estimation"""
+        # TODO: implement it
         return im, mask, poses
 
     def generate_labels(self, im, mask, poses):

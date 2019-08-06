@@ -1,24 +1,22 @@
 import sys
 import os
 import os.path as osp
-# enable import `deepfree` 
-sys.path.insert(0, osp.abspath('..'))
 
 import cv2
-from deepfree.datasets.utils import visual
+from fireu.data.tools import visual
 from pycocotools.coco import COCO
 
 
 # dataset path
-person_json = "/media/data/urun_tandong_video/data/COCO/annotations/person_keypoints_train2014.json"
-imdir = "/media/data/urun_tandong_video/data/COCO/images/train2014/"
+person_json = "/data/minicoco/annotations/mini_person_keypoints_val2014.json"
+imdir = "/data/minicoco/images/"
 
 coco = COCO(person_json)
 keys = list(coco.imgs.keys())
 
 # search for a good key with 17 keypoints
 find = False
-for key in keys[1000:]:
+for key in keys:
     ann_ids = coco.getAnnIds(key)
     ann_metas = coco.loadAnns(ann_ids)
     if len(ann_metas) > 0:
