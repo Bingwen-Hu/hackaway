@@ -15,9 +15,9 @@ def build_block(block):
         if 'conv' in name:
             # *params works because both parameter orders are same
             layers += [nn.Conv2d(*params)]
+            layers += [nn.ReLU(inplace=True)]
         elif 'pool' in name:
             layers += [nn.MaxPool2d(*params)]
-            layers += [nn.ReLU(inplace=True)]
         else:
             print(f"layer {name} is skipped")
     return nn.Sequential(*layers)
