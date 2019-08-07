@@ -29,8 +29,12 @@ class PoseNet(nn.Module):
     """
 
     def __init__(self, arch: Pose):
+        """Build the network architecture
+        Args:
+            Pose: Type of architecture 
+        """
         super().__init__()
-        self.arch = arch
+        self.arch = arch()
         # bulid the network, if you are confused,
         # refer to the forward method, which show 
         # the whole network architecture
