@@ -2,7 +2,7 @@
 
 import numpy as np
 
-def gradient_descent(x, y, lr=0.0001, threshold=1e-6):
+def gradient_descent(x, y, lr=0.001, threshold=1e-6):
     params = np.array([0.1, 0.2, 0])
     x = np.array([x[0], x[1], 1])
     y_h = np.sum(x * params)
