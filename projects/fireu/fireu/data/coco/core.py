@@ -73,6 +73,22 @@ class KeyPoint(COCO):
         # create mask directory
         os.makedirs(self.mask_dir, exist_ok=True)
     
+    # -------- Preprocessing --------
+    @staticmethod
+    def im_preprocess(self, im, channel_first=False):
+        """image pre-processing, scale image by divide 255,
+        centre image by substract 0.5
+        
+        Args:
+            im: image object return by cv2.imread
+            channel_first: if True, put channels on axis 0
+        """
+        im /= 255.0
+        im -= 0.5
+        if channel_first:
+            im = im.transpose((2, 0, 1))
+        return im
+
     def convert_joint_order(self, ann_metas):
         """convert the joint order from COCO to ours
 
@@ -157,7 +173,6 @@ class KeyPoint(COCO):
         heatmap_bg = (1 - heatmap_sum).reshape([1, im_h, im_w]) # 背景
         heatmaps = np.vstack([heatmaps, heatmap_bg])
         return heatmaps.astype(np.float32)
-
 
     def make_PAF(self, shape, joint_from, joint_to):
         """generate part_affinity_field following the paper
@@ -289,6 +304,7 @@ class KeyPoint(COCO):
         im = cv2.imread(path)
         return np.zeros(im.shape[:2], 'bool')
 
+    # -------- Data Augmentation --------
     def resize_data(self, im, mask, poses, shape):
         """resize all data as shape
 
@@ -312,6 +328,7 @@ class KeyPoint(COCO):
         # TODO: implement it
         return im, mask, poses
 
+    # -------- Data Generator --------
     def generate_labels(self, im, mask, poses):
         """generate labels for training purpose
 
@@ -331,7 +348,7 @@ class KeyPoint(COCO):
         return im, mask, heatmaps, pafs
 
 
-    # 这里开始是可视化相关的函数
+    # -------- Visualization --------
     @staticmethod 
     def plot_ignore_mask(im, mask, color=(0, 0, 1)):
         """visualize mask genrated by Class Keypoint
@@ -448,3 +465,5 @@ class KeyPoint(COCO):
         mask = (mask == 0).astype(np.uint8)
         im = im * np.repeat(mask[:, :, None], 3, axis=2)
         return im
+
+    # -------- Post-Processing --------

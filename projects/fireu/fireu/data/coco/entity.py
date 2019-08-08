@@ -88,9 +88,18 @@ class KeyPointParams(Params):
         Joint.RAnkle,
     ]
 
-    # TODO: add comments
+    # Training Parameters
     insize = 368
     min_area = 32 * 32
     min_keypoints = 5
     heatmap_sigma = 7
     paf_sigma = 8 # aka `limb width`
+
+    # Inference Parameters
+    infer_insize = 368
+    infer_scales = [0.5, 1.0, 1.5, 2.0]
+    # TODO: heatmap size means what?
+    heatmap_size = 320
+    gaussian_sigma = 2.5
+    gaussian_ksize = 17
+    

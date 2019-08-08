@@ -16,6 +16,7 @@ fireu/
 + Cython
 + opencv
 + numpy
++ scipy
 + matplotlib
 + pycocotools
 

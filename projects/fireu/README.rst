@@ -22,6 +22,7 @@ dependences
 * Cython
 * opencv
 * numpy
+* scipy
 * matplotlib
 * pycocotools
 

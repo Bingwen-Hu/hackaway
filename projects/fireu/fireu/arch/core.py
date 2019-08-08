@@ -8,7 +8,7 @@ class Arch(object):
 
     def __init__(self):
         self.description = "This is base class of network architecture"
-        # same as pytorch, but you can rearange it as you want
+        # same as pytorch, but you can rearange it if you want
         self.parameter_order = {
             'convolution': [
                 'channels_in', 'channels_out', 'ksize', 'stride', 
@@ -94,6 +94,9 @@ class PoseEstimation(Arch):
         self.build_stage2_6()
         
     def build_stage2_6(self):
+        """Create attribute for self
+        makes self.stage[2-6] available
+        """
         stage2_6 = self.stage2_6
         paf, cfm = stage2_6.keys()
         paf = stage2_6[paf]
