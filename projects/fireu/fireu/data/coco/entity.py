@@ -102,4 +102,7 @@ class KeyPointParams(Params):
     heatmap_size = 320
     gaussian_sigma = 2.5
     gaussian_ksize = 17
+
+    # for heatmap
+    peak_threshold = 0.05
     

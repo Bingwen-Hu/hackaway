@@ -5,9 +5,15 @@ import cv2
 import numpy as np
 import pycocotools.coco as coco
 
-from .entity import KeyPointParams # for KeyPoint
+# for finding peaks from heatmap
+from scipy.ndimage import generate_binary_structure
+from scipy.ndimage import gaussian_filter
+from scipy.ndimage import maximum_filter
 
-# NOTE: for debug, should be removed
+# Parameter setting for KeyPoint
+from .entity import KeyPointParams
+
+# for debug, should be removed
 import pysnooper
 
 class COCO(object):
@@ -61,6 +67,9 @@ class KeyPoint(COCO):
     """A class for pose estimation, especially for this paper
     link: https://arxiv.org/abs/1611.08050.
 
+    NOTE: In this class, I use `heatmap` or `confidence map` to represent the
+    concept of confidence map in the Paper. Heatmap emphasizes concrete details
+    while confidence map emphasizes the meaning of concept.
     """
     def __init__(self, images_directory, annotation_file, params: KeyPointParams):
         """
@@ -124,7 +133,7 @@ class KeyPoint(COCO):
         return poses
 
     def make_confidence_map(self, shape, joint):
-        """create a confidence map (heatmap, jointmap).
+        """create a confidence map (a.k.a. heatmap, jointmap).
 
         Args:
             shape: shape of confidence map 
@@ -467,3 +476,68 @@ class KeyPoint(COCO):
         return im
 
     # -------- Post-Processing --------
+    def find_peaks(self, heatmap):
+        """find peaks from heatmap. Here, we decide a peak by 2 conditions:
+        1. the peak must surpass the threshold
+        2. the peak must surpass its four direction points around
+           ----    Top     -----
+           Left    Peak    Right  s.t. Peak is maximum
+           ----    Bottom  -----
+           this struct is referred as `footprint` in this function 
+
+        Args:
+            heatmap: heatmap of joint, usually is one channel of network output
+
+        Returns:
+            Coordinates of peaks in image-form, with shape (N, 2). Note that for 
+            a point(x, y) in an image, you should fetch it by (y, x) in numpy. 
+            Here we use the image-form instead of numpy.array format.
+        """
+        footprint = generate_binary_structure(2, 1)
+        peaks = maximum_filter(heatmap, footprint=footprint)
+        # now we compute the coordinates
+        binary = (peaks == heatmap) * (heatmap > self.params['peak_threshold'])
+        # we reverse the return value to get the coordinates in image-form
+        coords = np.nonzero(binary)[::-1]
+        coords = np.array(coords).T
+        return coords
+
+    @staticmethod
+    def coordinates_resize(coords, factor):
+        """helper function used for finetuning peaks. resize coordinates
+        according to given factor. Given cell [1,2] return [2.5, 4.5]
+        Get from:
+        https://github.com/tensorboy/pytorch_Realtime_Multi-Person_Pose_Estimation
+
+        Args:
+            coords: coordinates of peaks in image-form, with shape (N, 2)
+            factor: int, indicate the scale to perform
+
+        Returns:
+            New coordinates with the same shape. Note that new coordinates 
+            is float type.
+        """
+        coords = coords.astype('f')
+        return (coords + 0.5) * factor - 0.5
+
+    @staticmethod
+    def coordinates_finetune(heatmap, peak, winsize=3):
+        """finetune coordinates
+        
+        Args:
+            heatmap: heatmap of joint, usually is one channel of network output
+            peak: peak coordinate (x, y) in image-form
+            winsize: control patch size. E.g. winsize=1, patch => 3x3
+                winsize=2, patch => 5x5
+        Returns:
+            Refined version of peak.
+        """
+        pass
+    
+    def NMS(self, heatmaps, factor, refined=True, smooth=False):
+        """Follow the paper section 2.2,  NMS obtains body part candidates
+
+        Args:
+
+        """
+
