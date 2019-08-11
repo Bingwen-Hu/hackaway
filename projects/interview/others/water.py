@@ -34,6 +34,7 @@ def pipeline(input):
             if delta > 0:
                 v = min(m, v + delta)
             else:
+                # 注意delta是负值
                 v = max(0, v + delta)
         # 只打开了给水管
         elif get_state:
