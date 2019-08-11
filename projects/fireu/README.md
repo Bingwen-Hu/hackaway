@@ -1,14 +1,17 @@
-# Fire U
+# Fireu
 Portable codes between different deep learning framework like `Pytorch`, `Tensorflow` etc.
+
+`Fireu` aim to help deep learner to handle dirty work such as parsing dataset, data preprocess and model post procecss etc.
 
 
 ### Architecture
 ```sh
-fireu/
+fireu
+├── arch
 └── data
     ├── coco
     ├── preprocess
-    └── utils
+    └── tools
 ```
 
 
