@@ -545,11 +545,16 @@ class KeyPoint(COCO):
         Returns:
             numpy.array, each row represents (joint, x, y, score, global id)
             Note that global id is unique for specific joint regardless its 
-            type. we refer return value as `part_list` in `part_associate`.
+            type. we refer return value as `parts_list` in `part_associate` 
+            and `person_parse`.
+        
+        Note: 
+            The global id for each joint is used to decide which person owns
+            this joint. See `person_parse` for more details.
         """
         pass
 
-    def part_associate(self, pafs, part_list, nb_sample):
+    def part_associate(self, pafs, parts_list, nb_sample):
         """Follow the paper section 2.3, this function leverages PAFs to find 
         connections between peaks.
     
@@ -560,5 +565,19 @@ class KeyPoint(COCO):
                 sample some points lied on the limb (connection).
 
         Returns:
+            we refer this return value as `limbs_list` in `person_parse`.
+        """
+        pass
+
+    def person_parse(self, parts_list, limbs_list):
+        """Follow the paper section 2.4, this function parse multi-person
+        using PAFs
+        
+        Args:
+            parts_list: return value of `NMS`
+            limbs_list: return value of `part_associate`
+
+        Returns:
 
         """
+        pass
