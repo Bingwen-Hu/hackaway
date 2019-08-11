@@ -522,7 +522,7 @@ class KeyPoint(COCO):
 
     @staticmethod
     def coordinates_finetune(heatmap, peak, winsize=3):
-        """finetune coordinates
+        """helper function to finetune coordinates
         
         Args:
             heatmap: heatmap of joint, usually is one channel of network output
@@ -534,10 +534,31 @@ class KeyPoint(COCO):
         """
         pass
     
-    def NMS(self, heatmaps, factor, refined=True, smooth=False):
+    def NMS(self, heatmaps, factor, smooth=False):
         """Follow the paper section 2.2,  NMS obtains body part candidates
 
         Args:
+            heatmaps: (h, w, len(joints)) numpy.array
+            factor: size ratio between CFM heatmap and insize
+            smooth: if True, apply Gaussian Filter
+        
+        Returns:
+            numpy.array, each row represents (joint, x, y, score, global id)
+            Note that global id is unique for specific joint regardless its 
+            type. we refer return value as `part_list` in `part_associate`.
+        """
+        pass
+
+    def part_associate(self, pafs, part_list, nb_sample):
+        """Follow the paper section 2.3, this function leverages PAFs to find 
+        connections between peaks.
+    
+        Args:
+            pafs: PAFs generate by network
+            part_list: return value of `NMS`
+            nb_sample: number of samples. In order to evaluate connections, we
+                sample some points lied on the limb (connection).
+
+        Returns:
 
         """
-
