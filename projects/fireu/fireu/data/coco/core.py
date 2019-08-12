@@ -168,7 +168,8 @@ class KeyPoint(COCO):
         heatmap_sum = np.zeros([im_h, im_w])
         # 这里的思路是，将所有相同关键点放到一个heatmap中
         # 所以是先遍历关键点，再遍历每个人的pose
-        for joint_i in range(len(self.params.joint)):
+        # 因为Joint是整型枚举型数据，所以可以直接当整数用
+        for joint_i in self.params.joint:
             heatmap = np.zeros([im_h, im_w])
             for pose in poses:
                 # 查看每一个关节点的v值，大于0说明该点有标签
@@ -496,14 +497,13 @@ class KeyPoint(COCO):
         footprint = generate_binary_structure(2, 1)
         peaks = maximum_filter(heatmap, footprint=footprint)
         # now we compute the coordinates
-        binary = (peaks == heatmap) * (heatmap > self.params['peak_threshold'])
+        binary = (peaks == heatmap) * (heatmap > self.params.peak_threshold)
         # we reverse the return value to get the coordinates in image-form
         coords = np.nonzero(binary)[::-1]
         coords = np.array(coords).T
         return coords
 
-    @staticmethod
-    def coordinates_resize(coords, factor):
+    def coordinates_resize(self, coords, factor):
         """helper function used for finetuning peaks. resize coordinates
         according to given factor. Given cell [1,2] return [2.5, 4.5]
         Get from:
@@ -520,39 +520,96 @@ class KeyPoint(COCO):
         coords = coords.astype('f')
         return (coords + 0.5) * factor - 0.5
 
-    @staticmethod
-    def coordinates_finetune(heatmap, peak, winsize=3):
-        """helper function to finetune coordinates
+    def peak_refine(self, heatmap, peak, factor, winsize=2, smooth=False):
+        """helper function to refine coordinates of peak
         
         Args:
             heatmap: heatmap of joint, usually is one channel of network output
             peak: peak coordinate (x, y) in image-form
+            factor: size ratio between CFM heatmap and insize
             winsize: control patch size. E.g. winsize=1, patch => 3x3
                 winsize=2, patch => 5x5
+            smooth: if True, apply Gaussian Filter
+
         Returns:
-            Refined version of peak.
+            A tuple( Refined version of peak, score of peak )
         """
-        pass
-    
-    def NMS(self, heatmaps, factor, smooth=False):
+        # heatmap.T.shape => (width, height)
+        shape = np.array(heatmap.T.shape) - 1
+        # Get patch border, still in image format
+        x_min, y_min = np.maximum(0, peak - winsize)
+        x_max, y_max = np.minimum(shape, peak + winsize)
+        # take a small patch around peak and upsample it
+        # 将peak周围的区域进行上采样
+        patch = heatmap[y_min : y_max + 1, x_min : x_max + 1]
+        patch = cv2.resize(patch, None, None, factor, factor, cv2.INTER_CUBIC)
+        
+        # apply gaussian filter
+        if smooth:
+            patch = gaussian_filter(patch, sigma=self.params.gaussian_sigma)
+
+        # 从这里我们开始修正peak的坐标。peak现在不一定是patch中的最大值（当然，一般是）。
+        # 所以我们的做法是，先计算patch中最大值的坐标，然后计算这个坐标跟peak的偏置。如果
+        # 两者相同，那么偏置为0。如果不同，这用这个偏置去修正peak的坐标。
+        # 
+        # 1. 计算当前patch的最大值的坐标，注意这是numpy format
+        patch_max = np.unravel_index(patch.argmax(), patch.shape)
+        # 2. 计算peak在patch上的坐标，也即是patch的中心坐标
+        patch_center = self.coordinates_resize(peak[::-1] - [y_min, x_min], factor)
+        # 3. 计算最大值坐标与中心坐标的偏置，用来对peak的坐标进行修正
+        offset = patch_max - patch_center
+        peak_refined = self.coordinates_resize(peak, factor) + offset[::-1]
+        peak_score = patch[patch_max]
+        return peak_refined, peak_score
+
+
+    def NMS(self, heatmaps, factor):
         """Follow the paper section 2.2,  NMS obtains body part candidates
 
         Args:
             heatmaps: (h, w, len(joints)) numpy.array
             factor: size ratio between CFM heatmap and insize
-            smooth: if True, apply Gaussian Filter
         
         Returns:
-            numpy.array, each row represents (joint, x, y, score, global id)
-            Note that global id is unique for specific joint regardless its 
-            type. we refer return value as `parts_list` in `part_associate` 
-            and `person_parse`.
+            List, each element represents one part, each part contains several
+            peaks. Each peak contains (x, y, score, global id). Note that the
+            global id is unique for every joint regardless its type. we refer
+            return value as `parts_list` in `part_associate` and `person_parse`.
         
         Note: 
             The global id for each joint is used to decide which person owns
             this joint. See `person_parse` for more details.
         """
-        pass
+        parts_list = []
+        global_id = 0
+        
+        for joint_i in self.params.joint:
+            heatmap = heatmaps[:, :, joint_i]
+            peaks = self.find_peaks(heatmap)
+            # each part contains (x, y, score, global_id)
+            parts = np.zeros([len(peaks), 4])
+            
+            for peak_i, peak in enumerate(peaks):
+                # 这里，如果对peak进行修正，那么修正时会返回分数。如果不修正，
+                # 则直接获取分类。但peak的位置仍需要进行放缩
+                if self.params.peak_refine:
+                    peak, score = self.peak_refine(heatmap, peak, factor
+                        self.params.winsize, self.params.smooth)
+                else:
+                    score = heatmap[peak[::-1]]
+                    peak = self.coordinates_resize(peak, factor)
+                # 现在peak已经变成浮点型，需要转成整型
+                peak = [int(x) for x in peak]
+                # 将新的peak坐标，分数，以及这个peak的id放入对应的part
+                part = [*peak, score, global_id]
+                parts[peak_i, :] = part
+                # 更新全局id
+                global_id += 1
+            
+            parts_list.append(parts)
+            
+        return parts_list
+
 
     def part_associate(self, pafs, parts_list, nb_sample):
         """Follow the paper section 2.3, this function leverages PAFs to find 
@@ -560,13 +617,36 @@ class KeyPoint(COCO):
     
         Args:
             pafs: PAFs generate by network
-            part_list: return value of `NMS`
+            parts_list: return value of `NMS`
             nb_sample: number of samples. In order to evaluate connections, we
                 sample some points lied on the limb (connection).
 
         Returns:
             we refer this return value as `limbs_list` in `person_parse`.
         """
+        limbs_list = []
+        # accessor is defined to access points from PAF quickly
+        # For each row:
+        # row 0: x coordinate
+        # row 1: y coordinate
+        # row 2: index of PAF of `from part` aka `fpart`
+        # row 3: index of PAF of `to part` aka `tpart`
+        accessor = np.empty([4, nb_sample], dtype=np.intp)
+
+        for fpart_i, tpart_i in self.params.limbs:
+            fparts = parts_list[fpart_i]
+            tparts = parts_list[tpart_i]
+            # for each limb type, we use a list to store limbs
+            limbs = []
+            if len(fparts) == 0 or len(tparts) == 0:
+                # no limb between these two parts is found
+                limbs_list.append(limbs)
+            else:
+                    
+            
+
+
+
         pass
 
     def person_parse(self, parts_list, limbs_list):

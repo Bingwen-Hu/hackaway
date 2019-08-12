@@ -32,10 +32,40 @@ class Joint(IntEnum):
 
 
 class Params:
-    pass
+    # input size for images
+    insize = 224
+    im_h = 224
+    im_w = 224
+
+    
 
 class KeyPointParams(Params):
 
+    # Training Parameters
+    insize = 368
+    min_area = 32 * 32
+    min_keypoints = 5
+    heatmap_sigma = 7
+    paf_sigma = 8 # aka `limb width`
+
+    # Inference Parameters
+    infer_insize = 368
+    infer_scales = [0.5, 1.0, 1.5, 2.0]
+    heatmap_size = 320
+
+    # for gaussian filter smoothing
+    smooth = False
+    gaussian_sigma = 2.5
+
+    # for peak selection
+    peak_threshold = 0.05
+    # for peak refinement
+    peak_refine = True
+    winsize = 2
+    # for PAFs evaluate
+    nb_sample = 10
+   
+    # specific params
     joint = Joint
 
     # In MS COCO, this is called skeleton
@@ -88,21 +118,4 @@ class KeyPointParams(Params):
         Joint.RAnkle,
     ]
 
-    # Training Parameters
-    insize = 368
-    min_area = 32 * 32
-    min_keypoints = 5
-    heatmap_sigma = 7
-    paf_sigma = 8 # aka `limb width`
-
-    # Inference Parameters
-    infer_insize = 368
-    infer_scales = [0.5, 1.0, 1.5, 2.0]
-    # TODO: heatmap size means what?
-    heatmap_size = 320
-    gaussian_sigma = 2.5
-    gaussian_ksize = 17
-
-    # for heatmap
-    peak_threshold = 0.05
-    
+   

@@ -35,8 +35,11 @@ def lucky(string):
             best = max(length, best)
             chance = 0
             length = 0
-            # 回溯到第1次使用修改机会的位置的后一位
-            i = back[0] + 1
+            # 回溯
+            if back[0] + 1 == back[1]:
+                i = back[1] + 1
+            else:
+                i = back[0] + 1
     best = max(best, length)
     return best
 
