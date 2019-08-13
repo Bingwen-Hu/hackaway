@@ -610,44 +610,103 @@ class KeyPoint(COCO):
             
         return parts_list
 
-
-    def part_associate(self, pafs, parts_list, nb_sample):
+    def part_associate(self, pafs, parts_list, nb_sample, limb_threshold):
         """Follow the paper section 2.3, this function leverages PAFs to find 
         connections between peaks.
     
         Args:
-            pafs: PAFs generate by network
+            pafs: PAFs has already been resized to original input image shape
             parts_list: return value of `NMS`
             nb_sample: number of samples. In order to evaluate connections, we
                 sample some points lied on the limb (connection).
+            limb_threshold: keep limb which surpass this value
 
         Returns:
-            we refer this return value as `limbs_list` in `person_parse`.
+            Nested list, length equals to limbs type. For each limb type, may 
+            have none or more limbs. We refer this return value as `limbs_list` 
+            in `person_parse`.
+            Each limb contains (fGid, tGid, score, fpart_i, tpart_i) 
+            fGid means `from global id`. tGid means `to global id`
         """
         limbs_list = []
-        # accessor is defined to access points from PAF quickly
-        # For each row:
-        # row 0: x coordinate
-        # row 1: y coordinate
-        # row 2: index of PAF of `from part` aka `fpart`
-        # row 3: index of PAF of `to part` aka `tpart`
-        accessor = np.empty([4, nb_sample], dtype=np.intp)
 
-        for fpart_i, tpart_i in self.params.limbs:
-            fparts = parts_list[fpart_i]
-            tparts = parts_list[tpart_i]
-            # for each limb type, we use a list to store limbs
-            limbs = []
+        for limb_i, (fparts_i, tparts_i) in enumerate(self.params.limbs):
+            fparts = parts_list[fparts_i]
+            tparts = parts_list[tparts_i]
+
             if len(fparts) == 0 or len(tparts) == 0:
                 # no limb between these two parts is found
-                limbs_list.append(limbs)
+                limbs = []
             else:
-                    
+                # we need a possible limbs to temporarily store all the limbs
+                # and decide which are valid limbs
+                possible_limbs = []
+                # compute the index of PAFs of fpart and tpart
+                fpaf_i = 2 * limb_i
+                tpaf_i = 2 * limb_i + 1
+                # this strange syntax is for broadcast in numpy
+                channels = [[fpaf_i], [tpaf_i]]
+                # here we need a nested for loop to match every possible limb
+                for fpart_i, fpart in enumerate(fparts):
+                    for tpart_i, tpart in enumerate(tparts):
+                        # part affinity unit vector
+                        vector = tpart[:2] - fpart[:2]
+                        norm = np.linalg.norm(vector)
+                        # two points may overlay
+                        if norm == 0:
+                            continue
+                        vector = vector / norm # shape: (2, )
+
+                        # approximate integral by sampling and summing 
+                        # uniformly-spaced values of u. Note that xs, ys are 
+                        # in image form. So we access sample in order [ys, xs]
+                        xs = np.round(np.linspace(fpart[0], tpart[0], nb_sample))
+                        ys = np.round(np.linspace(fpart[1], tpart[1], nb_sample))
+                        samples = pafs[ys, xs, channels] # shape: (2, nb_sample)
+                        # compute the limb score
+                        score = samples.T.dot(vector) # shape: (nb_sample, )
+                        # penalty for long limb (long than half of height of PAF)
+                        penalty = min(0, 0.5 * pafs.shape[0] / norm - 1)
+                        score_penalty = score.mean() + penalty
+                        # now we evaluate the score of limb
+                        # first, 80% of points surpass threshold 
+                        # second, score_penalty must be positive
+                        nb_surpass = np.count_nonzero(score > limb_threshold)
+                        criterion1 = nb_surpass > 0.8 * nb_sample
+                        criterion2 = score_penalty > 0
+                        if criterion1 and criterion2:
+                            fGid, tGid = fparts[fpart_i][3], tparts[tpart_i][3]
+                            limb = [fGid, tGid, score_penalty, fpart_i, tpart_i]
+                            possible_limbs.append(limb)
+           
+                # now, we have all possible limbs for each limb type, we need to
+                # evaluate them. This part matches formula 13, 14 in paper
+                # 1. sort limbs according to its score
+                possible_limbs.sort(key=lambda x: x[2], reverse=True)
+                # 2. use greedy algorithms to decide which limb is good, note that 
+                # maximum number of limb is the minimum number of two parts
+                max_limb = min(len(fparts), len(tparts))
+                # store the final limbs, recall that each row contains
+                # (from Gid, to Gid, score, fpart_i, tpart_i) 
+                limbs = []
+                fpart_used = []
+                tpart_used = []
+                for limb in possible_limbs:
+                    fpart_i, tpart_i = limb[3], limb[4]
+                    if fpart_i in fpart_used or tpart_i in tpart_used:
+                        # if either each part is used, then the this is invalid
+                        continue
+                    else:
+                        limbs.append(limb)
+                        fpart_used.append(fpart_i)
+                        tpart_used.append(tpart_i)
+                        # if maximum limb is reached, parse finish
+                        if len(limbs) == max_limb:
+                            break
             
+            limbs_list.append(limbs)
 
-
-
-        pass
+        return limbs_list
 
     def person_parse(self, parts_list, limbs_list):
         """Follow the paper section 2.4, this function parse multi-person
@@ -658,6 +717,56 @@ class KeyPoint(COCO):
             limbs_list: return value of `part_associate`
 
         Returns:
-
+        
         """
-        pass
+        # 我们的目标是输出关键点(part)，而每个关键点都有一个全局唯一的ID，所以我们只
+        # 需要算出每个人的关节点的ID就可以了。如果没有这个节点，就用-1来表示
+        # 对于每个人，我们还额外记录两个值，一个是这个人拥有的节点数，一个是他的分数
+        # 所以对于列表的每个元素，长度为 len(self.params.joint) + 2
+        persons = []
+        person_size = len(self.params.joint) + 2
+        # 我们建立一个字典来索引part跟person的关系，如果这个part已经被关联了，那么
+        # 字典里将保存这个人的ID. Key: part Gid, Value: person ID
+        mapping = {}
+
+        for limb_i, (fpart, tpart) in enumerate(self.params.limbs):
+            for limb in limbs_list[limb_i]:
+                fGid, tGid = limb[0], limb[1]
+                # 这里的代码非常低效，它需要遍历每一个人，看看这个limb的两个关节
+                # 已经关联的人的id
+                fperson = mapping.get(fGid)
+                tperson = mapping.get(tGid)
+                
+                # 对于每个联结(limb)，有好几种情况：
+                # 1. 两个节点(part)都没有关联到人，则创建新人来关联 
+                # 2. 两个节点，其中一个已关联，另一个没有，则将没有关联的那个节点
+                #    加入到已关联的那个人里去
+                # 3. 两个节点都已关联
+                # 3.1 但关联的是同一个人，则只需要将limb的分数加给那个人就好
+                # 3.2 两个节点关联到不同的人
+                # 3.2.1 但这两个人并没有重复节点，则将两个人合并成一个人
+                # 3.2.2 这两个人有重复节点，我想是编码逻辑错误了
+                if fperson is None and tperson is None:
+                    person = [-1] * person_size
+                    person[fpart] = fGid
+                    person[tpart] = tGid
+                    # -1 位置放节点数
+                    person[-1] = 2
+                    # -2 位置放分数，包括两个peak_score和他们的limb_score
+                    person[-2] = sum([
+                        parts_list[fpart][2],
+                        parts_list[tpart][2],
+                        limb[2],
+                    ])
+                    persons.append(person)
+                    # 计算目前这个人的id
+                    person_id = len(persons) - 1
+                    # 将节点与这个人的id进行关联
+                    mapping[fGid] = person_id
+                    mapping[tGid] = person_id
+                elif fperson is None:
+                    pass
+                elif tperson is None:
+                    pass
+                else:
+                    pass

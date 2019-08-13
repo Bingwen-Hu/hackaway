@@ -64,6 +64,7 @@ class KeyPointParams(Params):
     winsize = 2
     # for PAFs evaluate
     nb_sample = 10
+    limb_threshold = 0.05
    
     # specific params
     joint = Joint
