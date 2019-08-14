@@ -1,12 +1,8 @@
-"""Definition of entities. Thanks to:
-https://github.com/DeNA/Chainer_Realtime_Multi-Person_Pose_Estimation
-"""
+import enum
 
+from ..core import Parameter
 
-from enum import IntEnum
-
-
-class Joint(IntEnum):
+class Joint(enum.IntEnum):
     """Joint type for pose estimation task, we define our 
     own keypoints order and joint type, which is different
     from COCO's. 
@@ -31,15 +27,7 @@ class Joint(IntEnum):
     REar = 16;  LEar = 17
 
 
-class Params:
-    # input size for images
-    insize = 224
-    im_h = 224
-    im_w = 224
-
-    
-
-class KeyPointParams(Params):
+class KeyPointParams(Parameter):
 
     # Training Parameters
     insize = 368
@@ -56,15 +44,19 @@ class KeyPointParams(Params):
     # for gaussian filter smoothing
     smooth = False
     gaussian_sigma = 2.5
-
     # for peak selection
-    peak_threshold = 0.05
+    peak_threshold = 0.1
     # for peak refinement
     peak_refine = True
     winsize = 2
     # for PAFs evaluate
     nb_sample = 10
+    nb_sample_threshold = 8
     limb_threshold = 0.05
+    # for person
+    mean_score_threshold = 0.2
+    nb_part_threshold = 3
+
    
     # specific params
     joint = Joint
@@ -118,5 +110,3 @@ class KeyPointParams(Params):
         Joint.LAnkle,
         Joint.RAnkle,
     ]
-
-   

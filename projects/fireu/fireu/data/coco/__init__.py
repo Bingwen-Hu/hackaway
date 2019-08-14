@@ -1,3 +1,3 @@
 from .core import COCO
-from .core import KeyPoint
-from .core import KeyPointParams
+from .keypoint import KeyPointTrain
+from .keypoint import KeyPointTest
