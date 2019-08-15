@@ -815,7 +815,8 @@ class KeyPointTest(object):
         # 就刚好与它的行数相对应
         parts = np.vstack(parts_list)
         
-        for fpart, tpart in self.params.limbs:
+        # 我们忽略了最后两个limb
+        for limb_i, (fpart, tpart) in enumerate(self.params.limbs[:-2]):
             for person in persons.values():
                 fGid, tGid = person[fpart], person[tpart]
                 if fGid == -1 or tGid == -1:
@@ -827,4 +828,18 @@ class KeyPointTest(object):
                 for peak in peaks_coords:
                     cv2.circle(canvas, peak, peak_radius, color, thickness=-1)
                 
+                # 现在我们想画这个limb，但它不是规整的图形，比较麻烦
+                # 先计算这两个点peak1，peak2的中心点坐标
+                peaks_center = tuple(peaks_coords.mean(axis=0).astype(int))
+                # 再计算两个点的连线的角度: 向量 -> arctan2(弧度制) -> 角度
+                # NOTE: confuse, why from - to
+                vector = peaks_coords[0, :] - peaks_coords[1, :]
+                angle = np.rad2deg(np.arctan2(vector[1], vector[0]))
+                norm = np.linalg.norm(vector)
+                axes = (norm // 2, limb_thickness)
                 
+                polygon = cv2.ellipse2Poly(peaks_center, axes, angle=int(angle),
+                    arcStart=0, arsEnd=360, delta=1)
+                cv2.fillConvexPoly(canvas, polygon, self.params.colors[limb_i])
+        
+        return canvas
