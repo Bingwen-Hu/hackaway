@@ -3,7 +3,7 @@ import torchvision
 import torch.nn as nn
 import torch.nn.functional as F
 
-from fireu.arch import PoseEstimation as Pose
+from freedom.arch import PoseEstimation as Pose
 
 
 def build_block(block):
