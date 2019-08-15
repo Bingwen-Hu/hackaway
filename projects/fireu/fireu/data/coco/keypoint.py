@@ -483,20 +483,27 @@ class KeyPointTest(object):
         coords = coords.astype('f')
         return (coords + 0.5) * factor - 0.5
 
-    def peak_refine(self, heatmap, peak, factor, winsize=2, smooth=False):
+    def peak_refine(self, heatmap, peak, factor):
         """helper function to refine coordinates of peak
         
         Args:
             heatmap: heatmap of joint, usually is one channel of network output
             peak: peak coordinate (x, y) in image-form
             factor: size ratio between CFM heatmap and insize
+
+        Params: 
             winsize: control patch size. E.g. winsize=1, patch => 3x3
                 winsize=2, patch => 5x5
             smooth: if True, apply Gaussian Filter
+            gaussian_sigma: gaussian filter parameter
 
         Returns:
             A tuple( Refined version of peak, score of peak )
         """
+        winsize = self.params.winsize
+        smooth = self.params.smooth
+        gaussian_sigma = self.params.gaussian_sigma
+
         # heatmap.T.shape => (width, height)
         shape = np.array(heatmap.T.shape) - 1
         # Get patch border, still in image format
@@ -509,7 +516,7 @@ class KeyPointTest(object):
         
         # apply gaussian filter
         if smooth:
-            patch = gaussian_filter(patch, sigma=self.params.gaussian_sigma)
+            patch = gaussian_filter(patch, sigma=gaussian_sigma)
 
         # 从这里我们开始修正peak的坐标。peak现在不一定是patch中的最大值（当然，一般是）。
         # 所以我们的做法是，先计算patch中最大值的坐标，然后计算这个坐标跟peak的偏置。如果
@@ -555,8 +562,7 @@ class KeyPointTest(object):
                 # 这里，如果对peak进行修正，那么修正时会返回分数。如果不修正，
                 # 则直接获取分类。但peak的位置仍需要进行放缩
                 if self.params.peak_refine:
-                    peak, score = self.peak_refine(heatmap, peak, factor,
-                        self.params.winsize, self.params.smooth)
+                    peak, score = self.peak_refine(heatmap, peak, factor)
                 else:
                     score = heatmap[peak[::-1]]
                     peak = self.coordinates_resize(peak, factor)
@@ -572,16 +578,108 @@ class KeyPointTest(object):
             
         return parts_list
 
-    def part_associate(self, pafs, parts_list, nb_sample, limb_threshold):
+    def limb_score(self, pafs, fparts, tparts, channels):
+        """helper function for part association
+
+        Args:
+            pafs: PAFs has already been resized to original input image shape
+            fparts: from parts, element of parts_list 
+            tparts: to parts, element of parts_list
+            channels: index array to fetch PAFs from `pafs`
+        
+        Params:
+            nb_sample: number of samples. In order to evaluate connections, we
+                sample some points lied on the limb (connection).
+            nb_sample_threshold: number of samples that a limb should surpass
+            limb_threshold: keep limb which surpass this value
+        
+        Returns: 
+            All possible limbs.
+            Each limb contains (fGid, tGid, score of limb, fpart_i, tpart_i)
+        """
+        possible_limbs = []
+        nb_sample = self.params.nb_sample
+        nb_sample_threshold = self.params.nb_sample_threshold
+        limb_threshold = self.params.limb_threshold
+
+        for fpart_i, fpart in enumerate(fparts):
+            for tpart_i, tpart in enumerate(tparts):
+                # part affinity unit vector
+                vector = tpart[:2] - fpart[:2]
+                norm = np.linalg.norm(vector)
+                # two points may overlay
+                if norm == 0:
+                    continue
+                vector = vector / norm # shape: (2, )
+
+                # approximate integral by sampling and summing uniformly-spaced
+                # values of u. Note that xs, ys are # in image form. 
+                # So we access sample in order [ys, xs]
+                xs = np.round(np.linspace(fpart[0], tpart[0], nb_sample))
+                ys = np.round(np.linspace(fpart[1], tpart[1], nb_sample))
+                samples = pafs[ys, xs, channels] # shape: (2, nb_sample)
+                # compute the limb score
+                score = samples.T.dot(vector) # shape: (nb_sample, )
+                # penalty for long limb (long than half of height of PAF)
+                penalty = min(0, 0.5 * pafs.shape[0] / norm - 1)
+                score_penalty = score.mean() + penalty
+                # now we evaluate the score of limb
+                # 1. 80% of points surpass threshold 
+                # 2. score_penalty must be positive
+                nb_surpass = np.count_nonzero(score > limb_threshold)
+                criterion1 = nb_surpass > nb_sample_threshold
+                criterion2 = score_penalty > 0
+                if criterion1 and criterion2:
+                    fGid, tGid = fparts[fpart_i, 3], tparts[tpart_i, 3]
+                    limb = [fGid, tGid, score_penalty, fpart_i, tpart_i]
+                    possible_limbs.append(limb)
+    
+        return possible_limbs
+
+    def limb_select(self, fparts, tparts, possible_limbs):
+        """Perform greedy algorithms to find good limbs
+        
+        Args:
+            fparts: from parts, element of parts_list 
+            tparts: to parts, element of parts_list
+            possible_limbs: refer to `limb_score`
+        
+        Returns:
+            a subset of possible_limbs, represent good limbs
+        """
+        # now, we have all possible limbs for each limb type, we need to
+        # evaluate them. This part matches formula 13, 14 in paper
+        # 1. sort limbs according to its score
+        possible_limbs.sort(key=lambda x: x[2], reverse=True)
+        # 2. use greedy algorithms to decide which limb is good, note that 
+        # maximum number of limb is the minimum number of two parts
+        max_limb = min(len(fparts), len(tparts))
+        # recall that each limb in possible_limbs contains
+        # (fGid, tGid, score, fpart_i, tpart_i) 
+        limbs = []
+        fpart_used = []
+        tpart_used = []
+        for limb in possible_limbs:
+            fpart_i, tpart_i = limb[3], limb[4]
+            if fpart_i in fpart_used or tpart_i in tpart_used:
+                # if either each part is used, then the limb is invalid
+                continue
+            else:
+                limbs.append(limb)
+                fpart_used.append(fpart_i)
+                tpart_used.append(tpart_i)
+                # if maximum is reached, stop parsing
+                if len(limbs) == max_limb:
+                    break
+        return limbs
+
+    def part_associate(self, pafs, parts_list):
         """Follow the paper section 2.3, this function leverages PAFs to find 
         connections between peaks.
     
         Args:
             pafs: PAFs has already been resized to original input image shape
             parts_list: return value of `NMS`
-            nb_sample: number of samples. In order to evaluate connections, we
-                sample some points lied on the limb (connection).
-            limb_threshold: keep limb which surpass this value
 
         Returns:
             Nested list, length equals to limbs type. For each limb type, may 
@@ -599,75 +697,16 @@ class KeyPointTest(object):
                 # no limb between these two parts is found
                 limbs = []
             else:
-                # we need a possible limbs to temporarily store all the limbs
-                # and decide which are valid limbs
-                possible_limbs = []
                 # compute the index of PAFs of fpart and tpart
                 fpaf_i = 2 * limb_i
                 tpaf_i = 2 * limb_i + 1
                 # this strange syntax is for broadcast in numpy
                 channels = [[fpaf_i], [tpaf_i]]
-                # here we need a nested for loop to match every possible limb
-                for fpart_i, fpart in enumerate(fparts):
-                    for tpart_i, tpart in enumerate(tparts):
-                        # part affinity unit vector
-                        vector = tpart[:2] - fpart[:2]
-                        norm = np.linalg.norm(vector)
-                        # two points may overlay
-                        if norm == 0:
-                            continue
-                        vector = vector / norm # shape: (2, )
+                # find possible limbs
+                possible_limbs = self.limb_score(pafs, fparts, tparts, channels)
+                # select good limbs
+                limbs = self.limb_select(fparts, tparts, possible_limbs)
 
-                        # approximate integral by sampling and summing 
-                        # uniformly-spaced values of u. Note that xs, ys are 
-                        # in image form. So we access sample in order [ys, xs]
-                        xs = np.round(np.linspace(fpart[0], tpart[0], nb_sample))
-                        ys = np.round(np.linspace(fpart[1], tpart[1], nb_sample))
-                        samples = pafs[ys, xs, channels] # shape: (2, nb_sample)
-                        # compute the limb score
-                        score = samples.T.dot(vector) # shape: (nb_sample, )
-                        # penalty for long limb (long than half of height of PAF)
-                        penalty = min(0, 0.5 * pafs.shape[0] / norm - 1)
-                        score_penalty = score.mean() + penalty
-                        # now we evaluate the score of limb
-                        # 1. 80% of points surpass threshold 
-                        # 2. score_penalty must be positive
-                        nb_surpass = np.count_nonzero(score > limb_threshold)
-                        criterion1 = nb_surpass > self.params.nb_sample_threshold
-                        criterion2 = score_penalty > 0
-                        if criterion1 and criterion2:
-                            fGid, tGid = fparts[fpart_i, 3], tparts[tpart_i, 3]
-                            limb = [fGid, tGid, score_penalty, fpart_i, tpart_i]
-                            possible_limbs.append(limb)
-           
-                # now, we have all possible limbs for each limb type, we need to
-                # evaluate them. This part matches formula 13, 14 in paper
-                # 1. sort limbs according to its score
-                possible_limbs.sort(key=lambda x: x[2], reverse=True)
-                # 2. use greedy algorithms to decide which limb is good, note that 
-                # maximum number of limb is the minimum number of two parts
-                max_limb = min(len(fparts), len(tparts))
-                # recall that each limb in possible_limbs contains
-                # (from Gid, to Gid, score, fpart_i, tpart_i) 
-                # and each limb in final limbs contains
-                # (from Gid, to Gid, score)
-                limbs = []
-                fpart_used = []
-                tpart_used = []
-                for limb in possible_limbs:
-                    fpart_i, tpart_i = limb[3], limb[4]
-                    if fpart_i in fpart_used or tpart_i in tpart_used:
-                        # if either each part is used, then the limb is invalid
-                        continue
-                    else:
-                        # fGid, tGid, score of limb, fpart_i, tpart_i
-                        limbs.append(limb)
-                        fpart_used.append(fpart_i)
-                        tpart_used.append(tpart_i)
-                        # if maximum limb is reached, parse finish
-                        if len(limbs) == max_limb:
-                            break
-            
             limbs_list.append(limbs)
 
         return limbs_list
@@ -800,17 +839,24 @@ class KeyPointTest(object):
 
         # resize pafs
         pafs = cv2.resize(pafs, im.shape[::-1], interpolation=cv2.INTER_CUBIC)
-        limbs_list = self.part_associate(pafs, parts_list, self.nb_sample, self.limb_threshold)
+        limbs_list = self.part_associate(pafs, parts_list)
         persons = self.person_parse(parts_list, limbs_list)
         return parts_list, persons
 
     def plot_pose(self, im, parts_list, persons):
+        """draw pose on input image, including joint and limbs
+        
+        Args:
+            im: input image
+            parts_list: refer to `NMS`
+            persons: refer to `person_parse`
+        
+        Returns: 
+            drawed image
+        """
         canvas = im * 0.3
         canvas = canvas.astype(np.uint8)
 
-        limb_thickness = 3
-        peak_radius = 4
-        color = (255, 255, 255) 
         # 为了方便画出关键点，我们将parts_list合成一个array，那么一个part的Gid
         # 就刚好与它的行数相对应
         parts = np.vstack(parts_list)
@@ -823,23 +869,11 @@ class KeyPointTest(object):
                     # 并没有这个limb
                     continue
                 # 如果有，则取出这两个part的坐标
-                peaks_coords = parts[[fGid, tGid], :2].astype(int)
-                
-                for peak in peaks_coords:
-                    cv2.circle(canvas, peak, peak_radius, color, thickness=-1)
-                
-                # 现在我们想画这个limb，但它不是规整的图形，比较麻烦
-                # 先计算这两个点peak1，peak2的中心点坐标
-                peaks_center = tuple(peaks_coords.mean(axis=0).astype(int))
-                # 再计算两个点的连线的角度: 向量 -> arctan2(弧度制) -> 角度
-                # NOTE: confuse, why from - to
-                vector = peaks_coords[0, :] - peaks_coords[1, :]
-                angle = np.rad2deg(np.arctan2(vector[1], vector[0]))
-                norm = np.linalg.norm(vector)
-                axes = (norm // 2, limb_thickness)
-                
-                polygon = cv2.ellipse2Poly(peaks_center, axes, angle=int(angle),
-                    arcStart=0, arsEnd=360, delta=1)
-                cv2.fillConvexPoly(canvas, polygon, self.params.colors[limb_i])
-        
+                fpeak = tuple(parts[fGid, :2].astype(int))
+                tpeak = tuple(parts[tGid, :2].astype(int))
+                cv2.circle(canvas, fpeak, 3, (255, 255, 255), thickness=-1)
+                cv2.circle(canvas, tpeak, 3, (255, 255, 255), thickness=-1)
+                # 画limb，从fpeak到tpeak，从params中选颜色
+                cv2.line(canvas, fpeak, tpeak, self.params.colors[limb_i])
+
         return canvas
