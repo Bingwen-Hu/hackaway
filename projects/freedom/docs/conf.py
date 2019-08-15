@@ -13,21 +13,20 @@
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
 import os
-import os.path as osp
 import sys
-sys.path.insert(0, osp.abspath('..'))
+sys.path.insert(0, os.path.abspath('..'))
 
 
 # -- Project information -----------------------------------------------------
 
-project = 'fireu'
+project = 'freedom'
 copyright = '2019, siriusdemon'
 author = 'siriusdemon'
 
 # The short X.Y version
 version = ''
 # The full version, including alpha/beta/rc tags
-release = '0.0.1'
+release = '0.0.2'
 
 
 # -- General configuration ---------------------------------------------------
@@ -111,7 +110,7 @@ html_static_path = ['_static']
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'fireudoc'
+htmlhelp_basename = 'freedomdoc'
 
 
 # -- Options for LaTeX output ------------------------------------------------
@@ -138,7 +137,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'fireu.tex', 'fireu Documentation',
+    (master_doc, 'freedom.tex', 'freedom Documentation',
      'siriusdemon', 'manual'),
 ]
 
@@ -148,7 +147,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'fireu', 'fireu Documentation',
+    (master_doc, 'freedom', 'freedom Documentation',
      [author], 1)
 ]
 
@@ -159,8 +158,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'fireu', 'fireu Documentation',
-     author, 'fireu', 'One line description of project.',
+    (master_doc, 'freedom', 'freedom Documentation',
+     author, 'freedom', 'One line description of project.',
      'Miscellaneous'),
 ]
 

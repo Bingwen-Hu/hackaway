@@ -1,12 +1,12 @@
-# Fireu
+# Freedom
 Portable codes between different deep learning framework like `Pytorch`, `Tensorflow` etc.
 
-`Fireu` aim to help deep learner to handle dirty work such as parsing dataset, data preprocess and model post procecss etc.
+`Freedom` aim to help deep learner to handle dirty work such as parsing dataset, data preprocess and model post procecss etc.
 
 
 ### Architecture
 ```sh
-fireu
+freedom
 ├── arch
 └── data
     ├── coco

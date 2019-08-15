@@ -1,19 +1,22 @@
 
-Fire U
-======
+Freedom
+=======
 
 Portable codes between different deep learning framework like ``Pytorch``\ , ``Tensorflow`` etc.
+
+``Freedom`` aim to help deep learner to handle dirty work such as parsing dataset, data preprocess and model post procecss etc.
 
 Architecture
 ^^^^^^^^^^^^
 
 .. code-block:: sh
 
-   fireu/
+   freedom
+   ├── arch
    └── data
        ├── coco
        ├── preprocess
-       └── utils
+       └── tools
 
 dependences
 ^^^^^^^^^^^

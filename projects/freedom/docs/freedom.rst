@@ -1,17 +1,18 @@
-fireu package
-=============
+freedom package
+===============
 
 Subpackages
 -----------
 
 .. toctree::
 
-    fireu.data
+    freedom.arch
+    freedom.data
 
 Module contents
 ---------------
 
-.. automodule:: fireu
+.. automodule:: freedom
     :members:
     :undoc-members:
     :show-inheritance:

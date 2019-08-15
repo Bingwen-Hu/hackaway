@@ -1,7 +1,7 @@
-fireu
-=====
+freedom
+=======
 
 .. toctree::
    :maxdepth: 4
 
-   fireu
+   freedom
