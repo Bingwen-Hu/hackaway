@@ -1,8 +1,6 @@
 import os
 import cv2
-from pcn import models
-from pcn import pcn
-from pcn import utils
+import pcn
 
 if __name__ == '__main__':
     # usage settings
@@ -13,16 +11,9 @@ if __name__ == '__main__':
     else:
         imgpath = sys.argv[1]
     # network detection
-    nets = models.load_model()
     img = cv2.imread(imgpath)
-    faces = pcn.pcn_detect(img, nets)
-    # draw image
-    for face in faces:
-        face_, _ = utils.crop_face(img, face, 100) # ignore location
-    # show image
-    cv2.imshow("pytorch-PCN", face_)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    faces = pcn.detect(img)
     # save image
     name = os.path.basename(imgpath)
+    pcn.draw(img, faces)
     cv2.imwrite('result/ret_{}'.format(name), img)

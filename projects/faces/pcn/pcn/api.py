@@ -6,12 +6,12 @@ from .utils import crop_face, draw_face
 from .pcn import pcn_detect
 
 
-nets = load_model()    
+nets = load_model()
 
 def detect(img):
     if type(img) == str:
         img = cv2.imread(img)
-    winlist = pcn_detect(img, nets) 
+    winlist = pcn_detect(img, nets)
     return winlist
 
 def crop(img, winlist, size=200):

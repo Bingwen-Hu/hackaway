@@ -1,7 +1,7 @@
 # 输入木棍，切成几段，使其乘积最大
 
 import sys
-n = sys.stdin.readlines()
+n = sys.stdin.read()
 n = int(n.strip())
 
 def cut(n):
