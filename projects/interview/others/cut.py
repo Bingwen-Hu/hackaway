@@ -14,6 +14,10 @@ def cut(n):
         return 2
     if n == 3:  # m > 1
         return 2
+    # 对于大于3的数，每次检查所有可能的组合
+    # 比如12的组合可以是
+    # 11,1 10,2 9,3 8,4 7,5, 6,6
+    # 选其中的最大值
     for j in range(4, n+1):
         maximum = 0
         for i in range(1,j):
