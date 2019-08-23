@@ -1,1 +1,0 @@
-from .api import face_register, face_recognize, face_detect
