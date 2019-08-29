@@ -1,6 +1,6 @@
 import enum
 
-from ..core import Parameter
+from .core import Parameter
 
 class Joint(enum.IntEnum):
     """Joint type for pose estimation task, we define our 
@@ -40,6 +40,7 @@ class KeyPointParams(Parameter):
     infer_insize = 368
     infer_scales = [0.5, 1.0, 1.5, 2.0]
     heatmap_size = 320
+    stride = 8
 
     # for gaussian filter smoothing
     smooth = False

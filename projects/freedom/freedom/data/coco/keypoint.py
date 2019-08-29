@@ -51,11 +51,54 @@ class KeyPointTrain(COCO):
             im = im.transpose((2, 0, 1))
         return im
 
+    def im_letterbox(self, im, tsize):
+        """compute the suitable shape of for resize
+
+        Args:
+            im: image object return by cv2.imread
+            tsize: short for target size
+
+        Params:
+            stride: still a mystery for me
+
+        Returns:
+            proper shape for resize, tuple (width, height)
+
+        Notes: 
+            Why letterbox? I don't know, but people do.
+        """
+        stride = self.params.stride
+        im_h, im_w = im.shape[:2]
+
+        if im_h < im_w:
+            im_h = tsize
+            in_w = round(tsize / im_h * im_w)
+            # 因为不想用if，所以用个trick，以下的注释解释了下面代码的行为 
+            # surplus = im_w % stride
+            # if surplus != 0:
+            #     im_w += stride - surplus
+            surplus = (stride - (im_w % stride)) % stride
+            im_w += surplus
+        else:
+            im_w = tsize
+            im_h = round(tsize / im_w * im_h)
+            surplus = (stride - (im_h % stride)) % stride
+            im_h += surplus
+        return im_w, im_h
+
+    
+    def im_reshape(self, im):
+        pass
+
+
     def convert_joint_order(self, ann_metas):
         """convert the joint order from COCO to ours
 
         Args:
             ann_metas: annotations of COCO
+        
+        Params:
+            joint: Joint type.
         
         Returns:
             a numpy array (N, 18, 3) encodes keypoints for single image
@@ -91,7 +134,10 @@ class KeyPointTrain(COCO):
         Args:
             shape: shape of confidence map 
             joint: a.k.a keypoint, (x, y)
+        
+        Params:
             sigma: the hyperparameter control the spread of peak
+
         Returns:
             Confidence map with shape
         """
@@ -144,6 +190,9 @@ class KeyPointTrain(COCO):
             shape: (image_h, image_w) tuple or list
             joint_from: the first joint in limbs pairs
             joint_to: the second joint in limbs pairs
+
+        Returns:
+            PAF for one joint type
         """
         joint_dist = np.linalg.norm(joint_to - joint_from)
         unit_vector = (joint_to - joint_from) / joint_dist
@@ -720,10 +769,10 @@ class KeyPointTest(object):
             limbs_list: return value of `part_associate`
 
         Returns:
-            persons: A dict with Key: person id, Value: a list. let's say we 
-                have 10 joints, then the first 10 elements of list is either
-                -1 or Gid for the joint. The 2nd-to-last element is score. 
-                The last one is the number of joints this person owns.
+            persons: A dict with Key: person id, Value: a list. let's say 
+            we have 10 joints, then the first 10 elements of list is either
+            -1 or Gid for the joint. The 2nd-to-last element is score. 
+            The last one is the number of joints this person owns.
         """
         # 我们的目标是输出每个人的关键点(part)，而每个关键点都有一个全局唯一的ID，所以
         # 我们只需要算出每个人的关节点的ID就可以了。如果没有这个节点，就用-1来表示
@@ -838,7 +887,7 @@ class KeyPointTest(object):
         parts_list = self.NMS(heatmaps, factor=im.shape[0] / heatmaps.shape[0])
 
         # resize pafs
-        pafs = cv2.resize(pafs, im.shape[::-1], interpolation=cv2.INTER_CUBIC)
+        pafs = cv2.resize(pafs, im.shape[:-1], interpolation=cv2.INTER_CUBIC)
         limbs_list = self.part_associate(pafs, parts_list)
         persons = self.person_parse(parts_list, limbs_list)
         return parts_list, persons
@@ -850,6 +899,9 @@ class KeyPointTest(object):
             im: input image
             parts_list: refer to `NMS`
             persons: refer to `person_parse`
+        
+        Params:
+            colors: colors for joint type
         
         Returns: 
             drawed image
@@ -877,3 +929,6 @@ class KeyPointTest(object):
                 cv2.line(canvas, fpeak, tpeak, self.params.colors[limb_i])
 
         return canvas
+    
+
+    def __call__(self, model, )

@@ -6,7 +6,7 @@ int main(){
 
 
 /* source program is a sequence of bits, each with a value of 0 or 1. 
- * organzied in 8-bit chuncks called bytes.
+ * organzied in 8-bit chunks called bytes.
  *
  * gcc hello.c -o hello
  * consist of four steps:
