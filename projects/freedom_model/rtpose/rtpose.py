@@ -39,13 +39,19 @@ class PoseNet(nn.Module):
         # refer to the forward method, which show 
         # the whole network architecture
         self.build_backbone()
-        self.build_network() 
+        self.build_head() 
     
     def build_backbone(self):
+        """build the backbone of the whole network
+        network = backbone + head 
+        """
         backbone = self.arch.backbone
         self.backbone = build_block(backbone)
 
-    def build_network(self):
+    def build_head(self):
+        """build the head of the whole network
+        network = backbone + head
+        """
         stages = [f'stage{i}' for i in range(1, 7)]
         for stage in stages:
             block = getattr(self.arch, stage)

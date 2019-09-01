@@ -14,9 +14,57 @@ from .core import COCO
 from .params import KeyPointParams
 
 
+class KeyPointMixin(object):
+    @staticmethod
+    def im_preprocess(im, channel_first=False):
+        """image pre-processing, scale image by divide 255,
+        centre image by substract 0.5
+        
+        Args:
+            im: image object return by cv2.imread
+            channel_first: if True, put channels on axis 0
+        """
+        im = im / 255.0
+        im -= 0.5
+        if channel_first:
+            im = im.transpose((2, 0, 1))
+        return im
+
+    @staticmethod
+    def im_letterbox(im, tsize, stride):
+        """compute the suitable shape of for resize
+
+        Args:
+            im: image object return by cv2.imread
+            tsize: short for target size
+            stride: decided by network, total downscale of input and output
+        Returns:
+            resized image 
+        """
+        im_h, im_w = im.shape[:2]
+
+        if im_h < im_w:
+            im_w = round(tsize / im_h * im_w)
+            # 因为不想用if，所以用个trick，以下的注释解释了下面代码的行为 
+            # surplus = im_w % stride
+            # if surplus != 0:
+            #     im_w += stride - surplus
+            surplus = (stride - (im_w % stride)) % stride
+            im_w += surplus
+            im_h = tsize
+        else:
+            im_h = round(tsize / im_w * im_h)
+            surplus = (stride - (im_h % stride)) % stride
+            im_h += surplus
+            im_w = tsize
+
+        im_ = cv2.resize(im, (im_w, im_h), interpolation=cv2.INTER_CUBIC)
+        return im_
 
 
-class KeyPointTrain(COCO):
+
+
+class KeyPointTrain(COCO, KeyPointMixin):
     """A class for pose estimation, especially for this paper
     link: https://arxiv.org/abs/1611.08050.
 
@@ -37,60 +85,6 @@ class KeyPointTrain(COCO):
     
     # -------- Preprocessing --------
     @staticmethod
-    def im_preprocess(self, im, channel_first=False):
-        """image pre-processing, scale image by divide 255,
-        centre image by substract 0.5
-        
-        Args:
-            im: image object return by cv2.imread
-            channel_first: if True, put channels on axis 0
-        """
-        im /= 255.0
-        im -= 0.5
-        if channel_first:
-            im = im.transpose((2, 0, 1))
-        return im
-
-    def im_letterbox(self, im, tsize):
-        """compute the suitable shape of for resize
-
-        Args:
-            im: image object return by cv2.imread
-            tsize: short for target size
-
-        Params:
-            stride: still a mystery for me
-
-        Returns:
-            proper shape for resize, tuple (width, height)
-
-        Notes: 
-            Why letterbox? I don't know, but people do.
-        """
-        stride = self.params.stride
-        im_h, im_w = im.shape[:2]
-
-        if im_h < im_w:
-            im_h = tsize
-            in_w = round(tsize / im_h * im_w)
-            # 因为不想用if，所以用个trick，以下的注释解释了下面代码的行为 
-            # surplus = im_w % stride
-            # if surplus != 0:
-            #     im_w += stride - surplus
-            surplus = (stride - (im_w % stride)) % stride
-            im_w += surplus
-        else:
-            im_w = tsize
-            im_h = round(tsize / im_w * im_h)
-            surplus = (stride - (im_h % stride)) % stride
-            im_h += surplus
-        return im_w, im_h
-
-    
-    def im_reshape(self, im):
-        pass
-
-
     def convert_joint_order(self, ann_metas):
         """convert the joint order from COCO to ours
 
@@ -480,15 +474,11 @@ class KeyPointTrain(COCO):
 
 
     
-class KeyPointTest(object):
+class KeyPointTest(KeyPointMixin):
 
     def __init__(self, params: KeyPointParams):
         self.params = params
     
-    def im_preprocess(self, im, channel_first):
-        """same as Training Setting"""
-        return KeyPointTrain.im_preprocess(im, channel_first)
-
     def find_peaks(self, heatmap):
         """find peaks from heatmap. Here, we decide a peak by 2 conditions:
         1. the peak must surpass the threshold
@@ -523,7 +513,7 @@ class KeyPointTest(object):
 
         Args:
             coords: coordinates of peaks in image-form, with shape (N, 2)
-            factor: int, indicate the scale to perform
+            factor: indicate the scale to perform
 
         Returns:
             New coordinates with the same shape. Note that new coordinates 
@@ -554,13 +544,13 @@ class KeyPointTest(object):
         gaussian_sigma = self.params.gaussian_sigma
 
         # heatmap.T.shape => (width, height)
-        shape = np.array(heatmap.T.shape) - 1
+        shape = np.array(heatmap.T.shape)
         # Get patch border, still in image format
         x_min, y_min = np.maximum(0, peak - winsize)
-        x_max, y_max = np.minimum(shape, peak + winsize)
+        x_max, y_max = np.minimum(shape - 1, peak + winsize)
         # take a small patch around peak and upsample it
         # 将peak周围的区域进行上采样
-        patch = heatmap[y_min : y_max + 1, x_min : x_max + 1]
+        patch = heatmap[y_min : y_max+1, x_min : x_max+1]
         patch = cv2.resize(patch, None, None, factor, factor, cv2.INTER_CUBIC)
         
         # apply gaussian filter
@@ -602,7 +592,7 @@ class KeyPointTest(object):
         global_id = 0
         
         for joint_i in self.params.joint:
-            heatmap = heatmaps[:, :, joint_i]
+            heatmap = heatmaps[..., joint_i]
             peaks = self.find_peaks(heatmap)
             # each part contains (x, y, score, global_id)
             parts = np.zeros([len(peaks), 4])
@@ -664,8 +654,8 @@ class KeyPointTest(object):
                 # approximate integral by sampling and summing uniformly-spaced
                 # values of u. Note that xs, ys are # in image form. 
                 # So we access sample in order [ys, xs]
-                xs = np.round(np.linspace(fpart[0], tpart[0], nb_sample))
-                ys = np.round(np.linspace(fpart[1], tpart[1], nb_sample))
+                xs = np.round(np.linspace(fpart[0], tpart[0], nb_sample)).astype(int)
+                ys = np.round(np.linspace(fpart[1], tpart[1], nb_sample)).astype(int)
                 samples = pafs[ys, xs, channels] # shape: (2, nb_sample)
                 # compute the limb score
                 score = samples.T.dot(vector) # shape: (nb_sample, )
@@ -676,6 +666,7 @@ class KeyPointTest(object):
                 # 1. 80% of points surpass threshold 
                 # 2. score_penalty must be positive
                 nb_surpass = np.count_nonzero(score > limb_threshold)
+                print(nb_surpass, nb_sample_threshold, score_penalty)
                 criterion1 = nb_surpass > nb_sample_threshold
                 criterion2 = score_penalty > 0
                 if criterion1 and criterion2:
@@ -775,7 +766,7 @@ class KeyPointTest(object):
             The last one is the number of joints this person owns.
         """
         # 我们的目标是输出每个人的关键点(part)，而每个关键点都有一个全局唯一的ID，所以
-        # 我们只需要算出每个人的关节点的ID就可以了。如果没有这个节点，就用-1来表示
+        # 我们只需要找出每个人的关节点的ID就可以了。如果没有这个节点，就用-1来表示
         # 对于每个人，我们还额外记录两个值，一个是这个人拥有的节点数，一个是他的分数
         # 所以对于字典的每个元素，长度为 len(self.params.joint) + 2
         persons = {}
@@ -863,13 +854,16 @@ class KeyPointTest(object):
                     persons.pop(tPid)
 
         # 现在把那些节点比较少或者分数比较低的人给删除
+        pid_del = []
         for pid, person in persons.items():
             nb_part = person[-1]
             mean_score = person[-2] / nb_part
             critierion1 = nb_part < self.params.nb_part_threshold
             critierion2 = mean_score < self.params.mean_score_threshold
             if critierion1 or critierion2:
-                persons.pop(pid)
+                pid_del.append(pid)
+        for pid in  pid_del:
+            persons.pop(pid)
         
         return persons
 
@@ -884,10 +878,14 @@ class KeyPointTest(object):
         Returns:
             A dict contains person id and pose information
         """
+        # 放缩是一个很微妙的问题，是为记
+        # 对于part来说，因为还在进行其他处理，如微调以及平滑，如果在一个小的map上做，最后
+        # 再放大为原来的样子，是比较高效的。
+        # 对于paf来说，因为不需要做其他处理，只要让它跟原图一样就好了
         parts_list = self.NMS(heatmaps, factor=im.shape[0] / heatmaps.shape[0])
 
         # resize pafs
-        pafs = cv2.resize(pafs, im.shape[:-1], interpolation=cv2.INTER_CUBIC)
+        pafs = cv2.resize(pafs, im.shape[:2][::-1], interpolation=cv2.INTER_CUBIC)
         limbs_list = self.part_associate(pafs, parts_list)
         persons = self.person_parse(parts_list, limbs_list)
         return parts_list, persons
@@ -913,10 +911,14 @@ class KeyPointTest(object):
         # 就刚好与它的行数相对应
         parts = np.vstack(parts_list)
         
-        # 我们忽略了最后两个limb
-        for limb_i, (fpart, tpart) in enumerate(self.params.limbs[:-2]):
+        joint = self.params.joint
+        for limb_i, (fpart, tpart) in enumerate(self.params.limbs):
+            if fpart == joint.LShoulder and tpart == joint.LEar:
+                continue
+            elif fpart == joint.RShoulder and tpart == joint.REar:
+                continue
             for person in persons.values():
-                fGid, tGid = person[fpart], person[tpart]
+                fGid, tGid = int(person[fpart]), int(person[tpart])
                 if fGid == -1 or tGid == -1:
                     # 并没有这个limb
                     continue
@@ -930,5 +932,3 @@ class KeyPointTest(object):
 
         return canvas
     
-
-    def __call__(self, model, )
