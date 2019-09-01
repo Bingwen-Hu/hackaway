@@ -87,3 +87,7 @@ class PoseNet(nn.Module):
         CFMs = [CFM_1, CFM_2, CFM_3, CFM_4, CFM_5, CFM_6]
 
         return PAFs, CFMs
+
+if __name__ == '__main__':
+    net = PoseNet(Pose)
+    net.load_state_dict(torch.load('weights/rtpose_sd.pth'))
