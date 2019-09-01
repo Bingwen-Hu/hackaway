@@ -38,5 +38,9 @@ def max_expection_diff(N1, N2):
 
 
 def max_expection_many(dices):
+    dices.sort(reverse=True)
+    
     
 
+M = 7
+N = 3
