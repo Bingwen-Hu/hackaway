@@ -6,12 +6,19 @@ import torch.nn.functional as F
 from freedom.arch import PoseEstimation as Pose
 
 
-def build_block(block):
-    """block is a common data structure in fireu. It is a Orderdict
-    which key is name of layer and value is a list of parameters
+def build_blocks(blocks, part):
     """
+    Args: 
+        blocks: Orderdict whose key is name of layer and 
+            value is a list of parameters.
+        part: either `backbone` or `head`
+    Returns:
+        nn.Sequential contains layers defined in blocks
+    """
+    assert part in ["backbone", "head"]
+
     layers = []
-    for name, params in block.items():
+    for name, params in blocks.items():
         if 'conv' in name:
             # *params works because both parameter orders are same
             layers += [nn.Conv2d(*params)]
@@ -20,6 +27,10 @@ def build_block(block):
             layers += [nn.MaxPool2d(*params)]
         else:
             print(f"layer {name} is skipped")
+    # if we are building head of network, we don't need the last ReLU
+    # layer. Why? Because the original author have not include it! :-)
+    if part == 'head':
+        layers = layers[:-1]
     return nn.Sequential(*layers)
 
 
@@ -46,7 +57,7 @@ class PoseNet(nn.Module):
         network = backbone + head 
         """
         backbone = self.arch.backbone
-        self.backbone = build_block(backbone)
+        self.backbone = build_blocks(backbone, 'backbone')
 
     def build_head(self):
         """build the head of the whole network
@@ -56,8 +67,8 @@ class PoseNet(nn.Module):
         for stage in stages:
             block = getattr(self.arch, stage)
             PAF, CFM = block.keys()
-            PAF = build_block(block[PAF])
-            CFM = build_block(block[CFM])
+            PAF = build_blocks(block[PAF], 'head')
+            CFM = build_blocks(block[CFM], 'head')
             setattr(self, f"{stage}_PAF", PAF)
             setattr(self, f"{stage}_CFM", CFM)
 
@@ -97,3 +108,4 @@ class PoseNet(nn.Module):
 if __name__ == '__main__':
     net = PoseNet(Pose)
     net.load_state_dict(torch.load('weights/rtpose_sd.pth'))
+    net.eval()
