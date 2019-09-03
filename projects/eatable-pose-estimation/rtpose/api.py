@@ -5,18 +5,23 @@ from rtpose import PoseNet
 from epc import KeyPointTest
 from epc import KeyPointParams
 
+# load model
+net = PoseNet()
+net.load_state_dict(torch.load('weights/rtpose_sd.pth'))
+net.eval()
 
+# inference setup
+params = KeyPointParams()
+infer = KeyPointTest(params)
 
 if __name__ == "__main__":
-    net = PoseNet()
-    net.load_state_dict(torch.load('weights/rtpose_sd.pth'))
-    net.eval()
-    params = KeyPointParams()
-    infer = KeyPointTest(params)
+    import sys
+    if len(sys.argv) == 2:
+        impath = sys.argv[1]
+    else:
+        impath = "imgs/dinner.png"
 
-    impath = "imgs/dinner.png"
     im = cv2.imread(impath)
-
     im_resize = infer.im_letterbox(im, 
         infer.params.infer_insize, infer.params.stride)
     im_prep = infer.im_preprocess(im_resize)
@@ -28,13 +33,11 @@ if __name__ == "__main__":
     pafs = pafs.numpy().squeeze().transpose(1, 2, 0)
     heatmaps = heatmaps.numpy().squeeze().transpose(1, 2, 0)
     #scale to inference size
-    heatmaps = infer.im_letterbox(heatmaps, 
+    heatmaps_scale = infer.im_letterbox(heatmaps, 
         infer.params.heatmap_size, infer.params.stride)
-    pafs = infer.im_letterbox(pafs, 
+    pafs_scale = infer.im_letterbox(pafs, 
         infer.params.heatmap_size, infer.params.stride)
   
-    parts_list, persons = infer.pose_decode(im, heatmaps, pafs)
-    for part in parts_list:
-        print(part)
+    parts_list, persons = infer.pose_decode(im, heatmaps_scale, pafs_scale)
     canvas = infer.plot_pose(im, parts_list, persons)
     cv2.imwrite('test.png', canvas)

@@ -88,12 +88,12 @@ class PoseNet(nn.Module):
         CFM_4 = self.stage4_CFM(out_3)
         out_4 = torch.cat([PAF_4, CFM_4, filter_map], dim=1)
         # stage5
-        PAF_5 = self.stage3_PAF(out_4)
-        CFM_5 = self.stage3_CFM(out_4)
+        PAF_5 = self.stage5_PAF(out_4)
+        CFM_5 = self.stage5_CFM(out_4)
         out_5 = torch.cat([PAF_5, CFM_5, filter_map], dim=1)
         # stage6
-        PAF_6 = self.stage3_PAF(out_5)
-        CFM_6 = self.stage3_CFM(out_5)
+        PAF_6 = self.stage6_PAF(out_5)
+        CFM_6 = self.stage6_CFM(out_5)
         
         # because loss is computed in every stage, 
         # so we need to return all of them

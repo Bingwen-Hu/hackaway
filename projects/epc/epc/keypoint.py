@@ -854,7 +854,6 @@ class KeyPointTest(KeyPointMixin):
                 # 1. 80% of points surpass threshold 
                 # 2. score_penalty must be positive
                 nb_surpass = np.count_nonzero(score > limb_threshold)
-                print(nb_surpass, nb_sample_threshold, score_penalty)
                 criterion1 = nb_surpass > nb_sample_threshold
                 criterion2 = score_penalty > 0
                 if criterion1 and criterion2:
