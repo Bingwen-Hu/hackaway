@@ -1,13 +1,14 @@
 import cv2
 import torch
 
+from rtpose import PoseNet
+from epc import KeyPointTest
+from epc import KeyPointParams
 
-from rtpose import PoseNet, Pose
-from freedom.data.coco import KeyPointTest
-from freedom.data.coco.params import KeyPointParams
+
 
 if __name__ == "__main__":
-    net = PoseNet(Pose)
+    net = PoseNet()
     net.load_state_dict(torch.load('weights/rtpose_sd.pth'))
     net.eval()
     params = KeyPointParams()
@@ -18,7 +19,8 @@ if __name__ == "__main__":
 
     im_resize = infer.im_letterbox(im, 
         infer.params.infer_insize, infer.params.stride)
-    im_prep = infer.im_preprocess(im_resize, True)
+    im_prep = infer.im_preprocess(im_resize)
+    im_prep = im_prep.transpose(2, 0, 1)
     im_tensor = torch.Tensor(im_prep[None, ...])
     with torch.no_grad():
         PAFs, CFMs = net(im_tensor)

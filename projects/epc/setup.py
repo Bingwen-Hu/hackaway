@@ -5,11 +5,11 @@ with open("README.md", 'r') as f:
 
 
 setuptools.setup(
-    name = "freedom",
+    name = "epc",
     version = "0.1.0",
     author = "sirius demon",
     author_email = "mory2016@126.com",
-    description="Portable code for deep learning models",
+    description="Eatable code for deep learning models",
     long_description=long_description,
     long_description_content_type='text/markdown',
     url = "https://github.com/siriusdemon/freedom",

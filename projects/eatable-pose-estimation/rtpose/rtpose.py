@@ -3,7 +3,7 @@ import torchvision
 import torch.nn as nn
 import torch.nn.functional as F
 
-from freedom.arch import PoseEstimation as Pose
+from epc import PoseEstimation as PoseArch
 
 
 def build_blocks(blocks, part):
@@ -39,13 +39,10 @@ class PoseNet(nn.Module):
     https://github.com/ZheC/Realtime_Multi-Person_Pose_Estimation
     """
 
-    def __init__(self, arch: Pose):
-        """Build the network architecture
-        Args:
-            Pose: Type of architecture 
-        """
+    def __init__(self):
+        """Build the network architecture """
         super().__init__()
-        self.arch = arch()
+        self.arch = PoseArch()
         # bulid the network, if you are confused,
         # refer to the forward method, which show 
         # the whole network architecture
@@ -106,6 +103,6 @@ class PoseNet(nn.Module):
         return PAFs, CFMs
 
 if __name__ == '__main__':
-    net = PoseNet(Pose)
+    net = PoseNet()
     net.load_state_dict(torch.load('weights/rtpose_sd.pth'))
     net.eval()

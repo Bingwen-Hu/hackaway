@@ -6,6 +6,39 @@ import numpy as np
 import pycocotools.coco as coco
 
 
+class Arch(object):
+    """Definition of a network architeture, including network layer,
+    the order of parameters for each kind of layer and so on """
+
+    def __init__(self):
+        """Here we define fields should be followed by more specific class.
+
+        Fields:
+            description: a short description for this class
+            convolution: the order of parameters for convolution layer
+            pool: the order of parameters for pooling layer
+        """
+        self.description = "This is base class of network architecture"
+        self.convolution = [
+            'channels_in', 'channels_out', 'ksize', 'stride', 
+            'pad', 'dilation', 'group', 'bias',
+        ]
+        self.pool = ['ksize', 'stride', 'pad']
+
+
+class Parameter:
+    # training settings
+    insize = 224
+    im_h = 224
+    im_w = 224
+
+    lr = 0.001 # learning rate
+    bsize = 4 # batch size
+
+    # testing settings
+    infer_size = 224
+
+
 class COCO(object):
 
     def __init__(self, images_directory, annotation_file):
@@ -51,3 +84,9 @@ class COCO(object):
         im_path = self.get_im_path(im_id=im_id)
         im = cv2.imread(im_path)
         return im_id, ann_metas, im
+
+
+class CatDog(object):
+    """Cat and dog is a classic binary classification task hosted on Kaggle
+    So we use this to indicate common classification task"""
+    pass

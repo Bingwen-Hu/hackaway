@@ -1,4 +1,4 @@
-# deepfree.datasets.coco
+# COCO
 
 COCO is already a classic dataset format. And it's good enough. Let's build library on it.
 
@@ -17,4 +17,4 @@ MS COCO annotation order:
 9: l wrist      10: r wrist     11: l hip   12: r hip   13: l knee
 14: r knee      15: l ankle     16: r ankle
 ```
-![](./graphs/example.png)
+![](./graphs/coco-keypoint.png)

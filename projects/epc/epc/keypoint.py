@@ -1,33 +1,236 @@
 import os
-import enum
 import os.path as osp
+import enum
+from collections import OrderedDict
 
+# third party import
 import cv2
 import numpy as np
-
-# for finding peaks from heatmap
 from scipy.ndimage import generate_binary_structure
 from scipy.ndimage import gaussian_filter
 from scipy.ndimage import maximum_filter
 
-from .core import COCO
-from .params import KeyPointParams
+# local import
+from .base import Arch, Parameter, COCO
+
+
+# 在论文中，作者采用了vgg的前10个卷积层输出的特征图作为输入，并且这10个卷积层是
+# 可以finetune的。随后，采用了6个不同的stage来逐渐改进识别的效果，这种思想借鉴
+# 至Pose machine。我个人还觉得，这种做法很像resnet的残差思想。
+class PoseEstimation(Arch):
+    """Paper: https://arxiv.org/abs/1611.08050"""
+    def __init__(self):
+        super().__init__()
+        self.description = ("Pose estimation model architecture for Realtime "
+            "Multi-Person 2D Pose Estimation using Part Affinity Fields")
+        self.convolution = self.convolution[:5] # only need first 5 parameters
+        self.pool = self.pool[:2] # only need first 2 parameters
+        self.backbone = OrderedDict(
+            conv1_1 = [3, 64, 3, 1, 1],
+            conv1_2 = [64, 64, 3, 1, 1],
+            pool1 = [2, 2],
+            conv2_1 = [64, 128, 3, 1, 1],
+            conv2_2 = [128, 128, 3, 1, 1],
+            pool2 = [2, 2],
+            conv3_1 = [128, 256, 3, 1, 1],
+            conv3_2 = [256, 256, 3, 1, 1],
+            conv3_3 = [256, 256, 3, 1, 1],
+            conv3_4 = [256, 256, 3, 1, 1],
+            pool3 = [2, 2],
+            conv4_1 = [256, 512, 3, 1, 1],
+            conv4_2 = [512, 512, 3, 1, 1],
+            # PE donates Pose Estimation, this two layers 
+            # do not belong to VGG.
+            PE0_conv4_3 = [512, 256, 3, 1, 1],
+            PE0_conv4_4 = [256, 128, 3, 1, 1],
+        )
+
+        # for each stage of rtpose, there are two branchs, one output
+        # PAF, the other output confidence map (CFM)
+        # 在rtpose的每个stage中，都有两个分支，一个输出PAF，一个输出confidence map
+        # 这里，我们叫它作CFM
+        self.stage1 = OrderedDict(
+            PAF = OrderedDict(
+                PE1_conv5_1_L1 = [128, 128, 3, 1, 1],
+                PE1_conv5_2_L1 = [128, 128, 3, 1, 1],
+                PE1_conv5_3_L1 = [128, 128, 3, 1, 1],
+                PE1_conv5_4_L1 = [128, 512, 1, 1, 0],
+                PE1_conv5_5_L1 = [512, 38, 1, 1, 0]),
+            CFM = OrderedDict(
+                PE1_conv5_1_L2 = [128, 128, 3, 1, 1],
+                PE1_conv5_2_L2 = [128, 128, 3, 1, 1],
+                PE1_conv5_3_L2 = [128, 128, 3, 1, 1],
+                PE1_conv5_4_L2 = [128, 512, 1, 1, 0],
+                PE1_conv5_5_L2 = [512, 19, 1, 1, 0]),
+        )
+        # define the structure and generate stage[2-6] dynamically
+        # stage2至stage6的网络结构完全一致，这里我们采用动态生成的方式
+        # 这里的i代码第i个stage
+        self.stage2_6 = OrderedDict(
+            PAF = OrderedDict(
+                PEi_conv1_L1 = [185, 128, 7, 1, 3],
+                PEi_conv2_L1 = [128, 128, 7, 1, 3],
+                PEi_conv3_L1 = [128, 128, 7, 1, 3],
+                PEi_conv4_L1 = [128, 128, 7, 1, 3],
+                PEi_conv5_L1 = [128, 128, 7, 1, 3],
+                PEi_conv6_L1 = [128, 128, 1, 1, 0],
+                PEi_conv7_L1 = [128, 38, 1, 1, 0]),
+            CFM = OrderedDict(
+                PEi_conv1_L2 = [185, 128, 7, 1, 3],
+                PEi_conv2_L2 = [128, 128, 7, 1, 3],
+                PEi_conv3_L2 = [128, 128, 7, 1, 3],
+                PEi_conv4_L2 = [128, 128, 7, 1, 3],
+                PEi_conv5_L2 = [128, 128, 7, 1, 3],
+                PEi_conv6_L2 = [128, 128, 1, 1, 0],
+                PEi_conv7_L2 = [128, 19, 1, 1, 0]
+            )
+        )
+        self.build_stage2_6()
+        
+    def build_stage2_6(self):
+        """Create attribute for self, makes self.stage[2-6] available """
+        stage2_6 = self.stage2_6
+        paf, cfm = stage2_6.keys()
+        paf = stage2_6[paf]
+        cfm = stage2_6[cfm]
+        for i in range(2, 7):
+            paf_ = OrderedDict([(k.replace('i', str(i)),paf[k]) for k in paf])
+            cfm_ = OrderedDict([(k.replace('i', str(i)),cfm[k]) for k in cfm])
+            stage_ = OrderedDict(PAF=paf_, CFM=cfm_)
+            setattr(self, f'stage{i}', stage_)
+
+
+class Joint(enum.IntEnum):
+    """Joint type for pose estimation task, we define our 
+    own keypoints order and joint type, which is different
+    from COCO's. 
+
+    MS COCO annotation order:
+    0: nose         1: l eye        2: r eye    3: l ear    4: r ear
+    5: l shoulder   6: r shoulder   7: l elbow  8: r elbow
+    9: l wrist      10: r wrist     11: l hip   12: r hip   
+    13: l knee      14: r knee      15: l ankle 16: r ankle
+
+    NOTE: R means right, L means left. There are 17 parts 
+    in MS COCO dataset. Following authors' implementation, 
+    we compute neck position according to shoulders.
+    """
+    Nose = 0 
+    Neck = 1 
+    RShoulder = 2; RElbow = 3; RWrist = 4
+    LShoulder = 5; LElbow = 6; LWrist = 7
+    RHip = 8;   RKnee = 9;  RAnkle = 10
+    LHip = 11;  LKnee = 12; LAnkle = 13
+    REye = 14;  LEye = 15 
+    REar = 16;  LEar = 17
+
+
+class KeyPointParams(Parameter):
+
+    # Training Parameters
+    insize = 368
+    min_area = 32 * 32
+    min_keypoints = 5
+    heatmap_sigma = 7
+    paf_sigma = 8 # aka `limb width`
+
+    # Inference Parameters
+    infer_insize = 368
+    infer_scales = [0.5, 1.0, 1.5, 2.0]
+    heatmap_size = 320
+    stride = 8
+
+    # for gaussian filter smoothing
+    smooth = False
+    gaussian_sigma = 2.5
+    # for peak selection
+    peak_threshold = 0.1
+    # for peak refinement
+    peak_refine = True
+    winsize = 2
+    # for PAFs evaluate
+    nb_sample = 10
+    nb_sample_threshold = 8
+    limb_threshold = 0.05
+    # for person parsing
+    mean_score_threshold = 0.2
+    nb_part_threshold = 3
+   
+    # specific params
+    joint = Joint
+    # In MS COCO, this is called skeleton
+    # What we define here is different.
+    limbs = [
+        [Joint.Neck, Joint.RHip],
+        [Joint.RHip, Joint.RKnee],
+        [Joint.RKnee, Joint.RAnkle],
+
+        [Joint.Neck, Joint.LHip],
+        [Joint.LHip, Joint.LKnee],
+        [Joint.LKnee, Joint.LAnkle],
+
+        [Joint.Neck, Joint.RShoulder],
+        [Joint.RShoulder, Joint.RElbow],
+        [Joint.RElbow, Joint.RWrist],
+        [Joint.RShoulder, Joint.REar],
+
+        [Joint.Neck, Joint.LShoulder],
+        [Joint.LShoulder, Joint.LElbow],
+        [Joint.LElbow, Joint.LWrist],
+        [Joint.LShoulder, Joint.LEar],
+
+        [Joint.Neck, Joint.Nose],
+        [Joint.Nose, Joint.REye],
+        [Joint.Nose, Joint.LEye],
+        [Joint.REye, Joint.REar],
+        [Joint.LEye, Joint.LEar],
+    ]
+
+    # original coco keypoint order, here we use 
+    # Joint to represent it.
+    coco_keypoints = [
+        Joint.Nose,
+        Joint.LEye,
+        Joint.REye,
+        Joint.LEar,
+        Joint.REar,
+        Joint.LShoulder,
+        Joint.RShoulder,
+        Joint.LElbow,
+        Joint.RElbow,
+        Joint.LWrist,
+        Joint.RWrist,
+        Joint.LHip,
+        Joint.RHip,
+        Joint.LKnee,
+        Joint.RKnee,
+        Joint.LAnkle,
+        Joint.RAnkle,
+    ]
+
+    # limb color for visualization
+    colors = [
+        [255, 0, 0], [255, 85, 0], [255, 170, 0], [255, 255, 0], [170, 255, 0],
+        [85, 255, 0], [0, 255, 0], [0, 255, 85], [0, 255, 170], [0, 255, 255],
+        [0, 170, 255], [0, 85, 255], [0, 0, 255], [85, 0, 255], [170, 0, 255],
+        [255, 0, 255], [255, 0, 170], [255, 0, 85], [255, 0, 0]
+    ]
 
 
 class KeyPointMixin(object):
     @staticmethod
-    def im_preprocess(im, channel_first=False):
+    def im_preprocess(im):
         """image pre-processing, scale image by divide 255,
         centre image by substract 0.5
         
         Args:
             im: image object return by cv2.imread
             channel_first: if True, put channels on axis 0
+        Returns:
+            the preprocessed image
         """
         im = im / 255.0
         im -= 0.5
-        if channel_first:
-            im = im.transpose((2, 0, 1))
         return im
 
     @staticmethod
@@ -46,6 +249,7 @@ class KeyPointMixin(object):
         if im_h < im_w:
             im_w = round(tsize / im_h * im_w)
             # 因为不想用if，所以用个trick，以下的注释解释了下面代码的行为 
+            # NOTE: the following code do the same things with `if`
             # surplus = im_w % stride
             # if surplus != 0:
             #     im_w += stride - surplus
@@ -62,8 +266,6 @@ class KeyPointMixin(object):
         return im_
 
 
-
-
 class KeyPointTrain(COCO, KeyPointMixin):
     """A class for pose estimation, especially for this paper
     link: https://arxiv.org/abs/1611.08050.
@@ -75,12 +277,14 @@ class KeyPointTrain(COCO, KeyPointMixin):
     def __init__(self, images_directory, annotation_file, params: KeyPointParams):
         """
         Args:
+            images_directory: same as COCO
+            annotations_file: same as COCO
             params: KeyPointParams instance 
         """
         super().__init__(images_directory, annotation_file)
         self.params = params
         self.mask_dir = osp.join(self.root, 'mask')
-        # create mask directory
+        # create mask directory because we need mask to train
         os.makedirs(self.mask_dir, exist_ok=True)
     
     # -------- Preprocessing --------
@@ -90,10 +294,8 @@ class KeyPointTrain(COCO, KeyPointMixin):
 
         Args:
             ann_metas: annotations of COCO
-        
         Params:
             joint: Joint type.
-        
         Returns:
             a numpy array (N, 18, 3) encodes keypoints for single image
             where N is the number of persons.
@@ -116,26 +318,23 @@ class KeyPointTrain(COCO, KeyPointMixin):
                 pose[joint.Neck][0] = int((pose[joint.LShoulder][0] + pose[joint.RShoulder][0])/2)
                 pose[joint.Neck][1] = int((pose[joint.LShoulder][1] + pose[joint.RShoulder][1])/2)
                 pose[joint.Neck][2] = 2
-
             # 为了能叠加到poses里面，需要reshape保持维度一致
             pose = pose.reshape(-1, joint_len, 3)
             poses = np.vstack([poses, pose])
         return poses
 
-    def make_confidence_map(self, shape, joint):
-        """create a confidence map (a.k.a. heatmap, jointmap).
+    def make_confidence_map(self, shape, peak):
+        """create a confidence map (a.k.a. heatmap).
 
         Args:
             shape: shape of confidence map 
-            joint: a.k.a keypoint, (x, y)
-        
+            peak: a.k.a keypoint, (x, y)
         Params:
             sigma: the hyperparameter control the spread of peak
-
         Returns:
             Confidence map with shape
         """
-        x, y = joint
+        x, y = peak
         # grid_x是所有点的x坐标，grid_y是所有点的y坐标，这里的x、y是从图片的
         # 像素坐标的角度来理解
         grid_x = np.tile(np.arange(shape[1]), (shape[0], 1))
@@ -145,35 +344,34 @@ class KeyPointTrain(COCO, KeyPointMixin):
         heatmap = np.exp(-0.5 * grid_dist / self.params.heatmap_sigma ** 2)
         return heatmap
 
-    def make_confidence_maps(self, im, poses):
+    def make_confidence_maps(self, shape, poses):
         """generate confidence map for single image
         
         Args:
-            im: image object return by cv2.imread
+            shape: shape of confidence map 
             poses: poses for im, return by convert_joint_order
         Returns:
             comfidence map with shape (len(joint), h, w)
         """
         # init heatmaps as (0, h, w) 
-        im_h, im_w = im.shape[:2]
-        heatmaps = np.zeros([0, im_h, im_w])
+        heatmaps = np.zeros([0, *shape])
         # 为了计算背景，需要把所有heatmap进行累加
-        heatmap_sum = np.zeros([im_h, im_w])
+        heatmap_sum = np.zeros(shape)
         # 这里的思路是，将所有相同关键点放到一个heatmap中
         # 所以是先遍历关键点，再遍历每个人的pose
         # 因为Joint是整型枚举型数据，所以可以直接当整数用
         for joint_i in self.params.joint:
-            heatmap = np.zeros([im_h, im_w])
+            heatmap = np.zeros(shape)
             for pose in poses:
                 # 查看每一个关节点的v值，大于0说明该点有标签
                 if pose[joint_i, 2] > 0:
-                    jointmap = self.make_confidence_map([im_h, im_w], pose[joint_i][:2])
+                    jointmap = self.make_confidence_map(shape, pose[joint_i][:2])
                     # 这里是论文中的对不同人的关节点的max运算，以保留峰值
                     heatmap[jointmap > heatmap] = jointmap[jointmap > heatmap]
                     heatmap_sum[jointmap > heatmap_sum] = jointmap[jointmap > heatmap_sum]
             # 将这个关键点的热力图添加进返回值中
-            heatmaps = np.vstack([heatmaps, heatmap.reshape([1, im_h, im_w])])
-        heatmap_bg = (1 - heatmap_sum).reshape([1, im_h, im_w]) # 背景
+            heatmaps = np.vstack([heatmaps, heatmap.reshape([1, *shape])])
+        heatmap_bg = (1 - heatmap_sum).reshape([1, *shape]) # 背景
         heatmaps = np.vstack([heatmaps, heatmap_bg])
         return heatmaps.astype(np.float32)
 
@@ -216,21 +414,20 @@ class KeyPointTrain(COCO, KeyPointMixin):
         paf = np.broadcast_to(unit_vector, shape + [2]).transpose(2, 0, 1)
         return paf * paf_flag # 仅返回那些需要的点
 
-    def make_PAFs(self, im, poses):
+    def make_PAFs(self, shape, poses):
         """generate PAFs for input image
 
         Args:
-            im: image object return by cv2.imread
+            shape: (im_h, im_w) tuple or list
             poses: poses for im, return by convert_joint_order
         Returns:
             PAFs shape as (2 * len(limbs), im_h, im_w)
         """
-        im_h, im_w = im.shape[:2]
-        pafs = np.zeros([0, im_h, im_w])
+        pafs = np.zeros([0, *shape])
 
         # 这里的思路同heatmap，先遍历同一种关节的联结，再遍历每个pose
         for limb in self.params.limbs:
-            paf = np.zeros([2, im_h, im_w])
+            paf = np.zeros([2, *shape])
             # NOTE: 记录每个点重合的次数，目的是让最终的paf的点保持一样的水平
             # TODO: 以一种更直观的方式实现PAF
             paf_overlay = np.zeros_like(paf, np.int32)
@@ -239,7 +436,7 @@ class KeyPointTrain(COCO, KeyPointMixin):
                 joint_from, joint_to = pose[limb]
                 # 如果这两个关键点都有标出来
                 if joint_from[2] > 0 and joint_to[2] > 0:
-                    limb_paf = self.make_PAF([im_h, im_w], joint_from[:2], joint_to[:2])
+                    limb_paf = self.make_PAF(shape, joint_from[:2], joint_to[:2])
                     paf += limb_paf
                     
                     limb_paf_flags = limb_paf != 0
@@ -472,7 +669,6 @@ class KeyPointTrain(COCO, KeyPointMixin):
         im = im * np.repeat(mask[:, :, None], 3, axis=2)
         return im
 
-
     
 class KeyPointTest(KeyPointMixin):
 
@@ -490,7 +686,6 @@ class KeyPointTest(KeyPointMixin):
 
         Args:
             heatmap: heatmap of joint, usually is one channel of network output
-
         Returns:
             Coordinates of peaks in image-form, with shape (N, 2). Note that for 
             a point(x, y) in an image, you should fetch it by (y, x) in numpy. 
@@ -514,7 +709,6 @@ class KeyPointTest(KeyPointMixin):
         Args:
             coords: coordinates of peaks in image-form, with shape (N, 2)
             factor: indicate the scale to perform
-
         Returns:
             New coordinates with the same shape. Note that new coordinates 
             is float type.
@@ -529,13 +723,11 @@ class KeyPointTest(KeyPointMixin):
             heatmap: heatmap of joint, usually is one channel of network output
             peak: peak coordinate (x, y) in image-form
             factor: size ratio between CFM heatmap and insize
-
         Params: 
             winsize: control patch size. E.g. winsize=1, patch => 3x3
                 winsize=2, patch => 5x5
             smooth: if True, apply Gaussian Filter
             gaussian_sigma: gaussian filter parameter
-
         Returns:
             A tuple( Refined version of peak, score of peak )
         """
@@ -577,13 +769,11 @@ class KeyPointTest(KeyPointMixin):
         Args:
             heatmaps: (h, w, len(joints)) numpy.array
             factor: size ratio between CFM heatmap and insize
-        
         Returns:
             List, each element represents one part, each part contains several
             peaks. Each peak contains (x, y, score, global id). Note that the
             global id is unique for every joint regardless its type. we refer
             return value as `parts_list` in `part_associate` and `person_parse`.
-        
         Note: 
             The global id for each joint is used to decide which person owns
             this joint. See `person_parse` for more details.
@@ -625,13 +815,11 @@ class KeyPointTest(KeyPointMixin):
             fparts: from parts, element of parts_list 
             tparts: to parts, element of parts_list
             channels: index array to fetch PAFs from `pafs`
-        
         Params:
             nb_sample: number of samples. In order to evaluate connections, we
                 sample some points lied on the limb (connection).
             nb_sample_threshold: number of samples that a limb should surpass
             limb_threshold: keep limb which surpass this value
-        
         Returns: 
             All possible limbs.
             Each limb contains (fGid, tGid, score of limb, fpart_i, tpart_i)
@@ -683,7 +871,6 @@ class KeyPointTest(KeyPointMixin):
             fparts: from parts, element of parts_list 
             tparts: to parts, element of parts_list
             possible_limbs: refer to `limb_score`
-        
         Returns:
             a subset of possible_limbs, represent good limbs
         """
@@ -720,7 +907,6 @@ class KeyPointTest(KeyPointMixin):
         Args:
             pafs: PAFs has already been resized to original input image shape
             parts_list: return value of `NMS`
-
         Returns:
             Nested list, length equals to limbs type. For each limb type, may 
             have none or more limbs. We refer this return value as `limbs_list` 
@@ -758,7 +944,6 @@ class KeyPointTest(KeyPointMixin):
         Args:
             parts_list: return value of `NMS`
             limbs_list: return value of `part_associate`
-
         Returns:
             persons: A dict with Key: person id, Value: a list. let's say 
             we have 10 joints, then the first 10 elements of list is either
@@ -874,7 +1059,6 @@ class KeyPointTest(KeyPointMixin):
             im: input image
             heatmaps: network output
             pafs: network output
-            
         Returns:
             A dict contains person id and pose information
         """
@@ -883,8 +1067,6 @@ class KeyPointTest(KeyPointMixin):
         # 再放大为原来的样子，是比较高效的。
         # 对于paf来说，因为不需要做其他处理，只要让它跟原图一样就好了
         parts_list = self.NMS(heatmaps, factor=im.shape[0] / heatmaps.shape[0])
-
-        # resize pafs
         pafs = cv2.resize(pafs, im.shape[:2][::-1], interpolation=cv2.INTER_CUBIC)
         limbs_list = self.part_associate(pafs, parts_list)
         persons = self.person_parse(parts_list, limbs_list)
@@ -897,10 +1079,8 @@ class KeyPointTest(KeyPointMixin):
             im: input image
             parts_list: refer to `NMS`
             persons: refer to `person_parse`
-        
         Params:
             colors: colors for joint type
-        
         Returns: 
             drawed image
         """
@@ -929,6 +1109,11 @@ class KeyPointTest(KeyPointMixin):
                 cv2.circle(canvas, tpeak, 3, (255, 255, 255), thickness=-1)
                 # 画limb，从fpeak到tpeak，从params中选颜色
                 cv2.line(canvas, fpeak, tpeak, self.params.colors[limb_i])
-
         return canvas
-    
+
+__all__ = [
+    'PoseEstimation',
+    'KeyPointParams',
+    'KeyPointTrain',
+    'KeyPointTest',
+]
