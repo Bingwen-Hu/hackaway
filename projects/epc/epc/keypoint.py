@@ -675,6 +675,38 @@ class KeyPointTest(KeyPointMixin):
     def __init__(self, params: KeyPointParams):
         self.params = params
     
+    def preprocess(self, im):
+        """Combine preprocess methods for convenience
+
+        Args:
+            im: image object return by cv2.imread
+        Params:
+            infer_size: image size on inference time
+            stride: decided by network, total downscale of input and output
+        Returns:
+            image preprocessed
+        """
+        im = self.im_letterbox(im, self.params.infer_insize, self.params.stride)
+        im = self.im_preprocess(im)
+        return im
+
+    def postprocess(self, im, pafs, heatmaps):
+        """Combine post preprocess methods for convenience
+
+        Args:
+            im: image object return by cv2.imread
+            pafs: original PAF of network
+            heatmaps: original CFM of network
+        Returns:
+            same as `pose_decode`
+        """
+        tsize = self.params.heatmap_size
+        heatmaps = self.im_letterbox(heatmaps, tsize, self.params.stride)
+        pafs = self.im_letterbox(pafs, tsize, self.params.stride) 
+        parts_list, persons = self.pose_decode(im, heatmaps, pafs)
+        return parts_list, persons
+
+
     def find_peaks(self, heatmap):
         """find peaks from heatmap. Here, we decide a peak by 2 conditions:
         1. the peak must surpass the threshold
