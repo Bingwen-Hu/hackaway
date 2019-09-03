@@ -1,46 +1,54 @@
 import os
+import os.path as osp
 import cv2
 from uuid import uuid1
 from imutils import paths
 
+width = 100
+codelen = 5
 
-def gen_xy(imgpath):
-    width = cv2.imread(imgpath).shape[1]
-    # first set, into four
-    size = width // 4
-    xy_1 = [i*size for i in range(4)]
-    xy_1.append(width)
-    xy_1 = [(s, e) for (s, e) in zip(xy_1, xy_1[1:])]
-    # second set, into two part by middle
-    size = width // 2
-    xy_2 = [i*size for i in range(2)]
-    xy_2.append(width)
-    xy_2 = [(s, e) for (s, e) in zip(xy_2, xy_2[1:])]
-    # third set, into two part by first part and reset
-    size = width // 4
-    xy_3 = [(0, size), (size, width - size),
-            (0, width - size), (width - size, width)]
-    crops_xy = []
-    crops_xy.extend(xy_1)
-    crops_xy.extend(xy_2)
-    crops_xy.extend(xy_3)
-    return crops_xy
+def generate_xy(width, codelen):
+    """Generate start and end indice of certain image width
+    Args:
+        width: image width
+        piece: max number of piece to divide into
+    Returns:
+        list of pairs (start, end)        
+    """
+    # build the basic pieces
+    unit = width // codelen
+    base = [i*unit for i in range(codelen)]
+    base.append(width)
+    base = [(s, e) for (s, e) in zip(base, base[1:])]
+    # TODO: merge basic pieces to generate larger pieces
+    xys = base
+    return xys
 
 
-def crop(imgpath, crops_xy):
-    """separate a image (150x60) into 
-    four pieces"""
-    img = cv2.imread(imgpath)
-    for (s, e) in crops_xy:
-        crop = img[:, s:e]
-        cv2.imwrite("/home/jenny/datasets/img/sub/{}.png".format(uuid1()), crop)
+def crop_and_save(impath, xys, directory, codelen):
+    """crop image into pieces and save them
+    Args:
+        impath: image path with code
+        xys: (x, y) coordinates
+        directory: directory to save pieces
+        codelen: length of captcha code
+    """
+    im = cv2.imread(impath)
+    codes = osp.basename(impath)[:codelen]
+    for i, (s, e) in enumerate(xys):
+        crop = im[:, s:e]
+        path = osp.join(directory, f"{codes[i]}-{uuid1()}.png")
+        print(path)
+        cv2.imwrite(path, crop)
 
 
 
 if __name__ == "__main__":
-    path = '/home/jenny/datasets/img/'
-    images = list(paths.list_images(path))
-    crops_xy = gen_xy(images[0])
-    for i, f in enumerate(images):
-        crop(f, crops_xy)
+    image_directory = "/home/mory/Downloads/labledPicture"
+    images = list(paths.list_images(image_directory))
+    crops_xy = generate_xy(width, codelen)
+
+    for i, impath in enumerate(images):
+        crop_and_save(impath, crops_xy, "pieces", codelen)
+        break
         
