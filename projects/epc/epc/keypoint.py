@@ -218,6 +218,9 @@ class KeyPointParams(Parameter):
 
 
 class KeyPointMixin(object):
+    """This mixin class provide several common functions for Training and 
+    Testing. They are image preprocessing and visualization utilities.
+    """
     @staticmethod
     def im_preprocess(im):
         """image pre-processing, scale image by divide 255,
@@ -265,6 +268,84 @@ class KeyPointMixin(object):
         im_ = cv2.resize(im, (im_w, im_h), interpolation=cv2.INTER_CUBIC)
         return im_
 
+    @staticmethod 
+    def plot_ignore_mask(im, mask, color=(0, 0, 1)):
+        """visualize mask genrated by Class Keypoint
+        
+        Args:
+            im: numpy.array return by cv2.imread
+            mask: generated ignore_mask
+            color: for BGR channels, 0 means ignore, 1 means keep 
+        Returns:
+            im: image with highlighted mask region
+        """
+        # expand to 3 channels
+        mask = np.repeat(mask[:, :, np.newaxis], 3, axis=2)
+        # turn to 0s and 1s
+        mask = mask.astype(np.int32)
+        # only segmentation area is kept
+        im_masked = im * mask
+        # keep certain channels according to color
+        # change 1s to 255s
+        for i in range(3):
+            mask[:, :, i] = mask[:, :, i] * color[i] * 255
+        # 对于非mask区域，原图片是没有影响的。对于mask区域，保留它原来
+        # 颜色的30%，然后加上70%的color指定的颜色
+        # for masked region, keep its original color 30%, then 
+        # added 70% mask color
+        im = im - im_masked * 0.7 + mask * 0.7
+
+        return im.astype(np.uint8)
+
+    @staticmethod
+    def overlay_PAF(im, paf):
+        """Pad PAF layer on image"""
+        # 首先，创建HSV层
+        x, y = paf
+        # 这一句是什么意思呢？看不懂
+        hue = np.arctan2(y, x) / np.pi / -2 + 0.5
+        # 饱和度的取值为0-1
+        saturation = np.sqrt(x ** 2 + y ** 2)
+        saturation[saturation > 1.0] = 1.0
+        value = saturation.copy()
+        # None的作用等同np.newaxis
+        hsv_paf = np.vstack([hue[None], saturation[None], value[None]]).transpose(1, 2, 0)
+        hsv_paf = (hsv_paf * 255).astype(np.uint8)
+        rgb_paf = cv2.cvtColor(hsv_paf, cv2.COLOR_HSV2BGR)
+        # alpha = 0.6, beta = 0.4, gamma = 0
+        im = cv2.addWeighted(im, 0.6, rgb_paf, 0.4, 0)
+        return im
+    
+    @staticmethod
+    def overlay_PAFs(im, pafs): 
+        # 这里的思路是先将PAFs合成一个，然后再与im合并
+        mix_paf = np.zeros((2,) + im.shape[:2])
+        paf_overlay = np.zeros_like(mix_paf)
+
+        channels, height, width = pafs.shape
+        new_shape = channels // 2, 2, height, width
+        pafs = pafs.reshape(new_shape)
+        for paf in pafs:
+            mix_paf += paf
+            paf_overlay = paf != 0
+            paf_overlay += np.broadcast_to(paf_overlay[0] | paf_overlay[1], paf.shape)
+        mix_paf[paf_overlay > 0] /= paf_overlay[paf_overlay > 0]
+        im = KeyPointMixin.overlay_PAF(im, mix_paf)
+        return im
+
+    @staticmethod
+    def overlay_heatmap(im, heatmap):
+        heatmap = (heatmap * 255).astype(np.uint8)
+        rgb_heatmap = cv2.applyColorMap(heatmap, cv2.COLORMAP_JET)
+        im = cv2.addWeighted(im, 0.6, rgb_heatmap, 0.4, 0)
+        return im
+    
+    @staticmethod
+    def overlay_ignore_mask(im, mask):
+        """set ignore region dark"""
+        mask = (mask == 0).astype(np.uint8)
+        im = im * np.repeat(mask[:, :, None], 3, axis=2)
+        return im
 
 class KeyPointTrain(COCO, KeyPointMixin):
     """A class for pose estimation, especially for this paper
@@ -288,7 +369,6 @@ class KeyPointTrain(COCO, KeyPointMixin):
         os.makedirs(self.mask_dir, exist_ok=True)
     
     # -------- Preprocessing --------
-    @staticmethod
     def convert_joint_order(self, ann_metas):
         """convert the joint order from COCO to ours
 
@@ -411,7 +491,7 @@ class KeyPointTrain(COCO, KeyPointMixin):
         # 因为有x, y两个坐标，所以需要重复两次
         paf_flag = np.stack([paf_flag, paf_flag])
         # 创建一个所有点都是单位向量的平面
-        paf = np.broadcast_to(unit_vector, shape + [2]).transpose(2, 0, 1)
+        paf = np.broadcast_to(unit_vector, (*shape, 2)).transpose(2, 0, 1)
         return paf * paf_flag # 仅返回那些需要的点
 
     def make_PAFs(self, shape, poses):
@@ -507,6 +587,29 @@ class KeyPointTrain(COCO, KeyPointMixin):
         im = cv2.imread(path)
         return np.zeros(im.shape[:2], 'bool')
 
+    def generate_ignore_masks(self, visual=True):
+        """generate ignore masks whether for visualization or save into
+        disk for training.
+
+        Args:
+            visual: bool, if True, just visualize image, or else save 
+                ignore mask into disk.
+        """
+        for i in range(self.size):
+            im_id, ann_metas, im = self.get_im_with_anns(index=i)
+            _, mask = self.make_ignore_mask(im.shape[:2], ann_metas)
+
+            # visual
+            if visual:
+                im_origin = self.plot_masks_and_keypoints(im, ann_metas)
+                im_train = self.plot_ignore_mask(im, mask)
+                cv2.imshow("image", np.hstack([im_origin, im_train]))
+                k = cv2.waitKey()
+                if k == ord('q'):
+                    break
+            else:
+                self.save_ignore_mask(im_id, mask)
+
     # -------- Data Augmentation --------
     def resize_data(self, im, mask, poses, shape):
         """resize all data as shape
@@ -546,41 +649,11 @@ class KeyPointTrain(COCO, KeyPointMixin):
         im, mask, poses = self.resize_data(im, mask, poses, shape=(self.params.insize, ) * 2)
         mask = cv2.morphologyEx(mask.astype(np.uint8), cv2.MORPH_DILATE, np.ones([16, 16]))
         mask = mask.astype('bool')
-        heatmaps = self.make_confidence_maps(im, poses) 
-        pafs = self.make_PAFs(im, poses)
+        heatmaps = self.make_confidence_maps(im.shape[:2], poses) 
+        pafs = self.make_PAFs(im.shape[:2], poses)
         return im, mask, heatmaps, pafs
 
-
     # -------- Visualization --------
-    @staticmethod 
-    def plot_ignore_mask(im, mask, color=(0, 0, 1)):
-        """visualize mask genrated by Class Keypoint
-        
-        Args:
-            im: numpy.array return by cv2.imread
-            mask: generated ignore_mask
-            color: for BGR channels, 0 means ignore, 1 means keep 
-        Returns:
-            im: image with highlighted mask region
-        """
-        # expand to 3 channels
-        mask = np.repeat(mask[:, :, np.newaxis], 3, axis=2)
-        # turn to 0s and 1s
-        mask = mask.astype(np.int32)
-        # only segmentation area is kept
-        im_masked = im * mask
-        # keep certain channels according to color
-        # change 1s to 255s
-        for i in range(3):
-            mask[:, :, i] = mask[:, :, i] * color[i] * 255
-        # 对于非mask区域，原图片是没有影响的。对于mask区域，保留它原来
-        # 颜色的30%，然后加上70%的color指定的颜色
-        # for masked region, keep its original color 30%, then 
-        # added 70% mask color
-        im = im - im_masked * 0.7 + mask * 0.7
-
-        return im.astype(np.uint8)
-            
     def plot_masks_and_keypoints(self, im, ann_metas):
         """visualize mask region and keypoints in COCO dataset
         
@@ -619,57 +692,33 @@ class KeyPointTrain(COCO, KeyPointMixin):
 
         return im.astype(np.uint8)
 
-    @staticmethod
-    def overlay_PAF(im, paf):
-        """Pad PAF layer on image"""
-        # 首先，创建HSV层
-        x, y = paf
-        # 这一句是什么意思呢？看不懂
-        hue = np.arctan2(y, x) / np.pi / -2 + 0.5
-        # 饱和度的取值为0-1
-        saturation = np.sqrt(x ** 2 + y ** 2)
-        saturation[saturation > 1.0] = 1.0
-        value = saturation.copy()
-        # None的作用等同np.newaxis
-        hsv_paf = np.vstack([hue[None], saturation[None], value[None]]).transpose(1, 2, 0)
-        hsv_paf = (hsv_paf * 255).astype(np.uint8)
-        rgb_paf = cv2.cvtColor(hsv_paf, cv2.COLOR_HSV2BGR)
-        # alpha = 0.6, beta = 0.4, gamma = 0
-        im = cv2.addWeighted(im, 0.6, rgb_paf, 0.4, 0)
-        return im
-    
-    @staticmethod
-    def overlay_PAFs(im, pafs): 
-        # 这里的思路是先将PAFs合成一个，然后再与im合并
-        mix_paf = np.zeros((2,) + im.shape[:2])
-        paf_overlay = np.zeros_like(mix_paf)
+    def plot_labels(self):
+        """visualize labels for checking purpose"""
+        for i in range(self.size):
+            im_id, ann_metas, im = self.get_im_with_anns(index=i)
+            mask = self.get_ignore_mask(im_id)
+            poses = self.convert_joint_order(ann_metas)
+            im, mask, heatmaps, pafs = self.generate_labels(im, mask, poses)
+            # resize to view
+            shape = (self.params.insize, self.params.insize)
+            pafs = cv2.resize(pafs.transpose(1, 2, 0), shape).transpose(2, 0, 1)
+            heatmaps = cv2.resize(heatmaps.transpose(1, 2, 0), shape).transpose(2, 0, 1)
+            mask = cv2.resize(mask.astype(np.uint8) * 255, shape) == 255
+            # overlay labels
+            # 以下三个分别是PAF，heatmap和mask的效果
+            # 你可以注释掉其中的语句来看效果
+            img_to_show = im.copy()
+            img_to_show = self.overlay_PAFs(img_to_show, pafs)
+            img_to_show = self.overlay_heatmap(img_to_show, heatmaps[:-1].max(axis=0))
+            img_to_show = self.overlay_ignore_mask(img_to_show, mask)
+            # cv2.imwrite("resized_img.png", resized_img)
+            # cv2.imwrite('img_to_show.png', img_to_show)
+            cv2.imshow('w', np.hstack((im, img_to_show)))
+            k = cv2.waitKey(0)
+            if k == ord('q'):
+                break
+     
 
-        channels, height, width = pafs.shape
-        new_shape = channels // 2, 2, height, width
-        pafs = pafs.reshape(new_shape)
-        for paf in pafs:
-            mix_paf += paf
-            paf_overlay = paf != 0
-            paf_overlay += np.broadcast_to(paf_overlay[0] | paf_overlay[1], paf.shape)
-        mix_paf[paf_overlay > 0] /= paf_overlay[paf_overlay > 0]
-        im = KeyPoint.overlay_PAF(im, mix_paf)
-        return im
-
-    @staticmethod
-    def overlay_heatmap(im, heatmap):
-        heatmap = (heatmap * 255).astype(np.uint8)
-        rgb_heatmap = cv2.applyColorMap(heatmap, cv2.COLORMAP_JET)
-        im = cv2.addWeighted(im, 0.6, rgb_heatmap, 0.4, 0)
-        return im
-    
-    @staticmethod
-    def overlay_ignore_mask(im, mask):
-        """set ignore region dark"""
-        mask = (mask == 0).astype(np.uint8)
-        im = im * np.repeat(mask[:, :, None], 3, axis=2)
-        return im
-
-    
 class KeyPointTest(KeyPointMixin):
 
     def __init__(self, params: KeyPointParams):
