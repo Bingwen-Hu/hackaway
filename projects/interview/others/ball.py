@@ -16,7 +16,7 @@ def redball(red, blue, factor=1):
         return lastround(red, blue) * factor
 
     # A 得红球，游戏结束
-    win = red / (red + blue)
+    win = red / (red + blue) * factor
     # A 不得红球，要游戏下去，B不能得红球
     a = blue / (red + blue)
     b = (blue - 1) / (red + blue - 1)
@@ -28,7 +28,7 @@ def redball(red, blue, factor=1):
     # C 蓝
     cblue = (blue - 2) / (red + blue - 2)
     win2 = redball(red, blue-3, a * b * cblue)
-    return win + win1 + win2
+    return win + (win1 + win2) * (1 - win)
     
 x = redball(red, blue)
 print(x)

@@ -3,7 +3,7 @@ import os
 import os.path as osp
 
 import cv2
-from fireu.data.tools import visual
+from epc.tools import visual
 from pycocotools.coco import COCO
 
 
