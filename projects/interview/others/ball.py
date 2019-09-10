@@ -27,7 +27,7 @@ def redball(red, blue, factor=1):
     win1 = redball(red-1, blue-2, factor=a * b * cred)
     # C 蓝
     cblue = (blue - 2) / (red + blue - 2)
-    win2 = redball(red, blue-3, a * b * cblue)
+    win2 = redball(red, blue-3,                                                                                                                                                                                                                                                                               a * b * cblue)
     return win + (win1 + win2) * (1 - win)
     
 x = redball(red, blue)
