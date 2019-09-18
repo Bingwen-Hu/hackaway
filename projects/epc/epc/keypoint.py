@@ -1190,6 +1190,33 @@ class KeyPointTest(KeyPointMixin):
                 # 画limb，从fpeak到tpeak，从params中选颜色
                 cv2.line(canvas, fpeak, tpeak, self.params.colors[limb_i])
         return canvas
+    
+    def openpose(self, im, parts_list, persons):
+        """A helpful function to output same format as OpenPose project
+
+        Args:
+            im: input image
+            parts_list: refer to `NMS`
+            persons: refer to `person_parse`
+        Params:
+            colors: colors for joint type
+            joint: Joint type 
+        Returns: 
+            Dictionary as OpenPose Json format
+        """
+        output = {"version": 1}
+        people = []
+        # 为了方便画出关键点，我们将parts_list合成一个array，那么一个part的Gid
+        # 就刚好与它的行数相对应
+        parts = np.vstack(parts_list)
+        for person in persons.values():
+            pose_keypoints = []
+            for Gid in person[:18]:
+                # x, y, score
+                pose_keypoints += parts[Gid, :3].tolist()
+            people.append(pose_keypoints)
+        output['people'] = people
+        return output
 
 __all__ = [
     'PoseEstimation',
