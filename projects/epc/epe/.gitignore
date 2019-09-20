@@ -1,2 +1,4 @@
 *.pth
 imgs
+*.png
+*.json

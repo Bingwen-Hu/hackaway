@@ -1213,7 +1213,8 @@ class KeyPointTest(KeyPointMixin):
             pose_keypoints = []
             for Gid in person[:18]:
                 # x, y, score
-                pose_keypoints += parts[Gid, :3].tolist()
+                x, y, score = parts[int(Gid), :3]
+                pose_keypoints += [int(x), int(y), round(score, 5)]
             people.append(pose_keypoints)
         output['people'] = people
         return output

@@ -12,18 +12,19 @@ net.eval()
 
 # inference setup
 params = KeyPointParams()
-infer = KeyPointTest(params)
+KP = KeyPointTest(params)
 
 
 # pytorch specific input preprocess
 def input_prepare(im):
-    im_prep = infer.preprocess(im)
+    im_prep = KP.preprocess(im)
     im_prep = im_prep.transpose(2, 0, 1)
     im_tensor = torch.Tensor(im_prep[None, ...])
     return im_tensor
 
 
 if __name__ == "__main__":
+    import json
     import sys
     if len(sys.argv) == 2:
         impath = sys.argv[1]
@@ -38,6 +39,10 @@ if __name__ == "__main__":
     pafs = pafs.numpy().squeeze().transpose(1, 2, 0)
     heatmaps = heatmaps.numpy().squeeze().transpose(1, 2, 0)
     #scale to inference size
-    parts_list, persons = infer.postprocess(im, pafs, heatmaps)
-    canvas = infer.plot_pose(im, parts_list, persons)
+    parts_list, persons = KP.postprocess(im, pafs, heatmaps)
+    canvas = KP.plot_pose(im, parts_list, persons)
     cv2.imwrite('test.png', canvas)
+    # save as openpose format
+    kp_json = KP.openpose(im, parts_list, persons)
+    with open('keypoints.json', 'w') as f:
+        json.dump(kp_json, f)
