@@ -19,6 +19,7 @@ fn main() {
     // refer demo, so you can see box is like pointer in C/C++
     refer();
     box_as_refer();
+    refer_to_print();
 }
 
 
@@ -38,3 +39,14 @@ fn box_as_refer() {
     assert_eq!(5, *y);
 }
 
+
+// Just backup
+fn refer_to_print() {
+    let x = Box::new(5);
+    let y = 5;
+    let z = &y;
+
+    println!("value in Box is: {}", x);
+    println!("value of refer z is: {}", z);
+    println!("value of address z is: {:p}", z);
+}
