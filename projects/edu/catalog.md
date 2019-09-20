@@ -18,18 +18,19 @@
 16. argparse
 17. collections.Counter
 18. collections.Defaultdict
-19. time
-20. datetime
-21. math
-22. random
-23. uuid
-24. decorator
-25. generator
-26. magical method
-27. functools
-28. itertools
-29. What you can do?
-30. NeXT: the awesome list and recommendation
+19. re
+20. time
+21. datetime
+22. math
+23. random
+24. uuid
+25. decorator
+26. generator
+27. magical method
+28. functools
+29. itertools
+30. What you can do?
+31. NeXT: the awesome list and recommendation
 
 
 ## Eatable Third Party

@@ -12,7 +12,7 @@ conda install ipython
 ```
 
 ### 启动
-Windows下 ctrl+R 打开运行界面，输入 cmd 启动命令行，Linux 或者 Mac 直接打开终端，输入
+Windows下 win+R 打开运行界面，输入 cmd 启动命令行，Linux 或者 Mac 直接打开终端，输入
 
 ```sh
 ipython
