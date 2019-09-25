@@ -5,7 +5,7 @@ import rtpose
 
 
 
-img = 'imgs/dinner.png'
+img = 'imgs/ski.jpg'
 canvas, keypoint = rtpose.estimation(img)
 
 cv2.imwrite('canvas.png', canvas)

@@ -1,4 +1,3 @@
 *.pth
-imgs
-*.png
 *.json
+__pycache__

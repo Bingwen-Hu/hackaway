@@ -2,6 +2,8 @@
 
 # Pytorch Pose Estimation
 
+Pytorch implementation for [CVPR2017: Realtime Multi-Person Pose Estimation](https://arxiv.org/abs/1611.08050)
+
 [English Version](README.md)
 
 </div>
