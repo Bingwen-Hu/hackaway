@@ -50,11 +50,11 @@ def preprocess(cpath, impath):
     im = Image.open(impath)
     im = transform(im) # [-1,1]
 
-    # parse_array = psp.parse(impath)
+    parse_array = psp.parse(impath)
     # NOTE: Test whether human parsing is failed
-    filename = osp.basename(impath).replace('jpg', 'png')
-    image_parse = osp.join(opt.data_path, 'image-parse', filename)
-    parse_array = np.array(Image.open(image_parse))
+    # filename = osp.basename(impath).replace('jpg', 'png')
+    # image_parse = osp.join(opt.data_path, 'image-parse', filename)
+    # parse_array = np.array(Image.open(image_parse))
     # 所有大于0的即是身体
     parse_shape = (parse_array > 0).astype(np.float32)
     # 头部由多种组成，可能是头发，帽子和脸等
@@ -69,6 +69,7 @@ def preprocess(cpath, impath):
     parse_shape = parse_shape.resize((opt.fine_width//16, opt.fine_height//16), Image.BILINEAR)
     parse_shape = parse_shape.resize((opt.fine_width, opt.fine_height), Image.BILINEAR)
     shape = transform(parse_shape) # 各种规范化
+
     phead = torch.from_numpy(parse_head) # [0,1]
     # pcm = torch.from_numpy(parse_cloth) # [0,1]
 
