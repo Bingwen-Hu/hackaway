@@ -26,7 +26,7 @@ opt.grid_size = 5
 opt.checkpoint = 'checkpoints/gmm_final.pth'
 opt.checkpoint = 'checkpoints/tom_final.pth'
 
-    
+
 transform = transforms.Compose([
     transforms.ToTensor(),
     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
@@ -39,7 +39,7 @@ def preprocess(opt: EasyDict, c_name, im_name, stage='GMM'):
         im_name: image (person) name
         stage: GMM or TOM
     """
-        
+
     # cloth image & cloth mask
     if stage == 'GMM':
         c = Image.open(osp.join(opt.data_path, 'cloth', c_name))
@@ -47,14 +47,14 @@ def preprocess(opt: EasyDict, c_name, im_name, stage='GMM'):
     elif stage == "TOM":
         c = Image.open(osp.join(opt.data_path, 'warp-cloth', c_name))
         cm = Image.open(osp.join(opt.data_path, 'warp-mask', c_name))
-    
+
     c = transform(c)  # [-1,1]
     cm_array = np.array(cm)
     cm_array = (cm_array >= 128).astype(np.float32)
     cm = torch.from_numpy(cm_array) # [0,1]
     cm.unsqueeze_(0) # inplace, expand the channel
 
-    # person image 
+    # person image
     im = Image.open(osp.join(opt.data_path, 'image', im_name))
     im = transform(im) # [-1,1]
 
@@ -74,7 +74,7 @@ def preprocess(opt: EasyDict, c_name, im_name, stage='GMM'):
     parse_cloth = (parse_array == 5).astype(np.float32) + \
             (parse_array == 6).astype(np.float32) + \
             (parse_array == 7).astype(np.float32)
-    
+
     # shape downsample
     # 先放缩到一个低精度的图片，再放回原来的大小，使其模糊化
     parse_shape = Image.fromarray((parse_shape*255).astype(np.uint8))
@@ -114,12 +114,12 @@ def preprocess(opt: EasyDict, c_name, im_name, stage='GMM'):
 
     # just for visualization
     im_pose = transform(im_pose)
-    
+
     # cloth-agnostic representation
     # shape: 指的是身体形状，且是模糊的
     # im_h：指的是头部的图像
     # pose_map：指的是姿态的各个通道
-    agnostic = torch.cat([shape, im_h, pose_map], 0) 
+    agnostic = torch.cat([shape, im_h, pose_map], 0)
 
     if stage == 'GMM':
         im_g = Image.open('grid.png')
@@ -157,6 +157,7 @@ def gmm(opt, inputs, model):
     im_g = im_g[None, ...]
     print(agnostic.shape, c.shape)
     grid, theta = model(agnostic, c)
+    print(theta.shape)
     warped_cloth = F.grid_sample(c, grid, padding_mode='border')
     warped_mask = F.grid_sample(cm, grid, padding_mode='zeros')
     warped_grid = F.grid_sample(im_g, grid, padding_mode='zeros')
@@ -173,7 +174,7 @@ def save_image(img_tensor, img_name, save_dir):
         array = array.squeeze(0)
     elif array.shape[0] == 3:
         array = array.swapaxes(0, 1).swapaxes(1, 2)
-        
+
     img = Image.fromarray(array)
     if save_dir and img_name:
         img.save(os.path.join(save_dir, img_name))
@@ -185,7 +186,7 @@ def save_image(img_tensor, img_name, save_dir):
 
 def tom(opt, inputs, model):
     model.eval()
-        
+
     im_names = inputs['im_name']
     im = inputs['image']
     im_pose = inputs['pose_image']
@@ -195,7 +196,7 @@ def tom(opt, inputs, model):
     agnostic = inputs['agnostic']
     c = inputs['cloth']
     cm = inputs['cloth_mask']
-    
+
     agnostic = agnostic[None, ...]
     c = c[None, ...]
 

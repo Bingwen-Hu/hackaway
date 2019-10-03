@@ -220,6 +220,9 @@ mod tests {
 
     #[test]
     fn test_min_path_sum() {
+        //  1  3  1     1  4  5
+        //  1  5  1  => 2  7  6  
+        //  4  2  1     6  8  7 
         let input = [ [1,3,1].to_vec(), [1,5,1].to_vec(), [4,2,1].to_vec() ].to_vec();
         let res = crate::dp::min_path_sum(input);
         assert_eq!(7, res);

@@ -1,4 +1,5 @@
 // 我们开始学习动态规划吧
+use std::cmp::min;
 
 
 // https://leetcode-cn.com/problems/maximum-subarray
@@ -141,6 +142,27 @@ pub fn max_profit_k(k: i32, prices: Vec<i32>) -> i32 {
 
 // shortest path
 // https://leetcode-cn.com/problems/minimum-path-sum/
+// way: set grid value as the cost to get there
+// matrix: 
+// 1  0  1      1  1  2
+// 2  3  5  =>  3  4  7
+// 5  3  2      8  7  9
 pub fn min_path_sum(grid: Vec<Vec<i32>>) -> i32 {
-    return 0;
+    let row = grid.len();
+    let col = grid[0].len();
+    let mut cost = grid.clone();
+    for r in 0..row {
+        for c in 0..col {
+            if r == 0 && c == 0 {
+                cost[r][c] = grid[r][c];
+            } else if r == 0 {
+                cost[r][c] = grid[r][c] + cost[r][c-1];
+            } else if c == 0 {
+                cost[r][c] = grid[r][c] + cost[r-1][c];
+            } else {
+                cost[r][c] = grid[r][c] + min(cost[r-1][c], cost[r][c-1]);
+            }
+        }
+    }
+    return cost[row-1][col-1];
 }

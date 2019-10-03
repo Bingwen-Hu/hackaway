@@ -3,6 +3,7 @@ import os
 import os.path as osp
 import uuid
 
+import cv2
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -51,6 +52,7 @@ def preprocess(cpath, impath):
     im = transform(im) # [-1,1]
 
     parse_array = psp.parse(impath)
+    parse_array = cv2.imread(impath.replace('.png', '_parse.png'), 0)
     # NOTE: Test whether human parsing is failed
     # filename = osp.basename(impath).replace('jpg', 'png')
     # image_parse = osp.join(opt.data_path, 'image-parse', filename)
@@ -99,6 +101,7 @@ def preprocess(cpath, impath):
     # shape: 指的是身体形状，且是模糊的
     # im_h：指的是头部的图像
     # pose_map：指的是姿态的各个通道
+    print(shape.shape, im_h.shape, pose_map.shape)
     agnostic = torch.cat([shape, im_h, pose_map], 0) 
 
 
@@ -208,9 +211,18 @@ if __name__ == '__main__':
         ('000048_0.jpg', "012578_1.jpg"),
         ('000048_0.jpg', "010816_1.jpg"),
         ('000048_0.jpg', "010454_1.jpg"),
+        ('000048_0.jpg', '000001_1.jpg')
     ]
+    tests = [
+        ('wei.png', '010608_1.jpg'),
+        ('wei.png', "012578_1.jpg"),
+        ('wei.png', "010816_1.jpg"),
+        ('wei.png', "010454_1.jpg"),
+        ('wei.png', '000001_1.jpg')
+    ]
+
     for person, cloth in tests:
-        person = osp.join(opt.data_path, 'image', person)
+        # person = osp.join(opt.data_path, 'image', person)
         cloth = osp.join(opt.data_path, 'cloth', cloth)
         save_path = tryon(cloth, person)
         print(save_path)

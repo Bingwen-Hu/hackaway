@@ -69,7 +69,7 @@ class FeatureExtraction(nn.Module):
         model += [nn.Conv2d(512, 512, kernel_size=3, stride=1, padding=1), nn.ReLU(True)]
         model += [norm_layer(512)]
         model += [nn.Conv2d(512, 512, kernel_size=3, stride=1, padding=1), nn.ReLU(True)]
-        
+
         self.model = nn.Sequential(*model)
         init_weights(self.model, init_type='normal')
 
@@ -87,13 +87,13 @@ class FeatureL2Norm(torch.nn.Module):
         epsilon = 1e-6
         norm = torch.pow(torch.sum(torch.pow(feature,2),1)+epsilon,0.5).unsqueeze(1).expand_as(feature)
         return torch.div(feature,norm)
-    
+
 
 # mory NOTE: 将不同的特征在不同的channel上进行融合
 class FeatureCorrelation(nn.Module):
     def __init__(self):
         super(FeatureCorrelation, self).__init__()
-    
+
     def forward(self, feature_A, feature_B):
         b,c,h,w = feature_A.size()
         # reshape features for matrix multiplication
@@ -139,18 +139,18 @@ class FeatureRegression(nn.Module):
 # NOTE: 这段代码应该是废弃的！因为F未定义，应该是import torch.nn.functional as F
 class AffineGridGen(nn.Module):
     def __init__(self, out_h=256, out_w=192, out_ch = 3):
-        super(AffineGridGen, self).__init__()        
+        super(AffineGridGen, self).__init__()
         self.out_h = out_h
         self.out_w = out_w
         self.out_ch = out_ch
-        
+
     # mory: NOTE: 这里的theta对应论文中的网络结构图，是regression网络的输出
     def forward(self, theta):
         theta = theta.contiguous()
         batch_size = theta.size()[0]
         out_size = torch.Size((batch_size,self.out_ch,self.out_h,self.out_w))
         return F.affine_grid(theta, out_size)
-        
+
 # TPS transform
 # Refer to original paper for detail explaintation.
 class TpsGridGen(nn.Module):
@@ -191,12 +191,12 @@ class TpsGridGen(nn.Module):
                 self.P_X_base = self.P_X_base.cuda()
                 self.P_Y_base = self.P_Y_base.cuda()
 
-            
+
     def forward(self, theta):
         warped_grid = self.apply_transformation(theta,torch.cat((self.grid_X,self.grid_Y),3))
-        
+
         return warped_grid
-    
+
     def compute_L_inverse(self,X,Y):
         N = X.size()[0] # num of points (along dim 0)
         # construct matrix K
@@ -207,21 +207,21 @@ class TpsGridGen(nn.Module):
         K = torch.mul(P_dist_squared,torch.log(P_dist_squared))
         # construct matrix L
         O = torch.FloatTensor(N,1).fill_(1)
-        Z = torch.FloatTensor(3,3).fill_(0)       
+        Z = torch.FloatTensor(3,3).fill_(0)
         P = torch.cat((O,X,Y),1)
         L = torch.cat((torch.cat((K,P),1),torch.cat((P.transpose(0,1),Z),1)),0)
         Li = torch.inverse(L)
         if self.use_cuda:
             Li = Li.cuda()
         return Li
-        
+
     def apply_transformation(self,theta,points):
         if theta.dim()==2:
             theta = theta.unsqueeze(2).unsqueeze(3)
         # points should be in the [B,H,W,2] format,
-        # where points[:,:,:,0] are the X coords  
-        # and points[:,:,:,1] are the Y coords  
-        
+        # where points[:,:,:,0] are the X coords
+        # and points[:,:,:,1] are the Y coords
+
         # input are the corresponding control points P_i
         batch_size = theta.size()[0]
         # split theta into point coordinates
@@ -229,16 +229,16 @@ class TpsGridGen(nn.Module):
         Q_Y=theta[:,self.N:,:,:].squeeze(3)
         Q_X = Q_X + self.P_X_base.expand_as(Q_X)
         Q_Y = Q_Y + self.P_Y_base.expand_as(Q_Y)
-        
+
         # get spatial dimensions of points
         points_b = points.size()[0]
         points_h = points.size()[1]
         points_w = points.size()[2]
-        
+
         # repeat pre-defined control points along spatial dimensions of points to be transformed
         P_X = self.P_X.expand((1,points_h,points_w,1,self.N))
         P_Y = self.P_Y.expand((1,points_h,points_w,1,self.N))
-        
+
         # compute weigths for non-linear part
         W_X = torch.bmm(self.Li[:,:self.N,:self.N].expand((batch_size,self.N,self.N)),Q_X)
         W_Y = torch.bmm(self.Li[:,:self.N,:self.N].expand((batch_size,self.N,self.N)),Q_Y)
@@ -253,12 +253,12 @@ class TpsGridGen(nn.Module):
         # A_X,A,Y: size [B,H,W,1,3]
         A_X = A_X.unsqueeze(3).unsqueeze(4).transpose(1,4).repeat(1,points_h,points_w,1,1)
         A_Y = A_Y.unsqueeze(3).unsqueeze(4).transpose(1,4).repeat(1,points_h,points_w,1,1)
-        
+
         # compute distance P_i - (grid_X,grid_Y)
         # grid is expanded in point dim 4, but not in batch dim 0, as points P_X,P_Y are fixed for all batch
         points_X_for_summation = points[:,:,:,0].unsqueeze(3).unsqueeze(4).expand(points[:,:,:,0].size()+(1,self.N))
         points_Y_for_summation = points[:,:,:,1].unsqueeze(3).unsqueeze(4).expand(points[:,:,:,1].size()+(1,self.N))
-        
+
         if points_b==1:
             delta_X = points_X_for_summation-P_X
             delta_Y = points_Y_for_summation-P_Y
@@ -266,31 +266,31 @@ class TpsGridGen(nn.Module):
             # use expanded P_X,P_Y in batch dimension
             delta_X = points_X_for_summation-P_X.expand_as(points_X_for_summation)
             delta_Y = points_Y_for_summation-P_Y.expand_as(points_Y_for_summation)
-            
+
         dist_squared = torch.pow(delta_X,2)+torch.pow(delta_Y,2)
         # U: size [1,H,W,1,N]
         dist_squared[dist_squared==0]=1 # avoid NaN in log computation
-        U = torch.mul(dist_squared,torch.log(dist_squared)) 
-        
+        U = torch.mul(dist_squared,torch.log(dist_squared))
+
         # expand grid in batch dimension if necessary
         points_X_batch = points[:,:,:,0].unsqueeze(3)
         points_Y_batch = points[:,:,:,1].unsqueeze(3)
         if points_b==1:
             points_X_batch = points_X_batch.expand((batch_size,)+points_X_batch.size()[1:])
             points_Y_batch = points_Y_batch.expand((batch_size,)+points_Y_batch.size()[1:])
-        
+
         points_X_prime = A_X[:,:,:,:,0]+ \
                        torch.mul(A_X[:,:,:,:,1],points_X_batch) + \
                        torch.mul(A_X[:,:,:,:,2],points_Y_batch) + \
                        torch.sum(torch.mul(W_X,U.expand_as(W_X)),4)
-                    
+
         points_Y_prime = A_Y[:,:,:,:,0]+ \
                        torch.mul(A_Y[:,:,:,:,1],points_X_batch) + \
                        torch.mul(A_Y[:,:,:,:,2],points_Y_batch) + \
                        torch.sum(torch.mul(W_Y,U.expand_as(W_Y)),4)
-        
+
         return torch.cat((points_X_prime,points_Y_prime),3)
-        
+
 
 # NOTE: Here, we have GMM done! Next is TOM
 
@@ -366,7 +366,7 @@ class UnetSkipConnectionBlock(nn.Module):
             return self.model(x)
         else:
             return torch.cat([x, self.model(x)], 1)
-    
+
 
 # Here we have done, I think I have to implement a unet by myself.
 
@@ -425,13 +425,13 @@ class GMM(nn.Module):
     """
     def __init__(self, opt):
         super(GMM, self).__init__()
-        self.extractionA = FeatureExtraction(22, ngf=64, n_layers=3, norm_layer=nn.BatchNorm2d) 
+        self.extractionA = FeatureExtraction(22, ngf=64, n_layers=3, norm_layer=nn.BatchNorm2d)
         self.extractionB = FeatureExtraction(3, ngf=64, n_layers=3, norm_layer=nn.BatchNorm2d)
         self.l2norm = FeatureL2Norm()
         self.correlation = FeatureCorrelation()
         self.regression = FeatureRegression(input_nc=192, output_dim=2*opt.grid_size**2, use_cuda=False)
         self.gridGen = TpsGridGen(opt.fine_height, opt.fine_width, use_cuda=False, grid_size=opt.grid_size)
-        
+
     def forward(self, inputA, inputB):
         featureA = self.extractionA(inputA)
         featureB = self.extractionB(inputB)

@@ -18,3 +18,12 @@ docker image ls
 docker image rm xxx
 docker image rm $(docker image ls -q redis)
 ```
+
+### copy file between OS and container
+```bash
+# from os to container
+docker cp /os/path [container]:/docker/image/path
+# from container to os
+docker cp [container]:/docker/image/path /os/path
+```
+

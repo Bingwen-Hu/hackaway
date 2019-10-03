@@ -1,5 +1,6 @@
 #include <limits.h>
 #include <stdio.h>
+#include "leetcode.h"
 
 int c_atoi(char *str) {
     char *p = str;
@@ -47,3 +48,4 @@ void reverseString(char *s, int sSize) {
         tail--;
     }
 }
+
