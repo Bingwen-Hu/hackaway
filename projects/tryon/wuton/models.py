@@ -2,6 +2,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from torchvision import models
 import numpy as np
 
 
@@ -49,7 +50,7 @@ class FeatureExtraction(nn.Module):
         o3 = self.conv3(o2)
         o4 = self.conv4(o3)
         o5 = self.conv5(o4)
-        return o1, o2, o3, o4, o5
+        return [o1, o2, o3, o4, o5]
 
 
 
@@ -264,7 +265,6 @@ class GMM(nn.Module):
         self.l2norm = FeatureL2Norm()
         self.correlation = FeatureCorrelation()
         self.regression = FeatureRegression(input_nc=48, output_dim=2*grid_size**2, use_cuda=False)
-        self.gridGen = TpsGridGen(fine_height, fine_width, use_cuda=False, grid_size=grid_size)
 
     def forward(self, inputA, inputB):
         featureA = self.extractionA(inputA)
@@ -272,21 +272,159 @@ class GMM(nn.Module):
         featureA = self.l2norm(featureA[-1])
         featureB = self.l2norm(featureB[-1])
         correlation = self.correlation(featureA, featureB)
-
         theta = self.regression(correlation)
-        grid = self.gridGen(theta)
-        return grid, theta
+        return theta
+
+class DNet(nn.Module):
+    def __init__(self, fine_height, fine_width):
+        super().__init__()
+        self.deconv1 = nn.Sequential(
+            nn.Conv2d(512, 256, 3, 1, 1),
+            nn.InstanceNorm2d(256),
+            nn.LeakyReLU(0.01),
+        )
+        self.deconv2 = nn.Sequential(
+            nn.Conv2d(512, 128, 3, 1, 1),
+            nn.InstanceNorm2d(128),
+            nn.LeakyReLU(0.01),
+        )
+        self.deconv3 = nn.Sequential(
+            nn.Conv2d(256, 64, 3, 1, 1),
+            nn.InstanceNorm2d(64),
+            nn.LeakyReLU(0.01),
+        )
+        self.deconv4 = nn.Sequential(
+            nn.Conv2d(128, 32, 3, 1, 1),
+            nn.InstanceNorm2d(32),
+            nn.LeakyReLU(0.01),
+        )
+        self.deconv5 = nn.Sequential(
+            nn.Conv2d(64, 16, 3, 1, 1),
+            nn.InstanceNorm2d(16),
+            nn.LeakyReLU(0.01),
+        )
+        self.deconv6 = nn.Conv2d(16, 3, 3, 1, 1)
+
+    def forward(self, co, po):
+        co1, co2, co3, co4, co5 = co
+        po1, po2, po3, po4, po5 = po
+        
+        print(co5.shape, po5.shape)
+        map1 = torch.cat([co5, po5], 1)
+        out1 = self.deconv1(map1)
+        up1 = F.interpolate(out1, scale_factor=2, mode='bilinear')
+
+        map2 = torch.cat([co4, po4, up1], 1)
+        out2 = self.deconv2(map2)
+        up2 = F.interpolate(out2, scale_factor=2, mode='bilinear')
+
+        map3 = torch.cat([co3, po3, up2], 1)
+        out3 = self.deconv3(map3)
+        up3 = F.interpolate(out3, scale_factor=2, mode='bilinear')
+
+        map4 = torch.cat([co2, po2, up3], 1)
+        out4 = self.deconv4(map4)
+        up4 = F.interpolate(out4, scale_factor=2, mode='bilinear')
+
+        map5 = torch.cat([co1, po1, up4], 1)
+        out5 = self.deconv5(map5)
+        up5 = F.interpolate(out5, scale_factor=2, mode='bilinear')
+
+        out6 = self.deconv6(up5)
+        return out6
+
 
 
 class SiameseUnetGenerator(nn.Module):
-    pass
+    def __init__(self, fine_height, fine_width, grid_size):
+        super().__init__()
+        self.cnet = FeatureExtraction(3)
+        self.pnet = FeatureExtraction(3)
+        self.gmm = GMM(fine_height, fine_width, grid_size)
+        self.gridGen = [
+            TpsGridGen(fine_height, fine_width, use_cuda=False, grid_size=grid_size),
+            TpsGridGen(fine_height//2, fine_width//2, use_cuda=False, grid_size=grid_size),
+            TpsGridGen(fine_height//4, fine_width//4, use_cuda=False, grid_size=grid_size),
+            TpsGridGen(fine_height//8, fine_width//8, use_cuda=False, grid_size=grid_size),
+            TpsGridGen(fine_height//16, fine_width//16, use_cuda=False, grid_size=grid_size),
+            TpsGridGen(fine_height//32, fine_width//32, use_cuda=False, grid_size=grid_size),
+        ]
+        self.dnet = DNet(fine_height, fine_width)
+        
+    def forward(self, cloth, person, training=True):
+        co = self.cnet(cloth)
+        po = self.pnet(person)
+        theta = self.gmm(cloth, person)
+        for i in range(len(co)):
+            grid = self.gridGen[i+1](theta)
+            co[i] = F.grid_sample(co[i], grid)
+        warp_person = self.dnet(co, po)
+
+        # for training
+        if training:
+            grid = self.gridGen[0](theta)
+            warp_cloth = F.grid_sample(cloth, grid, mode='border')
+        else:
+            warp_cloth = None
+        return warp_person, warp_cloth
+
+
+# loss
+class Vgg19(nn.Module):
+    def __init__(self, requires_grad=False):
+        super(Vgg19, self).__init__()
+        vgg_pretrained_features = models.vgg19(pretrained=True).features
+        self.slice1 = torch.nn.Sequential()
+        self.slice2 = torch.nn.Sequential()
+        self.slice3 = torch.nn.Sequential()
+        self.slice4 = torch.nn.Sequential()
+        self.slice5 = torch.nn.Sequential()
+        for x in range(2):
+            self.slice1.add_module(str(x), vgg_pretrained_features[x])
+        for x in range(2, 7):
+            self.slice2.add_module(str(x), vgg_pretrained_features[x])
+        for x in range(7, 12):
+            self.slice3.add_module(str(x), vgg_pretrained_features[x])
+        for x in range(12, 21):
+            self.slice4.add_module(str(x), vgg_pretrained_features[x])
+        for x in range(21, 30):
+            self.slice5.add_module(str(x), vgg_pretrained_features[x])
+        if not requires_grad:
+            for param in self.parameters():
+                param.requires_grad = False
+
+    def forward(self, X):
+        h_relu1 = self.slice1(X)
+        h_relu2 = self.slice2(h_relu1)
+        h_relu3 = self.slice3(h_relu2)
+        h_relu4 = self.slice4(h_relu3)
+        h_relu5 = self.slice5(h_relu4)
+        out = [h_relu1, h_relu2, h_relu3, h_relu4, h_relu5]
+        return out
+
+class VGGLoss(nn.Module):
+    def __init__(self, layids = None):
+        super(VGGLoss, self).__init__()
+        self.vgg = Vgg19()
+        self.vgg.cuda()
+        self.criterion = nn.L1Loss()
+        self.weights = [1.0/32, 1.0/16, 1.0/8, 1.0/4, 1.0]
+        self.layids = layids
+
+    def forward(self, x, y):
+        x_vgg, y_vgg = self.vgg(x), self.vgg(y)
+        loss = 0
+        if self.layids is None:
+            self.layids = list(range(len(x_vgg)))
+        for i in self.layids:
+            loss += self.weights[i] * self.criterion(x_vgg[i], y_vgg[i].detach())
+        return loss
+
+
+
 
 if __name__ == '__main__':
     cloth = torch.randn(8, 3, 256, 192)
     mask_person  = torch.randn(8, 3, 256, 192)
-
-    f1 = FeatureExtraction(3)
-    f2 = FeatureExtraction(3)
-
-    gmm = GMM(fine_height=256, fine_width=192, grid_size=5)
-    grid, theta = gmm(mask_person, cloth)
+    net = SiameseUnetGenerator(fine_height=256, fine_width=192, grid_size=5)
+    out = net(cloth, mask_person)

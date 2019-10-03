@@ -6,7 +6,7 @@ import argparse
 import os
 import time
 from dataset import CPDataset, CPDataLoader
-from models import GMM 
+from models import SiameseUnetGenerator, VGGLoss 
 
 
 
@@ -78,7 +78,46 @@ def train_gmm(opt, train_loader, model):
             
 
 
+def train_wuton(opt, train_loader, model):
+    model.train()
 
+    # criterion
+    criterionL1 = nn.L1Loss()
+    criterionVGG = VGGLoss()
+
+    
+    # optimizer
+    optimizer = torch.optim.Adam(model.parameters(), lr=opt.lr, betas=(0.5, 0.999))
+    scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, lr_lambda = lambda step: 1.0 -
+            max(0, step - opt.keep_step) / float(opt.decay_step + 1))
+    
+    for step in range(opt.keep_step + opt.decay_step):
+        iter_start_time = time.time()
+        inputs = train_loader.next_batch()
+            
+        c = inputs['c']
+        im_mask = inputs['im_mask']
+        c_gt = inputs['c_gt']
+        im = inputs['im']
+            
+        warp_person, warp_cloth = model(im_mask, c, training=True)
+
+        loss_l1 = criterionL1(warp_cloth, c_gt)    
+        loss_vgg = criterionVGG(warp_person, im)
+        loss = loss_l1 + loss_vgg
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+
+            
+        if (step+1) % opt.display_count == 0:
+            t = time.time() - iter_start_time
+            print('step: %8d, time: %.3f, loss: %4f' % (step+1, t, loss.item()), flush=True)
+
+        if (step+1) % opt.save_count == 0:
+            statedict = model.cpu().state_dict()
+            torch.save(statedict, os.path.join(opt.checkpoint_dir, opt.name, 'step_%06d.pth' % (step+1)))
+            
 
 
 def main():
@@ -92,13 +131,9 @@ def main():
     # create dataloader
     train_loader = CPDataLoader(opt, train_dataset)
 
-    # visualization
-    if not os.path.exists(opt.tensorboard_dir):
-        os.makedirs(opt.tensorboard_dir)
-   
     # create model & train & save the final checkpoint
-    model = GMM(opt.fine_height, opt.fine_width, opt.grid_size)
-    train_gmm(opt, train_loader, model)
+    model = SiameseUnetGenerator(opt.fine_height, opt.fine_width, opt.grid_size)
+    train_wuton(opt, train_loader, model)
     
   
     print('Finished training %s, nameed: %s!' % (opt.stage, opt.name))
