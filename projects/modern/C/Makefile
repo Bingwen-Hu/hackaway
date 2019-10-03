@@ -1,10 +1,24 @@
-C=gcc
+# Compiler, flags, library
+CC=gcc
 CFLAGS=-g -Wall -O2
-OBJS=fantest
+LIBS=
+
+# target
+TARGET=fantest
+
+# dependences
+OF_FANTEST = fantest.o main-fantest.o
+
 
 clean: 
-	rm -rf ${OBJS}
+	rm -rf ${TARGET}
 	rm -rf *.o
 
-fantest: fantest.o
-	$C fantest.c main-fantest.c ${CFLAGS} -o $@
+fantest: ${OF_FANTEST}
+	${CC} ${OF_FANTEST} ${CFLAGS} -o $@
+
+
+# convenient command for detect dependences
+# gcc -MM file.c
+fantest.o: fantest.c fantest.h
+main-fantest.o: main-fantest.c fantest.h
