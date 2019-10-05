@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "xmalloc.h"
 
 // generic function
@@ -33,24 +34,30 @@
         }                                                       \
     } while (0)
 
-#define print_vector(fmt, v, n)                                 \
-    do {                                                        \
-        size_t print_vector_loop_counter;                       \
-        for (print_vector_loop_counter = 0;                     \
-             print_vector_loop_counter < (n);                   \
-             print_vector_loop_counter++) {                     \
-            printf(fmt, (v)[print_vector_loop_counter]);        \
-        }                                                       \
-        putchar('\n');                                          \
-    } while (0)
-
 #define fprint_vector(stream, fmt, v, n)                                \
     do {                                                                \
-        size_t print_vector_loop_counter;                               \
-        for (print_vector_loop_counter = 0;                             \
-             print_vector_loop_counter < (n);                           \
-             print_vector_loop_counter++) {                             \
-            fprintf(stream, fmt, (v)[print_vector_loop_counter]);       \
+        size_t fprint_vector_loop_counter;                              \
+        for (fprint_vector_loop_counter = 0;                            \
+             fprint_vector_loop_counter < (n);                          \
+             fprint_vector_loop_counter++) {                            \
+            fprintf(stream, fmt, (v)[fprint_vector_loop_counter]);      \
         }                                                               \
         fputc('\n', stream);                                            \
     } while (0)
+
+
+#define print_vector(fmt, v, n) fprint_vector(stdout, fmt, v, n)
+
+#define fprint_matrix(stream, fmt, a, m, n)                             \
+    do {                                                                \
+        size_t fprint_matrix_loop_counter;                              \
+        for (fprint_matrix_loop_counter = 0;                            \
+             fprint_matrix_loop_counter < (m);                          \
+             fprint_matrix_loop_counter++) {                            \
+            fprint_vector(stream, fmt,                                  \
+                (a)[fprint_matrix_loop_counter], n);                    \
+        }                                                               \
+        fputc('\n', stream);                                            \
+    } while (0)
+
+#define print_matrix(fmt, a, m, n) fprint_matrix(stdout, fmt, a, m, n)

@@ -15,9 +15,7 @@ static int write_pbm(char** M, int m, int n, char* outfile)
 
     fprintf(f, "P1\n");
     fprintf(f, "%d %d\n", m, n);
-    for (int i = 0; i < m; i++) {
-        fprint_vector(f, "%d ", M[i], n);
-    }
+    fprint_matrix(f, "%d ", M, m, n);
 
     fclose(f);
     return 0;
