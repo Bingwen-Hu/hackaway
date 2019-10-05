@@ -15,3 +15,8 @@ void fgets_test(){
         printf("-> %s", buf);
     }
 }
+
+void test_random() {
+    int r = random();
+    printf("exist random! %d\n", r);
+}
