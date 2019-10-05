@@ -1,7 +1,6 @@
 # Compiler, flags, library
 CC=gcc
-CFLAGS=-g -Wall -O2
-LIBS=
+CFLAGS=-g -Wall -O2 -std=c11 -pedantic
 
 # target
 TARGET=fantest

@@ -1,4 +1,4 @@
-from models import GMM
+from models import SiameseUnetGenerator
 from easydict import EasyDict
 import torch
 from torchvision import transforms
@@ -17,9 +17,10 @@ transform = transforms.Compose([
     ])
         
 
-model = GMM(opt.fine_height, opt.fine_width, opt.grid_size)
+model = SiameseUnetGenerator(opt.fine_height, opt.fine_width, opt.grid_size)
 
-model.load_state_dict(torch.load('checkpoints/gmm_last.pth', map_location='cpu'))
+model.load_state_dict(torch.load('checkpoints/wton_last.pth', map_location='cpu'))
+model.eval()
 
 def preprocess(opt, c_name, im_name):
     # cloth image
@@ -57,6 +58,22 @@ def preprocess(opt, c_name, im_name):
     return inputs
 
 tests = [
-    '000057_0.jpg', '012578_1.jpg',
-    '000066_0.jpg', '009595_1.jpg'
+    ['000057_0.jpg', '012578_1.jpg'],
+    ['000066_0.jpg', '009595_1.jpg'],
 ]
+
+
+import cv2
+with torch.no_grad():
+    for person_name, cloth_name in tests:
+        inputs = preprocess(opt, cloth_name, person_name)
+        cloth = inputs['c']
+        person = inputs['im_mask']
+        cloth = cloth[None, ...]
+        person = person[None, ...]
+        warped_person, _ = model(cloth, person, training=False)
+        img = warped_person.numpy().astype(np.uint8)
+        img = img.squeeze().transpose(1, 2, 0)
+        cv2.imwrite('gen'+person_name[:-4]+'.png', img)
+        
+    
