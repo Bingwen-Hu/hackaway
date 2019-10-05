@@ -43,3 +43,14 @@
         }                                                       \
         putchar('\n');                                          \
     } while (0)
+
+#define fprint_vector(stream, fmt, v, n)                                \
+    do {                                                                \
+        size_t print_vector_loop_counter;                               \
+        for (print_vector_loop_counter = 0;                             \
+             print_vector_loop_counter < (n);                           \
+             print_vector_loop_counter++) {                             \
+            fprintf(stream, fmt, (v)[print_vector_loop_counter]);       \
+        }                                                               \
+        fputc('\n', stream);                                            \
+    } while (0)

@@ -1,3 +1,9 @@
 #pragma once
 
-inline int random(int n);
+#include <stdlib.h>
+
+
+inline int randint(int n) 
+{
+    return rand()/(RAND_MAX/n + 1);
+}
