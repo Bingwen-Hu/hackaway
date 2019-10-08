@@ -27,3 +27,19 @@ void test_sizeof() {
     printf("size of int is %ld\n", sizeof(int));
     printf("size of *r is %d\n", size_p);
 }
+
+void test_local_scope() 
+{
+    int i = 999;
+    printf("outer i = %d\n", i);
+
+    do {
+        int i = 111;
+        printf("inner i = %d\n", i);
+    } while (0);
+    {
+        int i = 222;
+        printf("Never confuse! %d\n", i);
+    }
+    printf("outer i = %d\n", i);
+}

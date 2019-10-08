@@ -4,7 +4,7 @@ CFLAGS=-g -Wall -std=c11 -pedantic
 
 
 # target
-TARGET=array fetch-line random sparse umfpack
+TARGET=array fetch-line random sparse umfpack list
 
 # dependences
 OF_ARRAY = xmalloc.o test-array.o
@@ -12,6 +12,7 @@ OF_FETCH_LINE = fetch-line.o test-fetch-line.o
 OF_RANDOM = test-random.o xmalloc.o
 OF_SPARSE = test-sparse.o sparse.o xmalloc.o
 OF_UMFPACK = test-umfpack.o xmalloc.o sparse.o
+OF_LIST = test-list.o xmalloc.o list.o
 
 clean: 
 	rm -rf ${TARGET}
@@ -35,6 +36,9 @@ sparse: ${OF_SPARSE}
 umfpack: ${OF_UMFPACK}
 	${CC} ${OF_UMFPACK} ${CFLAGS} -lumfpack -o $@
 
+list: ${OF_LIST}
+	${CC} ${OF_LIST} ${CFLAGS} -o $@
+
 # convenient command for detect dependences
 # gcc -MM file.c
 test-array.o: test-array.c array.h xmalloc.h
@@ -44,3 +48,5 @@ test-random.o: test-random.c array.h xmalloc.h random.h
 sparse.o: sparse.c sparse.h
 test-sparse.o: test-sparse.c sparse.h array.h xmalloc.h
 test-umfpack.o: test-umfpack.c
+test-list.o: test-list.c list.h
+list.o: list.c list.h xmalloc.h
