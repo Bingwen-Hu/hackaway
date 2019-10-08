@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include "array.h"
 #include "sparse.h"
+#include "modern.h"
 
 int main()
 {
@@ -14,8 +15,8 @@ int main()
     make_vector(b, n);
     make_vector(x, n);
 
-    a[0][0] = 2; a[0][1] = 3; a[0][2] = 0; a[0][3] = 0; a[0][4] = 0;
-    a[1][0] = 3; a[1][1] = 0; a[1][2] = 4; a[1][3] = 0; a[1][4] = 6;
+    a[0][0] = 0; a[0][1] = 3; a[0][2] = 0; a[0][3] = 0; a[0][4] = 0;
+    a[1][0] = 0; a[1][1] = 0; a[1][2] = 4; a[1][3] = 0; a[1][4] = 6;
     a[2][0] = 0; a[2][1] = -1; a[2][2] = -3; a[2][3] = 2; a[2][4] = 0;
     a[3][0] = 0; a[3][1] = 0; a[3][2] = 1; a[3][3] = 0; a[3][4] = 0;
     a[4][0] = 0; a[4][1] = 4; a[4][2] = 2; a[4][3] = 0; a[4][4] = 1;
@@ -37,8 +38,21 @@ int main()
 
     void* symbolic;
     void* numeric;
-    umfpack_di_symbolic(n, n, Ap, Ai, Ax, &symbolic, NULL, NULL);
-    umfpack_di_numeric(Ap, Ai, Ax, symbolic, &numeric, NULL, NULL);
+    int status;
+    status = umfpack_di_symbolic(n, n, Ap, Ai, Ax, &symbolic, NULL, NULL);
+
+    if (status != UMFPACK_OK) {
+        error("umfpack_di_symbol() fail!");
+        return EXIT_FAILURE;
+    }
+
+    status = umfpack_di_numeric(Ap, Ai, Ax, symbolic, &numeric, NULL, NULL);
+
+    if (status == UMFPACK_WARNING_singular_matrix) {
+        error("matrix is singular");
+        return EXIT_FAILURE;
+    }   
+
     umfpack_di_solve(UMFPACK_A, Ap, Ai, Ax, x, b, numeric, NULL, NULL);
 
     print_vector("%3.1lf ", x, n);
