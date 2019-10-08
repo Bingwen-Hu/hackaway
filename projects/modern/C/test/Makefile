@@ -1,16 +1,17 @@
 # Compiler, flags, library
 CC=gcc
 CFLAGS=-g -Wall -std=c11 -pedantic
-LIBS=
+
 
 # target
-TARGET=array fetch-line random sparse
+TARGET=array fetch-line random sparse umfpack
 
 # dependences
 OF_ARRAY = xmalloc.o test-array.o
 OF_FETCH_LINE = fetch-line.o test-fetch-line.o
 OF_RANDOM = test-random.o xmalloc.o
 OF_SPARSE = test-sparse.o sparse.o xmalloc.o
+OF_UMFPACK = test-umfpack.o xmalloc.o sparse.o
 
 clean: 
 	rm -rf ${TARGET}
@@ -31,6 +32,8 @@ random: ${OF_RANDOM}
 sparse: ${OF_SPARSE}
 	${CC} ${OF_SPARSE} ${CFLAGS} -o $@
 
+umfpack: ${OF_UMFPACK}
+	${CC} ${OF_UMFPACK} ${CFLAGS} -lumfpack -o $@
 
 # convenient command for detect dependences
 # gcc -MM file.c
@@ -40,3 +43,4 @@ test-fetch-line.o: test-fetch-line.c fetch-line.h
 test-random.o: test-random.c array.h xmalloc.h random.h
 sparse.o: sparse.c sparse.h
 test-sparse.o: test-sparse.c sparse.h array.h xmalloc.h
+test-umfpack.o: test-umfpack.c
