@@ -1,19 +1,10 @@
 #pragma once
 
-#include <stdio.h>
-#include <stdlib.h>
 
-/* ======= Data Structure =======
-Variable:
-    ElemType: element type in list
-Structure: 
-    LinkList: list with head pointer
-*/
+typedef struct conscell {
+    void* data;
+    struct conscell* next;
+} conscell;
 
-
-typedef int ElemType;
-
-typedef struct Node {
-    ElemType data;
-    struct Node *next;
-} Node, *LinkList;
+conscell* lpush(conscell* list, void* data);
+conscell* lpop(conscell* list);

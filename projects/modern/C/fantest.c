@@ -20,3 +20,10 @@ void test_random() {
     int r = random();
     printf("exist random! %d\n", r);
 }
+
+void test_sizeof() {
+    int* r = malloc(sizeof(int));
+    int size_p = sizeof(*r);
+    printf("size of int is %ld\n", sizeof(int));
+    printf("size of *r is %d\n", size_p);
+}
