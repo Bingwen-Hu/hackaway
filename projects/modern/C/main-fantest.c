@@ -5,5 +5,6 @@ int main() {
     // fgets_test();
     // test_random();
     // test_sizeof();
-    test_local_scope();
+    // test_local_scope();
+    test_valgrind();
 }

@@ -7,3 +7,4 @@ void fgets_test();
 void test_random();
 void test_sizeof();
 void test_local_scope();
+void test_valgrind();

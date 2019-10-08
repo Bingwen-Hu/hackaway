@@ -22,4 +22,6 @@ typedef struct conscell {
 
 
 conscell* lpush(conscell* list, void* data);
-conscell* lpop(conscell* list);
+conscell* lpop(conscell* list, conscell** cons);
+void lfree(conscell* list);
+conscell* lreverse(conscell* list);

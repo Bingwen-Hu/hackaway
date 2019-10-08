@@ -43,3 +43,12 @@ void test_local_scope()
     }
     printf("outer i = %d\n", i);
 }
+
+void test_valgrind()
+{
+    int *r = malloc(sizeof(int));
+    *r = 12;
+    printf("value of r is %d\n", *r);
+
+    free(r);
+}
