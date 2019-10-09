@@ -1,0 +1,10 @@
+# python cache
+__pycache__
+*.pyc
+
+# data and output
+mnist
+output
+
+# ide settings
+.vscode
