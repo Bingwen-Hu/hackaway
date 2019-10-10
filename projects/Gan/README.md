@@ -5,7 +5,7 @@
 </div>
 
 ## Gans List
-+ [x] 2014 basic Gan
++ [x] 2014 basic Gan. aka sGan (Standard Gan)
 + [ ] 2014 cGan
 + [ ] 2016 dcGan
 + [ ] 2017 wGan

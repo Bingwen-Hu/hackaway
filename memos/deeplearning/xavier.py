@@ -8,4 +8,5 @@ def xavier_init(size):
     F = 1 / sqrt(dim / 2) 
     """
     dim = size[0]
-    xavier_stddev = 1. / math.sqrt(in_dim / 2.)
+    xavier_stddev = 1. / math.sqrt(dim / 2.)
+    return xavier_stddev
