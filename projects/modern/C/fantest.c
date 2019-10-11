@@ -1,4 +1,6 @@
 #include "fantest.h"
+
+
 // fan test
 
 //
@@ -17,7 +19,9 @@ void fgets_test(){
 }
 
 void test_random() {
-    int r = random();
+    // switch to the following code to see the result
+    // int r = random();
+    int r = rand();
     printf("exist random! %d\n", r);
 }
 
@@ -51,4 +55,17 @@ void test_valgrind()
     printf("value of r is %d\n", *r);
 
     free(r);
+}
+
+void test_macroexpand()
+{
+    printf(RED "can this work?\n" RESET);
+    printf(BLUE "blue never stop\n" RESET);
+    printf(ESC_STD_RED "long macro\n"RESET);
+    printf(ESC_STD_RED_WHITE "white background\n"RESET);
+}
+
+void test_printf_str()
+{
+    printf("\033" "[31mhaha\n" "You never know");
 }

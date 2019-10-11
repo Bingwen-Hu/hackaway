@@ -6,5 +6,7 @@ int main() {
     // test_random();
     // test_sizeof();
     // test_local_scope();
-    test_valgrind();
+    // test_valgrind();
+    // test_printf_str();
+    test_macroexpand();
 }
