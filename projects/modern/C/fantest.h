@@ -21,5 +21,8 @@ void test_printf_str();
 #define RED ESC_STD_RED
 #define BLUE ESC"[34m"
 #define RESET ESC"[0m"
+void test_color();
 
-void test_macroexpand();
+
+#define myprintf(...) printf(__VA_ARGS__)
+void test_macroprintf();

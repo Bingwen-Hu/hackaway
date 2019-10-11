@@ -57,7 +57,7 @@ void test_valgrind()
     free(r);
 }
 
-void test_macroexpand()
+void test_color()
 {
     printf(RED "can this work?\n" RESET);
     printf(BLUE "blue never stop\n" RESET);
@@ -68,4 +68,10 @@ void test_macroexpand()
 void test_printf_str()
 {
     printf("\033" "[31mhaha\n" "You never know");
+}
+
+
+void test_macroprintf()
+{
+    myprintf(RED "haha%d\n" RESET, 1);
 }
