@@ -22,6 +22,7 @@ void test_printf_str();
 #define BLUE_BOLD ESC_BOLD"34m"
 #define BLUE_DIM ESC_DIM"34m"
 #define RESET ESC"[0m"
+#define RESET_BG ESC"[49m;"
 void test_color();
 
 
