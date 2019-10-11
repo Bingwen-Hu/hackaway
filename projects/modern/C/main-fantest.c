@@ -8,6 +8,6 @@ int main() {
     // test_local_scope();
     // test_valgrind();
     // test_printf_str();
-    // test_color();
-    test_macroprintf();
+    test_color();
+    // test_macroprintf();
 }

@@ -61,15 +61,17 @@ void test_color()
 {
     printf(RED "can this work?\n" RESET);
     printf(BLUE "blue never stop\n" RESET);
+    printf(BLUE_BOLD "blue never stop\n" RESET);
+    printf(BLUE_DIM "blue std never stop\n" RESET);
     printf(ESC_STD_RED "long macro\n"RESET);
     printf(ESC_STD_RED_WHITE "white background\n"RESET);
+    printf(ESC_BOLD_RED_WHITE "bold red white background\n"RESET);
 }
 
 void test_printf_str()
 {
     printf("\033" "[31mhaha\n" "You never know");
 }
-
 
 void test_macroprintf()
 {
