@@ -61,12 +61,14 @@ void test_color()
 {
     printf(ESC_BOLD_RED_WHITE "bold red white background\n"RESET);
     printf(RED "can this work?\n" RESET);
+    printf(ESC_STD_RED "long macro\n"RESET);
+    printf(ESC_STD_RED_WHITE "white background\n"RESET);
+    printf(BG_WIHTE_DIM "what's your problem?\n"RESET);
+    printf(BG_WIHTE "STD your problem?\n"RESET);
+    printf(BG_WIHTE_BOLD "with bold bg\n"RESET);
     printf(BLUE "blue never stop\n" RESET);
     printf(BLUE_BOLD "blue never stop\n" RESET);
     printf(BLUE_DIM "blue std never stop\n" RESET);
-    printf(ESC_STD_RED "long macro\n"RESET);
-    printf(ESC_STD_RED_WHITE "white background\n"RESET);
-    printf("what's your problem?\n");
 }
 
 void test_printf_str()
@@ -76,5 +78,5 @@ void test_printf_str()
 
 void test_macroprintf()
 {
-    myprintf(RED "haha%d\n" RESET, 1);
+    myprintf("test", RED "haha%d\n" RESET, 1);
 }

@@ -23,8 +23,11 @@ void test_printf_str();
 #define BLUE_DIM ESC_DIM"34m"
 #define RESET ESC"[0m"
 #define RESET_BG ESC"[49m;"
+#define BG_WIHTE_BOLD ESC"[47;1m"
+#define BG_WIHTE_DIM ESC"[47;2m"
+#define BG_WIHTE ESC"[47;1m"
 void test_color();
 
 
-#define myprintf(...) printf(__VA_ARGS__)
+#define myprintf(so, ...) printf(so __VA_ARGS__)
 void test_macroprintf();
