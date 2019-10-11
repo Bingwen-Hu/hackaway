@@ -4,16 +4,19 @@
 // ESC [ num m
 // ESC [ num; num m
 // ESC [ num; num; num m
-// 
 
-// basic code
-#define ESC     "\033"
-#define SEP     ";"
-#define CMD     "m"
-#define STD     ESC"[0;"
-#define BOLD    ESC"[1;"
-#define DIM     ESC"[2;"
-#define RESET   ESC"[0m"
+// open bracket => OB => [
+// semicolon => SE => ;
+
+#define COLOR_ESC     "\033"
+#define COLOR_OB      "["
+#define COLOR_SE      ";"
+#define COLOR_CMD     "m"
+#define COLOR_STD     "0"
+#define COLOR_BOLD    "1"
+#define COLOR_DIM     "2"
+#define COLOR_RESET   COLOR_ESC"[0m"
+
 
 #define FG_BLACK     "30"
 #define FG_RED       "31"
@@ -24,6 +27,7 @@
 #define FG_CYAN      "36"
 #define FG_WHITE     "37"
 #define FG_RESET     "39"
+#define FG_DEFAULT   FG_RESET
 
 #define BG_BLACK     "40"
 #define BG_RED       "41"
@@ -34,58 +38,37 @@
 #define BG_CYAN      "46"
 #define BG_WHITE     "47"
 #define BG_RESET     "49"
+#define BG_DEFAULT   BG_RESET
+
+#define cfprintf1(stream, param, ...) \
+    fprintf(stream, COLOR_ESC COLOR_OB param COLOR_CMD __VA_ARGS__ COLOR_RESET)
+
+#define cprintf1(param, ...) \
+    cfprintf1(stdout, param, __VA_ARGS__)
+
+#define cfprintf2(stream, param1, param2, ...)                          \
+    fprintf(stream, COLOR_ESC COLOR_OB param1 COLOR_SE param2 COLOR_CMD \
+        __VA_ARGS__ COLOR_RESET)
+
+#define cprintf2(param1, param2, ...) \
+    cfprintf2(stdout, param1, param2, __VA_ARGS__)
+
+#define cfprintf(stream, mode, fg, bg, ...)                                   \
+    fprintf(stream, COLOR_ESC COLOR_OB mode COLOR_SE fg COLOR_SE bg COLOR_CMD \
+        __VA_ARGS__ COLOR_RESET)
+
+#define cprintf(mode, fg, bg, ...) \
+    cfprintf(stdout, mode, fg, bg, __VA_ARGS__)
 
 
-// standard mode as default
-#define STD_BLACK     STD"30m"
-#define STD_RED       STD"31m"
-#define STD_GREEN     STD"32m"
-#define STD_YELLOW    STD"33m"
-#define STD_BLUE      STD"34m"
-#define STD_MAGENTA   STD"35m"
-#define STD_CYAN      STD"36m"
-#define STD_WHITE     STD"37m"
-#define STD_RESET     STD"39m"
+#define color_fbegin(stream, mode, fg, bg) \
+    fprintf(stream, COLOR_ESC COLOR_OB mode COLOR_SE fg COLOR_SE bg COLOR_CMD)
 
-// bold (brightness) mode
-#define BOLD_BLACK     BOLD"30m"
-#define BOLD_RED       BOLD"31m"
-#define BOLD_GREEN     BOLD"32m"
-#define BOLD_YELLOW    BOLD"33m"
-#define BOLD_BLUE      BOLD"34m"
-#define BOLD_MAGENTA   BOLD"35m"
-#define BOLD_CYAN      BOLD"36m"
-#define BOLD_WHITE     BOLD"37m"
-#define BOLD_RESET     BOLD"39m"
+#define color_fend(stream) \
+    fprintf(stream, COLOR_RESET)
 
-// dim (darkness) mode
-#define DIM_BLACK     DIM"30m"
-#define DIM_RED       DIM"31m"
-#define DIM_GREEN     DIM"32m"
-#define DIM_YELLOW    DIM"33m"
-#define DIM_BLUE      DIM"34m"
-#define DIM_MAGENTA   DIM"35m"
-#define DIM_CYAN      DIM"36m"
-#define DIM_WHITE     DIM"37m"
-#define DIM_RESET     DIM"39m"
+#define color_begin(mode, fg, bg) \
+    color_fbegin(stdout, mode, fg, bg)
 
-// background
-#define BG_STD_BLACK     STD"40m"
-#define BG_STD_RED       STD"41m"
-#define BG_STD_GREEN     STD"42m"
-#define BG_STD_YELLOW    STD"43m"
-#define BG_STD_BLUE      STD"44m"
-#define BG_STD_MAGENTA   STD"45m"
-#define BG_STD_CYAN      STD"46m"
-#define BG_STD_WHITE     STD"47m"
-#define BG_STD_RESET     STD"49m"
-
-
-#define ESC_STD_RED_WHITE ESC_STD"31;47m"
-#define ESC_BOLD_RED_WHITE ESC_STD"31;49m"
-#define ESC_BOLD ESC"[1;"
-#define RED ESC_STD_RED
-#define BLUE ESC"[34m"
-#define BLUE_BOLD ESC_BOLD"34m"
-#define BLUE_DIM ESC_DIM"34m"
-#define RESET ESC"[0m"
+#define color_end() \
+    color_fend(stdout)
