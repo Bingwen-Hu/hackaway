@@ -1,17 +1,17 @@
 直观地理解GAN
 
 
-## 基本原理
+### 基本原理
 GAN即生成对抗网络（Generative adversial network），可以用来生成图片、视频等等，不一而足，其应用领域非常广阔呢。其基本原理来源于现实例子，比如警匪片里的警察与歹徒的竞逐。如果警察太厉害，歹徒太弱，这部片就不好看了，反之亦如是。只有当警匪两者势均力敌的时候，才会有你来我往，高潮迭起的剧情。这对于GAN也是一样的。
 
 GAN中的警察，专业术语是判别器（Discriminator），我们叫它小D好了。GAN中的歹徒，我们叫它生成器（Generator），即G。这个G是个盗版商，它根据它所了解，熟悉及掌握的知识，来制造假货出售。一开始，D一下子就识别出真假，G不气馁，再改进，再与D较量。这样日复一日，年复一年，G和D的功力大增。最后的结果是，G制作出来的东西，D分不清是真是假，也就是说，G的造假技术已经炉火纯青了。
 
 这时候会发生什么事情呢？这时候，深度学习研究者就把G拿出来，生成个熊猫啦，恐龙啦，不一而足～～
 
-## Pytorch 极简实现
+### Pytorch 极简实现
 我使用的环境是`pytorch==1.2.0`, `torchvision==0.4.0`。
 
-第一，导入依赖。
+#### 第一，导入依赖。
 ```py
 import torch
 import torch.nn as nn
@@ -21,7 +21,7 @@ from torchvision.transforms import ToTensor
 from torchvision.datasets import MNIST
 ```
 
-第二，配置参数。
+#### 第二，配置参数。
 ```py
 ##### settings 
 x_dim = 28 * 28 # size of mnist digit
@@ -33,7 +33,7 @@ epochs = 120
 ```
 我们所使用的数据集是`MNIST`，对于获取GAN的直观感受再适合不过。`MNIST`的数据是0-9这10个数字的图片，像这样
 
-<img src="graphs/sample.png" height=400, width=400 />
+![sample](graphs/sample.png)
 
 `MNIST`的图片大小是 28x28，我们设置`x_dim`是把图片展开成1维向量了，因为我们准备使用全连接层，而不是卷积网络。`z_dim`是随机噪声的维度，随机噪声就是G用来生成假数据的原料啦。`h_dim`是隐藏层维度。`batch_size`设置为60，当然可以设置成其他的，只要能整除就行。整除仅仅是为了这份代码能够高效训练。
 
@@ -41,7 +41,7 @@ epochs = 120
 
 `lr`学习率设置为`0.001`，迭代120次。
 
-第三，数据准备。
+#### 第三，数据准备。
 ```py
 ##### load data and generate targets
 # NOTE: we only need train data
@@ -55,7 +55,7 @@ fake_target = torch.zeros(batch_size, 1)
 
 > 你知道为什么只使用训练集吗？一般不都需要训练集和测试集吗？
 
-第四，网络架构。
+#### 第四，网络架构。
 ```py
 ##### network arch 
 class Generator(nn.Module):
@@ -93,9 +93,9 @@ class Discriminator(nn.Module):
         x = self.net(x)
         return x
 ```
-简单解释一下，G和D的结构都是双线性网络结构。不同的是，G的输入维度是`z_dim`，输出维度是`x_dim`，因为G要把随机噪声（原材料）制作成赝品。(赝品真的是个好词，它不仅有假的意思，还有能够以假乱真的含义:-)。D的输入维度是`x_dim`，输出维度是1,因为D的任务是判断输入的x是真还是假。
+简单解释一下，G和D的结构都是双线性网络结构。不同的是，G的输入维度是`z_dim`，输出维度是`x_dim`，因为G要把随机噪声（原材料）制作成赝品。(赝品真的是个好词，它不仅有假的意思，还有能够以假乱真的含义:-)。D的输入维度是`x_dim`，输出维度是1，因为D的任务是判断输入的x是真还是假。
 
-第五，模型初始化。
+#### 第五，模型初始化。
 ```py
 ##### init model
 G = Generator(z_dim, h_dim)
@@ -103,7 +103,7 @@ D = Discriminator(x_dim, h_dim)
 ```
 当然，我没有专门做权重初始化，只是创建而已，这时`pytorch`会进行随机权重初始化。
 
-第六，设置优化器及损失函数。
+#### 第六，设置优化器及损失函数。
 ```py
 ##### optimizer and loss
 G_optim = optim.Adam(G.parameters(), lr=lr)
@@ -113,9 +113,9 @@ D_loss_real = nn.BCELoss()
 D_loss_fake = nn.BCELoss()
 G_loss_f2r = nn.BCELoss()
 ```
-解释一下损失函数。`D_loss_real`用于训练D认识什么是真品，`D_loss_fake`用于训练D什么是赝品，`G_loss_f2r`用于训练G将随机噪声慢慢做成赝品，`f2r`就是把假的（fake）东西努力往真的（real）靠。
+解释一下损失函数。`D_loss_real`用于训练D认识什么是真品，`D_loss_fake`用于训练D什么是赝品，`G_loss_f2r`用于训练G将随机噪声慢慢做成赝品。
 
-第七，训练过程。
+#### 第七，训练过程。
 ```py
 ##### training loop
 G.train()
@@ -146,7 +146,7 @@ for epoch_i in range(epochs):
 ```
 在训练过程中，我们首先随机生成了噪声`z`，然后`G(z)`生成了假的数据`fx`。注意在第二个`for`循环里，我们从`dataloader`取出了真的数据`x`，所以现在我们有真假两种数据。然后，D对两种数据分别判断，得出结论`fake`及`real`。`D_loss_real(real, real_target)`训练D学会判断真数据，`D_loss_fake(fake, fake_target)`训练它学会判断假数据，我们将之加总，然后反向传播，更新权重。这时D的判断能力得到增强。接着，我们再一次生成噪声`z`及`fx`，然后让D判断，得到`fake`，`G_loss_f2r(fake, real_target)`是训练G去生成更好的赝品，随后我们反向传播更新权重，得到了更好的G。
 
-第八，结果可视化。
+#### 第八，结果可视化。
 ```py
     # for each epoch, visualize result
     print(f"Epoch-{epoch_i}: D_loss: {D_loss:.5f}, G_loss: {G_loss:.5f}")
@@ -186,18 +186,25 @@ def visual_mnist(epoch, samples, figsize):
 ```
 因为我们的目标是直观理解GAN，所以`visual_mnist`并不在讨论范围之内，放这里是为了代码完整。
 
-## TIPs
-+ 你应该要读至少两遍代码或者博客，这样才能全局掌握所有代码片段的关联。
-+ 你应该试图去回答那些小问题，以检验你对代码的理解。当然，我的代码写得不好，你也可以不看：-)。
-+ 你可以提供其他版本的Gan并发一个PR吗？但我是不会合并的：-)。
+#### 第十 训练效果
+迭代1次数据集的结果以及迭代50次的结果。迭代120次的效果？手滑已删～～自己跑代码～～
 
-## Next
-+ 所有的代码都可以在[Github]()获取。
-+ 关注我的[Github Page]()查看更新。
+![1-epoch](graphs/000.png)
+![50-epoch](graphs/050.png)
+
+### Tips
++ 你应该要读至少两遍代码或者博客，这样才能全局掌握所有代码片段的关联。
++ 你应该试图去回答那些小问题，以检验你对代码的理解。当然，我的代码写得不好，你也可以不看:-)。
+
+### Next
++ 所有的代码都可以在[Github](https://github.com/siriusdemon/hackaway/tree/master/projects/Gan/GAN)获取。
++ 关注我的[Github Page](https://siriusdemon.github.io/)查看更新。
 + 也可以关注公众号`可食用代码`。
 
-## Wishes
+![](wechat.jpg)
+
+### Wishes
 愿所有见过，听说过，忆念以及使用这个仓库的人，都能够获得暂时的快乐与永久不变的快乐。
 
-## Reference & Thanks
+### Reference & Thanks
 + https://github.com/wiseodd/generative-models
