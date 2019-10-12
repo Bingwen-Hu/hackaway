@@ -55,4 +55,4 @@ test-sparse.o: test-sparse.c sparse.h array.h xmalloc.h
 test-umfpack.o: test-umfpack.c
 test-list.o: test-list.c list.h
 list.o: list.c list.h xmalloc.h
-test-color.o: test-color.c color.h
+test-color.o: test-color.c termcolor.h

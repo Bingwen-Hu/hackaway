@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "color.h"
+#include "termcolor.h"
 
 
 // how can I
