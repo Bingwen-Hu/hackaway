@@ -3,7 +3,7 @@
 int main()
 {
     cv::Mat input = cv::imread("1.jpg");
-
+    // anchor
     std::vector<cv::Point> startPoint
     {
         cv::Point(133, 313), cv::Point(139, 345), cv::Point(163, 378), cv::Point(195, 400), cv::Point(244, 412),
@@ -15,6 +15,7 @@ int main()
         cv::Point(290, 398), cv::Point(328, 376), cv::Point(350, 336), cv::Point(360, 307)
     };
 
+    // framework
     for (int i = 0; i <= 5; i++)
     {
         startPoint.push_back(cv::Point(0, input.rows * i / 5));
@@ -31,10 +32,12 @@ int main()
 
     cv::TickMeter tm;
     tm.start();
+    // the API
     cv::Mat output = idw.Transform(input);
     tm.stop();
     std::cout << "FaceWarping: " << tm.getTimeMilli() << "ms" << std::endl;
 
+    // visual
     for(int i = 0; i < startPoint.size(); i++)
     {
         cv::line(input, startPoint[i], endPoint[i], cv::Scalar(255, 255, 0), 3);
