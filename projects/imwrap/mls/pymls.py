@@ -1,4 +1,5 @@
 import numpy as np
+import cv2
 
 array = np.array
 
@@ -39,8 +40,8 @@ class MLS:
         """
         im_h, im_w, channels = ori_img.shape
         out = np.zeros_like(ori_img)
-        for i in range(im_h, step=self.gridSize):
-            for j in range(im_w, step=self.gridSize):
+        for i in range(0, im_w, self.gridSize):
+            for j in range(0, im_h, self.gridSize):
                 ni = i + self.gridSize
                 nj = j + self.gridSize
                 w = h = self.gridSize
@@ -54,21 +55,22 @@ class MLS:
                 for di in range(h):
                     for dj in range(w):
                         deltax = bilinear_interp(di / h, dj / w, 
-                            array([i, j]), array([i, nj]),
-                            array([ni, j]), array([ni, nj]),   
+                            self.rDx[i, j], self.rDx[i, nj],
+                            self.rDy[ni, j], self.rDy[ni, nj],   
                         )
                         deltay = bilinear_interp(di / h, dj / w,
-                            array([i, j]), array([i, nj]),
-                            array([ni, j]), array([ni, nj]),
+                            self.rDx[i, j], self.rDx[i, nj],
+                            self.rDy[ni, j], self.rDy[ni, nj],
                         )
                         nx = j + dj + deltax
                         ny = i + di + deltay
-                        nx = min(nx, im_w - 1)
-                        ny = min(ny, im_h - 1)
+                        nx = min(nx, im_h - 1)
+                        ny = min(ny, im_w - 1)
                         nx_f = int(nx)
                         ny_f = int(nx)
-                        nx_c = np.ceil(nx)
-                        ny_c = np.ceil(ny)
+                        nx_c = int(np.ceil(nx))
+                        ny_c = int(np.ceil(ny))
+                        print(f"i: {i}, j: {j}, nx: {nx}, ny: {ny}")
 
                         if channels == 1:
                             out[i+di, j+dj] = bilinear_interp(
@@ -90,7 +92,6 @@ class MLS:
         return out
 
     # very important
-    @abstract
     def calcDelta(self):
         """Calculate delta value which will be used for generating the warped
         image
@@ -135,6 +136,7 @@ def calcArea(V):
 class MLS_Rigid(MLS):
     
     def __init__(self):
+        super().__init__()
         self.preScale = False
    
     def calcDelta(self):
@@ -247,3 +249,26 @@ class MLS_Rigid(MLS):
         if self.preScale:
             for i in range(self.nPoint):
                 self.newdots[i] *= ratio
+
+
+if __name__ == "__main__":
+    img = cv2.imread('../imgs/girl.jpg')
+    srcH, srcW = img.shape[:2]
+    print("Height, width ", srcH, srcW)
+    mls = MLS_Rigid()
+    mls.srcH = srcH
+    mls.srcW = srcW
+    mls.tarH = srcH
+    mls.tarW = srcW
+    import pickle
+    with open('points.pkl', 'rb') as f:
+        src_point, dst_point = pickle.load(f)
+    mls.newdots = src_point
+    mls.olddots = dst_point
+    for p in src_point:
+        print(p)
+    mls.nPoint = len(src_point)t)
+    mls.calcDelta()
+    im = mls.genNewImg(img, 1)
+    mls.calcDelta()
+    im = mls.genNewImg(img, 1)

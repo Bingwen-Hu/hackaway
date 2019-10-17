@@ -4,9 +4,10 @@ import rtpose
 import numpy as np
 
 
-img = '../imgs/fat.jpg'
-img = 'wei.jpg'
-img = 'bress.jpg'
+# img = '../imgs/fat.jpg'
+# img = 'wei.jpg'
+# img = '../imgs/bress.jpg'
+img = '../imgs/girl.jpg'
 
 im = cv2.imread(img)
 if im is None:
