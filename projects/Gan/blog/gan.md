@@ -1,6 +1,5 @@
 ## 直观地理解GAN
 
-
 ### 基本原理
 GAN即生成对抗网络（Generative adversial network），可以用来生成图片、视频等等，不一而足，其应用领域非常广阔呢。其基本原理来源于现实例子，比如警匪片里的警察与歹徒的竞逐。如果警察太厉害，歹徒太弱，这部片就不好看了，反之亦如是。只有当警匪两者势均力敌的时候，才会有你来我往，高潮迭起的剧情。这对于GAN也是一样的。
 
@@ -201,7 +200,7 @@ def visual_mnist(epoch, samples, figsize):
 + 关注我的[Github Page](https://siriusdemon.github.io/)查看更新。
 + 也可以关注公众号`可食用代码`。
 
-![](wechat.jpg)
+![wechat](./graphs/wechat.jpg)
 
 ### Wishes
 愿所有见过，听说过，忆念以及使用这个仓库的人，都能够获得暂时的快乐与永久不变的快乐。
