@@ -1,0 +1,1 @@
+/home/mory/hackaway/projects/Gan/blog/gan.md
