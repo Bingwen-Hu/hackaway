@@ -33,6 +33,12 @@ def blog_already(filename):
         return True
     return False
 
+def get_category(filename):
+    abspath = osp.abspath(filename)
+    dirname = osp.dirname(abspath)
+    folder = dirname.split(osp.sep)[-1]
+    category = folder
+    return category
 
 def create_pelican_head(filename):
     """for an raw blog"""
@@ -72,9 +78,20 @@ def add_pelican_head(filename, override=False):
     print(f"Done! Save into {filename}")
 
 
-def modify():
+def modify(filename):
     """for an modified blog"""
-    pass
+    modify = datetime.now().strftime("%Y-%m-%d %H:%M")
+    with open(filename) as f:
+        content = f.readlines()
+    # the 3-th line is modified time
+    content[2] = f"Modified: {modify}\n"
+    # update category
+    category = get_category(filename)
+    content[3] = f"Category: {category}\n"
+    with open(filename, 'w') as f:
+        f.writelines(content)
+    print("modify blog {}".format(filename))
+
 
 if __name__ == '__main__':
     import sys
@@ -83,4 +100,4 @@ if __name__ == '__main__':
     if not already:
         add_pelican_head(filename, override=True)
     else:
-        print("already blog!")
+        modify(filename)
