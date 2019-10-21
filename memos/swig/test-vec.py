@@ -2,9 +2,10 @@ import vec
 
 my = vec.My()
 
-v = vec.vectori()
+# use native list
 lst = [1, 2, 3, 4]
-for i in lst:
-    v.push_back(i)
+my.print_vector(lst)
 
-my.myvector(lst)
+# use C++ vector<int>
+v = vec.vectori([5, 6, 7, 8])
+my.print_vector(v)

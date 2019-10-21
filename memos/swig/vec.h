@@ -4,5 +4,5 @@
 
 class My {
     public:
-        void myvector(std::vector<int> const &v);
+        void print_vector(std::vector<int> const &v);
 };
