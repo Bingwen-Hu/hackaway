@@ -56,7 +56,7 @@ html:
 push:
 	cp -rf output/* $(GITHUB_DIR) 
 	cd $(GITHUB_DIR)
-	git add && git commit -m "update" && git push
+	git add . && git commit -m "update" && git push
 
 
 clean:
