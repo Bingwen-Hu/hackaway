@@ -108,7 +108,7 @@ $$
 $$
 上式有唯一最小值，得
 $$
-    M = \frac{1}{\mu_s}\sum \limits_i w_i \begin{pmatrix} \hat{p_i} \\ -\hat{p_i}^{\perp} \end{pmatrix} 
+    M = \frac{1}{\mu_s}\sum \limits_i w_i \begin{pmatrix} \hat{p_i} \\ -\hat{p_i}^{\perp} \end{pmatrix} \tag{9}
         (\hat{q_i}^T \quad -\hat{q_i}^T)  
 $$
 其中，
@@ -121,4 +121,21 @@ $$
 ### 严格变换(Rigid Deformation)
 严格变换认为，形变不应该涉及放缩。
 
-这一部分特别难懂！
+这一部分特别难懂！好吧，我只取其精华。
+
+与公式8相同，不过取一个不同的$\mu$值。
+$$
+    \mu_r = \sqrt{(\sum \limits_i w_i \hat{q_i}\hat{p_i}^T)^2 + (\sum \limits_i w_i \hat{q_i}(\hat{p_i}^{\perp})^T)^2}
+$$
+
+完整公式，令
+$$
+    \hat{f_r}(v) = \sum \limits_i \hat{q_i}A_i
+$$
+$A_i$与之前的一样。$\hat{f_r}(v)$是向量$v-p_*$的一个旋转版本。为了计算最终的变换$f_r(v)$，我们对$\hat{f_r}$进行放缩，除以$v-p_*$的长度，得
+$$
+    f_r(v) = |v-p_*| \frac{\hat{f_r}(v)}{\hat{f_r}(v)} + q_*
+$$
+
+### 划线变换
+这一部分先忽略。
