@@ -19,7 +19,7 @@ epochs = 120
 
 ##### load data and generate targets
 # NOTE: we only need train data
-trainset = MNIST('../mnist', train=True, transform=ToTensor(), download=True)
+trainset = MNIST('mnist', train=True, transform=ToTensor(), download=True)
 dataloader = DataLoader(trainset, batch_size=batch_size, shuffle=True)
 # targets for D, who only output 1 for real data, 0 for fake data
 real_target = torch.ones(batch_size, 1) 
