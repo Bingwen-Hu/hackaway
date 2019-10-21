@@ -1,10 +1,4 @@
-Title: IPython 简介
-Date: 2019-10-12 19:23
-Modified: 2019-10-12 19:23
-Category: python
-Tags: python
-Authors: siriusdemon
-Summary: 
+## IPython 简介
 
 IPython 是一个增强版的Python交互环境，是学习和工作中不可或缺的利器，然而现今 Python 大热，很多人却不了解 IPython，很可惜～赶紧让我们一起来了解下吧 :)
 

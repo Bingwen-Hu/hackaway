@@ -38,7 +38,7 @@
         {% endblock ogtags %}
         <!-- favicon -->
         {% if FAVICON %}
-        <link rel="icon" type="image/png" href="{{ SITEURL }}/theme/images/{{ FAVICON }}">
+        <link rel="icon" type="image/png" href="{{ SITEURL }}/images/{{ FAVICON }}">
         {% endif %}
         <!-- moment.js for date formatting -->
         <script src="{{ SITEURL }}/theme/js/moment.js"></script>
@@ -77,7 +77,7 @@
             {% if GRAVATAR %}
             <a href="/"><img src="{{ GRAVATAR }}" alt="Matt McManus Avatar" class="gravatar"></a>
             {% elif LOGO %}
-            <a href="/"><img src="{{ SITEURL }}/theme/images/{{ LOGO }}" alt="Siriusdemon Logo"></a>
+            <a href="/"><img src="{{ SITEURL }}/images/{{ LOGO }}" alt="Siriusdemon Logo"></a>
             {% else %}
             <h1><a href="/">{{ SITENAME }}</a></h1>
             {% endif %}

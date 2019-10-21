@@ -1,11 +1,4 @@
-Title: os 模块
-Date: 2019-10-10 11:03
-Modified: 2019-10-10 11:03
-Category: Python
-Tags: Python, 操作系统
-Authors: 默安
-Summary: Python系统操作模块os简介
-
+## os 模块
 
 os 表示操作系统 (Operation System ) ，因而封装的是一些操作系统相关的功能，比如创建文件夹，删除文件夹等等。下面我们一起来了解下吧 :)
 

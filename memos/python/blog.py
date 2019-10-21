@@ -47,9 +47,7 @@ def create_pelican_head(filename):
     date = datetime.now().strftime("%Y-%m-%d %H:%M")
     modify = date
     abspath = osp.abspath(filename)
-    dirname = osp.dirname(abspath)
-    folder = dirname.split(osp.sep)[-1]
-    category = folder
+    category = abspath.split(osp.sep)[4]
     tags = category
     authors = "siriusdemon"
     summary = ""
@@ -63,19 +61,6 @@ def create_pelican_head(filename):
         f"Summary: {summary}\n"
     )
     return pelican_head
-
-
-def add_pelican_head(filename, override=False):
-    head = create_pelican_head(filename)
-    with open(filename) as f:
-        content = f.readlines()
-        content[0] = head
-    if not override:
-        filename = f"new_{filename}"
-    with open(filename, 'w') as f:
-        f.writelines(content)
-    
-    print(f"Done! Save into {filename}")
 
 
 def modify(filename):
@@ -93,11 +78,63 @@ def modify(filename):
     print("modify blog {}".format(filename))
 
 
+
+def create_footer(filename):
+    abspath = osp.abspath(filename)
+    # /home/mory/hackaway/{category}/xx/
+    category = abspath.split(osp.sep)[4]
+    dirname = osp.dirname(abspath)
+    position = dirname[abspath.index(category):]
+    github_url = osp.join("https://github.com/siriusdemon/hackaway/tree/master/",
+                            position)
+
+    foot = (
+        "### Next\n"
+        f"+ 所有的代码都可以在[Github]({github_url})获取。\n"
+        "+ 关注我的[Github Page](https://siriusdemon.github.io/)查看更新。\n"
+        "+ 也可以关注公众号可食用代码。\n"
+        "\n"
+        "![wechat](./images/wechat.jpg)\n"
+        "\n"
+        "### Wishes\n"
+        "愿所有见过，听说过，忆念以及使用这个仓库的人，都能够获得暂时的快乐与永久不变的快乐。"
+    )
+    return category, foot
+
+
+def generate(filename, head, footer, target_dir, target_name):
+    with open(filename) as f:
+        content = f.readlines()
+    content[0] = head
+    if content[-1] != '\n':
+        content.append("\n")
+    content.append(footer)
+    target_path = osp.join(target_dir, target_name)
+    with open(target_path, 'w', encoding='utf-8') as f:
+        f.writelines(content)
+    print(f"write into {target_path}... Done!")
+
 if __name__ == '__main__':
     import sys
     filename = sys.argv[1]
+    if len(sys.argv) > 2:
+        target_name = sys.argv[2]
+    else:
+        target_name = filename
     already = blog_already(filename)
+
     if not already:
-        add_pelican_head(filename, override=True)
+        target_dir = "/home/mory/hackaway/projects/github/content"
+        head = create_pelican_head(filename)
+        category, footer = create_footer(filename)
+        target_dir = osp.join(target_dir, category)
+        os.makedirs(target_dir, exist_ok=True)
+        generate(filename, head, footer, target_dir, target_name)
+        # copy graphs
+        graphs_dir = osp.join(os.getcwd(), 'graphs')
+        if osp.exists(graphs_dir):
+            os.makedirs(osp.join(target_dir, "graphs"), exist_ok=True)
+            os.system(f"cp {graphs_dir}/* {target_dir}/graphs/")
+            print("copy graphs ... Done!")
     else:
         modify(filename)

@@ -1,10 +1,4 @@
-Title: 使用swig封装C++代码
-Date: 2019-10-21 12:47
-Modified: 2019-10-21 12:47
-Category: memos
-Tags: memos, c++, python
-Authors: siriusdemon
-Summary: 在Python中使用C++代码！
+# 使用swig封装C++代码
 
 ### 环境
 + Linux (ubuntu 1804)
@@ -141,15 +135,6 @@ swig 封装代码还是特别简洁的，我们的全部源代码目录如下：
 ```
 我们只是编写了简单的接口文件，就可以把我们的 c++ 代码导入 Python 了！
 
-### 下一步
-+ 所有的代码都可以在[Github](https://github.com/siriusdemon/hackaway/tree/master/memos/swig)获取。
-+ 关注我的[Github Page](https://siriusdemon.github.io/)查看更新。
-+ 也可以关注公众号`可食用代码`。
-
-![wechat](./graphs/wechat.jpg)
-
-### Wishes
-愿所有见过，听说过，忆念以及使用这个仓库的人，都能够获得暂时的快乐与永久不变的快乐。
-
 ### Reference & Thanks
 + http://swig.org/tutorial.html
+

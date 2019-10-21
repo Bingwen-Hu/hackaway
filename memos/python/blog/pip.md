@@ -1,10 +1,4 @@
-Title: Pip 简介
-Date: 2019-10-12 19:20
-Modified: 2019-10-12 19:20
-Category: python
-Tags: python
-Authors: siriusdemon
-Summary: 
+## Pip 简介
 
 
 Pip 是一个Python的包管理工具，主要用于安装和删除第三方包，搭建开发环境依赖，是工作中最常用的工具，没有之一！赶紧让我们一起来了解下吧 :)

@@ -1,10 +1,4 @@
-Title: os.path 模块
-Date: 2019-10-12 19:22
-Modified: 2019-10-12 19:22
-Category: python
-Tags: python
-Authors: siriusdemon
-Summary: 
+## os.path 模块
 
 os.path 表示操作系统路径 (Operation System Path) ，因而封装的是一些路径操作相关的功能，比如获取文件的绝对路径，合并路径等等。下面我们一起来了解下吧 :)
 

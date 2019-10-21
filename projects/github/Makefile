@@ -50,13 +50,13 @@ help:
 html:
 	$(PELICAN) $(INPUTDIR) -o $(OUTPUTDIR) -s $(CONFFILE) $(PELICANOPTS)
 	@mkdir -p output/graphs
-	@cp content/deep-learning/graphs/* output/graphs
-	@cp content/python/graphs/* output/graphs
+	@cp content/memos/graphs/* output/graphs/
+	@cp content/projects/graphs/* output/graphs/
+	@mkdir -p output/images
+	@cp images/* output/images/
 
 push:
 	cp -rf output/* $(GITHUB_DIR) 
-	cd $(GITHUB_DIR)
-	git add . && git commit -m "update" && git push
 
 
 clean:

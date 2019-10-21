@@ -195,15 +195,5 @@ def visual_mnist(epoch, samples, figsize):
 + 你应该要读至少两遍代码或者博客，这样才能全局掌握所有代码片段的关联。
 + 你应该试图去回答那些小问题，以检验你对代码的理解。当然，我的代码写得不好，你也可以不看:-)。
 
-### Next
-+ 所有的代码都可以在[Github](https://github.com/siriusdemon/hackaway/tree/master/projects/Gan/GAN)获取。
-+ 关注我的[Github Page](https://siriusdemon.github.io/)查看更新。
-+ 也可以关注公众号`可食用代码`。
-
-![wechat](./graphs/wechat.jpg)
-
-### Wishes
-愿所有见过，听说过，忆念以及使用这个仓库的人，都能够获得暂时的快乐与永久不变的快乐。
-
 ### Reference & Thanks
 + https://github.com/wiseodd/generative-models
