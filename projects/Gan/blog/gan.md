@@ -10,7 +10,7 @@ GAN中的警察，专业术语是判别器（Discriminator），我们叫它小D
 ### Pytorch 极简实现
 我使用的环境是`pytorch==1.2.0`, `torchvision==0.4.0`。
 
-#### 第一，导入依赖。
+#### 第一，导入依赖
 ```py
 import torch
 import torch.nn as nn
@@ -20,7 +20,7 @@ from torchvision.transforms import ToTensor
 from torchvision.datasets import MNIST
 ```
 
-#### 第二，配置参数。
+#### 第二，配置参数
 ```py
 ##### settings 
 x_dim = 28 * 28 # size of mnist digit
@@ -40,7 +40,7 @@ epochs = 120
 
 `lr`学习率设置为`0.001`，迭代120次。
 
-#### 第三，数据准备。
+#### 第三，数据准备
 ```py
 ##### load data and generate targets
 # NOTE: we only need train data
@@ -54,7 +54,7 @@ fake_target = torch.zeros(batch_size, 1)
 
 > 你知道为什么只使用训练集吗？一般不都需要训练集和测试集吗？
 
-#### 第四，网络架构。
+#### 第四，网络架构
 ```py
 ##### network arch 
 class Generator(nn.Module):
@@ -94,7 +94,7 @@ class Discriminator(nn.Module):
 ```
 简单解释一下，G和D的结构都是双线性网络结构。不同的是，G的输入维度是`z_dim`，输出维度是`x_dim`，因为G要把随机噪声（原材料）制作成赝品。(赝品真的是个好词，它不仅有假的意思，还有能够以假乱真的含义:-)。D的输入维度是`x_dim`，输出维度是1，因为D的任务是判断输入的x是真还是假。
 
-#### 第五，模型初始化。
+#### 第五，模型初始化
 ```py
 ##### init model
 G = Generator(z_dim, h_dim)
@@ -102,7 +102,7 @@ D = Discriminator(x_dim, h_dim)
 ```
 当然，我没有专门做权重初始化，只是创建而已，这时`pytorch`会进行随机权重初始化。
 
-#### 第六，设置优化器及损失函数。
+#### 第六，设置优化器及损失函数
 ```py
 ##### optimizer and loss
 G_optim = optim.Adam(G.parameters(), lr=lr)
@@ -114,7 +114,7 @@ G_loss_f2r = nn.BCELoss()
 ```
 解释一下损失函数。`D_loss_real`用于训练D认识什么是真品，`D_loss_fake`用于训练D什么是赝品，`G_loss_f2r`用于训练G将随机噪声慢慢做成赝品。
 
-#### 第七，训练过程。
+#### 第七，训练过程
 ```py
 ##### training loop
 G.train()
@@ -145,7 +145,7 @@ for epoch_i in range(epochs):
 ```
 在训练过程中，我们首先随机生成了噪声`z`，然后`G(z)`生成了假的数据`fx`。注意在第二个`for`循环里，我们从`dataloader`取出了真的数据`x`，所以现在我们有真假两种数据。然后，D对两种数据分别判断，得出结论`fake`及`real`。`D_loss_real(real, real_target)`训练D学会判断真数据，`D_loss_fake(fake, fake_target)`训练它学会判断假数据，我们将之加总，然后反向传播，更新权重。这时D的判断能力得到增强。接着，我们再一次生成噪声`z`及`fx`，然后让D判断，得到`fake`，`G_loss_f2r(fake, real_target)`是训练G去生成更好的赝品，随后我们反向传播更新权重，得到了更好的G。
 
-#### 第八，结果可视化。
+#### 第八，结果可视化
 ```py
     # for each epoch, visualize result
     print(f"Epoch-{epoch_i}: D_loss: {D_loss:.5f}, G_loss: {G_loss:.5f}")
@@ -185,7 +185,7 @@ def visual_mnist(epoch, samples, figsize):
 ```
 因为我们的目标是直观理解GAN，所以`visual_mnist`并不在讨论范围之内，放这里是为了代码完整。
 
-#### 第十 训练效果
+#### 第九, 训练效果
 迭代1次数据集的结果以及迭代50次的结果。迭代120次的效果？手滑已删～～自己跑代码～～
 
 ![1-epoch](graphs/000.png)
