@@ -10,7 +10,7 @@
 + [ ] 2016 dcGan
 + [ ] 2017 wGan
 + [ ] 2017 CycleGan
-+ [ ] 2019 RGan
++ [x] 2019 RsGan
 
 
 ## Reference
