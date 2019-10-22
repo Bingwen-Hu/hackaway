@@ -89,6 +89,7 @@ def create_footer(filename):
                             position)
 
     foot = (
+        "\n"
         "### Next\n"
         f"+ 所有的代码都可以在[Github]({github_url})获取。\n"
         "+ 关注我的[Github Page](https://siriusdemon.github.io/)查看更新。\n"
@@ -97,7 +98,7 @@ def create_footer(filename):
         "![wechat](./images/wechat.jpg)\n"
         "\n"
         "### Wishes\n"
-        "愿所有见过，听说过，忆念以及使用这个仓库的人，都能够获得暂时的快乐与永久不变的快乐。"
+        "愿所有见过，听说过，忆念以及使用这篇文章的人，都能够获得暂时的快乐与永久不变的快乐。"
     )
     return category, foot
 
