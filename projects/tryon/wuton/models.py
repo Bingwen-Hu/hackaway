@@ -303,7 +303,7 @@ class DNet(nn.Module):
             nn.InstanceNorm2d(16),
             nn.LeakyReLU(0.01),
         )
-        self.deconv6 = nn.Conv2d(16, 3, 3, 1, 1)
+        self.deconv6 = nn.Conv2d(16, 6, 3, 1, 1)
 
     def forward(self, co, po):
         co1, co2, co3, co4, co5 = co
@@ -367,6 +367,25 @@ class SiameseUnetGenerator(nn.Module):
         else:
             warp_cloth = None
         return warp_person, warp_cloth
+
+
+class Discriminator(nn.Module):
+    def __init__(self, input_nc, output_nc):
+        super().__init__()
+        self.net = nn.Sequential(
+            nn.Conv2d(input_nc, output_nc, 1, 1, 0),
+            nn.LeakyReLU(0.2, True),
+            nn.Conv2d(output_nc, output_nc * 2, 1, 2, 0),
+            nn.BatchNorm2d(output_nc * 2),
+            nn.LeakyReLU(0.2, True),
+            nn.Conv2d(output_nc * 2, output_nc * 2, 1, 2, 0),
+            nn.BatchNorm2d(output_nc * 2),
+            nn.LeakyReLU(0.2, True),
+            nn.Conv2d(output_nc * 2, 1, 1, 2, 0),
+        )
+    def forward(self, input):
+        self.net(input)
+    
 
 
 # loss

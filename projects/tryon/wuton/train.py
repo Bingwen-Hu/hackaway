@@ -6,7 +6,7 @@ import argparse
 import os
 import time
 from dataset import CPDataset, CPDataLoader
-from models import SiameseUnetGenerator, VGGLoss 
+from models import SiameseUnetGenerator, VGGLoss, Discriminator
 
 
 
@@ -78,18 +78,17 @@ def train_gmm(opt, train_loader, model):
             
 
 
-def train_wuton(opt, train_loader, model):
+def train_wuton(opt, train_loader, model, dmodel):
     model.train()
 
     # criterion
     criterionL1 = nn.L1Loss()
     criterionVGG = VGGLoss()
-
+    BCE_stable = nn.BCEWithLogitsLoss()
     
     # optimizer
     optimizer = torch.optim.Adam(model.parameters(), lr=opt.lr, betas=(0.5, 0.999))
-    scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, lr_lambda = lambda step: 1.0 -
-            max(0, step - opt.keep_step) / float(opt.decay_step + 1))
+    doptimizer = torch.optim.SGD(dmodel.parameters(), lr=0.001)
     
     for step in range(opt.keep_step + opt.decay_step):
         iter_start_time = time.time()
@@ -101,13 +100,26 @@ def train_wuton(opt, train_loader, model):
         im = inputs['im']
             
         warp_person, warp_cloth = model(im_mask, c, training=True)
+        pair_person, unpair_person = warp_person.split(3, dim=1)
 
+        # adversal training D
+        fake = dmodel(unpair_person)
+        real = dmodel(pair_person)
+        gan_target = torch.ones(real.shape[0], 1)
+        D_loss = BCE_stable(real - fake, gan_target)
+        doptimizer.zero_grad()
+        D_loss.backward()
+        doptimizer.step()
+
+        # G
+        G_loss = BCE_stable(fake.detach() - real.detach (), gan_target)
         loss_l1 = criterionL1(warp_cloth, c_gt)    
-        loss_vgg = criterionVGG(warp_person, im)
-        loss = loss_l1 + loss_vgg
+        loss_vgg = criterionVGG(pair_person, im)
+        loss = loss_l1 + loss_vgg + G_loss
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
+
 
             
         if (step+1) % opt.display_count == 0:
@@ -133,7 +145,8 @@ def main():
 
     # create model & train & save the final checkpoint
     model = SiameseUnetGenerator(opt.fine_height, opt.fine_width, opt.grid_size)
-    train_wuton(opt, train_loader, model)
+    dmodel = Discriminator(3, 64)
+    train_wuton(opt, train_loader, model, dmodel)
     
   
     print('Finished training %s, nameed: %s!' % (opt.stage, opt.name))
