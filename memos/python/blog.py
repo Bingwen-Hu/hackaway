@@ -40,6 +40,20 @@ def get_category(filename):
     category = folder
     return category
 
+def get_extra_tags(filename):
+    "always less than 10 tags"
+    extra = ['python', 'c/c++', 'lisp', 'rust']
+    extra += ['misc', 'game', 'algo', 'math', 'view']
+    for i, tag in enumerate(extra):
+        print(f"({i}) {tag}\t")
+    tags = input(f"Enter the numbers of tags for {filename}, "
+                 "for example: 1,6: ")
+    tags_i = list(map(int, tags.split(',')))
+    tags = [extra[i] for i in tags_i]
+    return ','.join(tags)
+    
+    
+
 def create_pelican_head(filename):
     """for an raw blog"""
     with open(filename) as f:
@@ -48,7 +62,7 @@ def create_pelican_head(filename):
     modify = date
     abspath = osp.abspath(filename)
     category = abspath.split(osp.sep)[4]
-    tags = category
+    tags = get_extra_tags(filename)
     authors = "siriusdemon"
     summary = ""
     pelican_head = (
@@ -56,7 +70,7 @@ def create_pelican_head(filename):
         f"Date: {date}\n"
         f"Modified: {modify}\n"
         f"Category: {category}\n"
-        f"Tags: {tags}\n"
+        f"Tags: {category},{tags}\n"
         f"Authors: {authors}\n"
         f"Summary: {summary}\n"
     )

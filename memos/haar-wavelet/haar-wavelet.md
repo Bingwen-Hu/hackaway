@@ -7,12 +7,12 @@ $L^2(0,1)$表定义在闭区间(0,1)的平方可积的函数的线性空间(line
 
 内积(inner product):
 $$
-    (f, g) = \int_0^1 f(x)g(x)dx \tag{1}
+    (f, g) = \int_0^1 f(x)g(x)dx \quad f,g \in L^2(0,1) \tag{1}
 $$
 
 求模(norm):
 $$
-    ||f||^2 = (f, f) = \int_0^1 |f(x)|^2dx, \quad f,g \in L^2(0,1) \tag{2}
+    ||f||^2 = (f, f) = \int_0^1 |f(x)|^2dx, \quad f \in L^2(0,1) \tag{2}
 $$
 
 求模运算满足三角不等式：
