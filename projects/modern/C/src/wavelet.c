@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include "wavelet.h"
+#include "modern.h"
 
 #define SQRT1_2 sqrt(1.0/2)
 
@@ -49,6 +50,7 @@ static void haar_transform_vector_reverse(double* v, int n)
     }
 }
 
+
 static void haar_transform_matrix_forward(double** a, int m, int n)
 {
 
@@ -71,7 +73,16 @@ static void haar_transform_matrix_reverse(double** a, int m, int n)
  */
 void haar_transform_vector(double* v, int n, int dir)
 {
-
+    if (dir == WT_FWD) {
+        haar_transform_vector_forward(v, n);
+    } else if (dir == WT_REV) {
+        haar_transform_vector_reverse(v, n);
+    } else {
+        error("*** error in haar_transform_vector() "
+              "the third argument should be one of "
+              "WT_FWD or WT_REV\n");
+        exit(EXIT_FAILURE);
+    }
 }
 
 /**
