@@ -12,6 +12,7 @@ def Phi(x):
         return 1
     else:
         return 0
+        
 # continues with all the code block before
 # we have j and V_j already
 # we discard j in the name for fixed j.
