@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include <wavelet.h>
+#include "wavelet.h"
 
 #define SQRT1_2 sqrt(1.0/2)
 
@@ -34,7 +34,19 @@ static void haar_transform_vector_forward(double* v, int n)
 
 static void haar_transform_vector_reverse(double* v, int n)
 {
-
+    double h = sqrt(n);
+    int i, d;
+    for (d = n/2; d > 0; d /= 2) {
+        for (i = 0; i < n; i += 2*d) {
+            double x = SQRT1_2 * (v[i] + v[i+d]);
+            double y = SQRT1_2 * (v[i] - v[i+d]);
+            v[i] = x;
+            v[i+d] = y;
+        }
+    }
+    for (i = 0; i < n; i++) {
+        v[i] *= h;
+    }
 }
 
 static void haar_transform_matrix_forward(double** a, int m, int n)

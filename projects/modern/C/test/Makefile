@@ -5,7 +5,7 @@ CFLAGS=-g -Wall -std=c11 -pedantic
 
 # target
 TARGET=array fetch-line random sparse umfpack list
-TARGET+=color
+TARGET+=color wavelet
 
 # dependences
 OF_ARRAY = xmalloc.o test-array.o
@@ -15,6 +15,7 @@ OF_SPARSE = test-sparse.o sparse.o xmalloc.o
 OF_UMFPACK = test-umfpack.o xmalloc.o sparse.o
 OF_LIST = test-list.o xmalloc.o list.o
 OF_COLOR = test-color.o
+OF_WAVELET = test-wavelet.o xmalloc.o wavelet.o
 
 clean: 
 	rm -rf ${TARGET}
@@ -44,6 +45,8 @@ list: ${OF_LIST}
 color: ${OF_COLOR}
 	${CC} ${OF_COLOR} ${CFLAGS} -o $@
 	
+wavelet: ${OF_WAVELET}
+	${CC} ${OF_WAVELET} ${CFLAGS} -o $@ -lm
 # convenient command for detect dependences
 # gcc -MM file.c
 test-array.o: test-array.c array.h xmalloc.h
@@ -56,3 +59,5 @@ test-umfpack.o: test-umfpack.c
 test-list.o: test-list.c list.h
 list.o: list.c list.h xmalloc.h
 test-color.o: test-color.c termcolor.h
+wavelet.o: wavelet.c wavelet.h
+test-wavelet.o: test-wavelet.c array.h xmalloc.h wavelet.h
