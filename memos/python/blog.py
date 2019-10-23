@@ -44,8 +44,11 @@ def get_extra_tags(filename):
     "always less than 10 tags"
     extra = ['python', 'c/c++', 'lisp', 'rust']
     extra += ['misc', 'game', 'algo', 'math', 'view']
+    print("Extra Tags: ")
     for i, tag in enumerate(extra):
-        print(f"({i}) {tag}\t")
+        print(f"({i}) {tag}", end='\t')
+        if (i+1) % 3 == 0:
+            print()
     tags = input(f"Enter the numbers of tags for {filename}, "
                  "for example: 1,6: ")
     tags_i = list(map(int, tags.split(',')))

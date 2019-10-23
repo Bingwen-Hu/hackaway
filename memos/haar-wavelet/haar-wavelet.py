@@ -4,8 +4,8 @@ import numpy as np
 
 
 j = 2
-V_j = [i / 2**j for i in range(2**j+1)]
-print(V_j)
+points = [i / 2**j for i in range(2**j+1)]
+print(points)
 
 def Phi(x):
     if 0 <= x <= 1:
@@ -14,7 +14,7 @@ def Phi(x):
         return 0
         
 # continues with all the code block before
-# we have j and V_j already
+# we have j already
 # we discard j in the name for fixed j.
 def Phi_ifn(i):
     def Phi_i(x):
@@ -61,4 +61,4 @@ def Psi_ifn(i):
 F_2w = [Psi_ifn(i) for i in range(2**j)]
 
 # uncomment it to visualiza F_2
-# visual_fn(F_2w, [1, 4])
+visual_fn(F_2w, [1, 4])
