@@ -37,4 +37,27 @@ def visual_fn(F_j, figsize):
         plt.plot(xs, y)
     plt.show()
 
-visual_fn(F_2, [1, 4])
+# uncomment it to visualiza F_2
+# visual_fn(F_2, [1, 4])
+
+
+# here we start to construct W_2
+
+def Psi(x):
+    if 0 < x < 1/2:
+        return 1
+    elif 1/2 < x < 1:
+        return -1
+    else:
+        return 0
+
+def Psi_ifn(i):
+    def Psi_i(x):
+        val =  2**(j/2) * Psi(2**j * x - i)
+        return val
+    return Psi_i
+
+F_2w = [Psi_ifn(i) for i in range(2**j)]
+
+# uncomment it to visualiza F_2
+# visual_fn(F_2w, [1, 4])
