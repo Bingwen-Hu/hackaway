@@ -3,6 +3,7 @@
 #include <math.h>
 #include "wavelet.h"
 #include "modern.h"
+#include "array.h"
 
 #define SQRT1_2 sqrt(1.0/2)
 
@@ -53,12 +54,33 @@ static void haar_transform_vector_reverse(double* v, int n)
 
 static void haar_transform_matrix_forward(double** a, int m, int n)
 {
-
+    for (int i = 0; i < m; i++) {
+        haar_transform_vector(a[i], n, WT_FWD);
+    }
+    // create a transpose matrix of a
+    // apply the haar transform on new matrix's rows
+    // them mapping back to a
+    double** t;
+    make_matrix(t, n, m);
+    matrix_transpose(a, m, n, t);
+    for (int j = 0; j < n; j++) {
+        haar_transform_vector(t[j], m, WT_FWD);
+    }
+    matrix_transpose(t, n, m, a);
 }
 
 static void haar_transform_matrix_reverse(double** a, int m, int n)
 {
-
+    for (int i = 0; i < m; i++) {
+        haar_transform_vector(a[i], n, WT_REV);
+    }
+    double** t;
+    make_matrix(t, n, m);
+    matrix_transpose(a, m, n, t);
+    for (int j = 0; j < n; j++) {
+        haar_transform_vector(t[j], m, WT_REV);
+    }
+    matrix_transpose(t, n, m, a);
 }
 
 /**
@@ -98,5 +120,14 @@ void haar_transform_vector(double* v, int n, int dir)
  */
 void haar_transform_matrix(double** a, int m, int n, int dir)
 {
-
+    if (dir == WT_FWD) {
+        haar_transform_matrix_forward(a, m, n);
+    } else if (dir == WT_REV) {
+        haar_transform_matrix_reverse(a, m, n);
+    } else {
+        error("*** error in haar_transform_matrix() "
+              "the third argument should be one of "
+              "WT_FWD or WT_REV\n");
+        exit(EXIT_FAILURE);
+    }
 }
