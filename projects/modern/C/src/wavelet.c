@@ -67,6 +67,7 @@ static void haar_transform_matrix_forward(double** a, int m, int n)
         haar_transform_vector(t[j], m, WT_FWD);
     }
     matrix_transpose(t, n, m, a);
+    free_matrix(t);
 }
 
 static void haar_transform_matrix_reverse(double** a, int m, int n)
@@ -81,6 +82,7 @@ static void haar_transform_matrix_reverse(double** a, int m, int n)
         haar_transform_vector(t[j], m, WT_REV);
     }
     matrix_transpose(t, n, m, a);
+    free_matrix(t);
 }
 
 /**

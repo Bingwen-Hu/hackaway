@@ -24,6 +24,8 @@ static void test_vector(int n)
     printf("reconstructed vector:\n");
     print_vector("%8.4f ", v, n);
     puts("");
+
+    free_vector(v);
 }
 
 static void test_matrix(int m, int n)
@@ -50,6 +52,7 @@ static void test_matrix(int m, int n)
     printf("reconstructed matrix:\n");
     print_matrix("%8.4f ", a, m, n);
     puts("");
+    free_matrix(a);
 }
 
 int main()
