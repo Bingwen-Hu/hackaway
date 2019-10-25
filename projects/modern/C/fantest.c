@@ -71,3 +71,27 @@ void test_strcpy()
     printf("value of a is %s\n", c);
     printf("len of s is %zu\n", strlen(s));
 }
+
+void test_calloc()
+{
+    int row = 4;
+    int column = 8;
+    double* a = calloc(row, column * sizeof(double));
+
+    for (int i = 0; i < row; i++) {
+        for (int j = 0; j < column; j++) {
+            a[i*column + j] = 1. / (1 + i + j);
+            printf("%7.3lf ", a[i*column + j]);
+        }
+        printf("\n");
+    }
+
+    printf("\n");
+
+    for (int i = 0; i < column; i++) {
+        for (int j = 0; j < row; j++) {
+            printf("%7.3f ", a[i * row + j]);
+        }
+        printf("\n");
+    }
+}

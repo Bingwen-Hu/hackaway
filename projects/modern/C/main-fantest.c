@@ -9,5 +9,6 @@ int main() {
     // test_valgrind();
     // test_printf_str();
     // test_macroprintf();
-    test_strcpy();
+    // test_strcpy();
+    test_calloc();
 }

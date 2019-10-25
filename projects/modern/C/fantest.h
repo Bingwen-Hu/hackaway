@@ -14,3 +14,4 @@ void test_printf_str();
 void test_macroprintf();
 
 void test_strcpy();
+void test_calloc();
