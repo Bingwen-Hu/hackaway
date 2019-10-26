@@ -49,3 +49,13 @@ void reverseString(char *s, int sSize) {
     }
 }
 
+// https://leetcode-cn.com/problems/container-with-most-water/
+int maxArea(int* height, int heightSize){
+    int left = 0; 
+    int right = heightSize - 1;
+    int area = 0;
+
+    while (left < right) {
+        
+    }
+}
