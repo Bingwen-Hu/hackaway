@@ -1,19 +1,27 @@
 #pragma once
 
-#include <stdio.h>
-#include <stdlib.h>
 
-/* ======= Data Structure =======
-Variable:
-    ElemType: element type in list
-Structure: 
-    LinkList: list with head pointer
-*/
+#define lfprint(stream, fmt, list, type)            \
+    do {                                            \
+        conscell* p;                                \
+        for (p = (list); p != NULL; p = p->next) {  \
+            type data = *(type *)(p->data);         \
+            fprintf(stream, fmt, data);             \
+        }                                           \
+        fputc('\n', stream);                        \
+    } while (0)
 
 
-typedef int ElemType;
+#define lprint(fmt, list, type) \
+    lfprint(stdout, fmt, list, type)
 
-typedef struct Node {
-    ElemType data;
-    struct Node *next;
-} Node, *LinkList;
+typedef struct conscell {
+    void* data;
+    struct conscell* next;
+} conscell;
+
+
+conscell* lpush(conscell* list, void* data);
+conscell* lpop(conscell* list, conscell** cons);
+void lfree(conscell* list);
+conscell* lreverse(conscell* list);

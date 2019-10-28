@@ -303,13 +303,12 @@ class DNet(nn.Module):
             nn.InstanceNorm2d(16),
             nn.LeakyReLU(0.01),
         )
-        self.deconv6 = nn.Conv2d(16, 3, 3, 1, 1)
+        self.deconv6 = nn.Conv2d(16, 6, 3, 1, 1)
 
     def forward(self, co, po):
         co1, co2, co3, co4, co5 = co
         po1, po2, po3, po4, po5 = po
-        
-        print(co5.shape, po5.shape)
+
         map1 = torch.cat([co5, po5], 1)
         out1 = self.deconv1(map1)
         up1 = F.interpolate(out1, scale_factor=2, mode='bilinear')
@@ -342,15 +341,19 @@ class SiameseUnetGenerator(nn.Module):
         self.pnet = FeatureExtraction(3)
         self.gmm = GMM(fine_height, fine_width, grid_size)
         self.gridGen = [
-            TpsGridGen(fine_height, fine_width, use_cuda=False, grid_size=grid_size),
-            TpsGridGen(fine_height//2, fine_width//2, use_cuda=False, grid_size=grid_size),
-            TpsGridGen(fine_height//4, fine_width//4, use_cuda=False, grid_size=grid_size),
-            TpsGridGen(fine_height//8, fine_width//8, use_cuda=False, grid_size=grid_size),
-            TpsGridGen(fine_height//16, fine_width//16, use_cuda=False, grid_size=grid_size),
-            TpsGridGen(fine_height//32, fine_width//32, use_cuda=False, grid_size=grid_size),
+            TpsGridGen(fine_height, fine_width, use_cuda=True, grid_size=grid_size),
+            TpsGridGen(fine_height//2, fine_width//2, use_cuda=True, grid_size=grid_size),
+            TpsGridGen(fine_height//4, fine_width//4, use_cuda=True, grid_size=grid_size),
+            TpsGridGen(fine_height//8, fine_width//8, use_cuda=True, grid_size=grid_size),
+            TpsGridGen(fine_height//16, fine_width//16, use_cuda=True, grid_size=grid_size),
+            TpsGridGen(fine_height//32, fine_width//32, use_cuda=True, grid_size=grid_size),
         ]
         self.dnet = DNet(fine_height, fine_width)
-        
+        self.cnet.cuda()
+        self.pnet.cuda()
+        self.dnet.cuda()
+        self.gmm.cuda()
+
     def forward(self, cloth, person, training=True):
         co = self.cnet(cloth)
         po = self.pnet(person)
@@ -363,10 +366,33 @@ class SiameseUnetGenerator(nn.Module):
         # for training
         if training:
             grid = self.gridGen[0](theta)
-            warp_cloth = F.grid_sample(cloth, grid, mode='border')
+            warp_cloth = F.grid_sample(cloth, grid, mode='bilinear')
         else:
             warp_cloth = None
         return warp_person, warp_cloth
+
+
+class Discriminator(nn.Module):
+    def __init__(self, input_nc, output_nc):
+        super().__init__()
+        self.net = nn.Sequential(
+            nn.Conv2d(input_nc, output_nc, 1, 1, 0),
+            nn.LeakyReLU(0.2, True),
+            nn.Conv2d(output_nc, output_nc * 2, 1, 2, 0),
+            nn.BatchNorm2d(output_nc * 2),
+            nn.LeakyReLU(0.2, True),
+            nn.Conv2d(output_nc * 2, output_nc * 2, 1, 2, 0),
+            nn.BatchNorm2d(output_nc * 2),
+            nn.LeakyReLU(0.2, True),
+            nn.Conv2d(output_nc * 2, output_nc, 1, 2, 0),
+            nn.BatchNorm2d(output_nc),
+            nn.LeakyReLU(0.2, True),
+            nn.Conv2d(output_nc, 1, 1, 2, 0)
+        )
+    def forward(self, input):
+        return self.net(input)
+
+
 
 
 # loss

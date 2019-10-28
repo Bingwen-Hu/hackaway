@@ -1,5 +1,4 @@
-#pragma once
-
+#include "modern.h"
 // When a standard is not enough to clear everything
 // convention comes in
 // Every function ends with `M` means memory is allocated

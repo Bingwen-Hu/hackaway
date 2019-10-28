@@ -1,95 +1,67 @@
+#include <stdio.h>
 #include "list.h"
+#include "xmalloc.h"
 
 
-LinkList InitList_M(LinkList L, int length){
-    LinkList p, q;
-    ElemType r;
+/**
+ * @brief Push data into list
+ *
+ * @param list, the list or NULL
+ * @param data, the data 
+ * @return a new list
+ *   @retval new, new head pointer
+ */
+conscell* lpush(conscell* list, void* data)
+{
+    conscell* new = xmalloc(sizeof(conscell));
+    new->data = data;
+    new->next = list;
+    return new;
+}
 
-    L = (LinkList) malloc(sizeof(Node)); /* head node */
-    L->data = 0;                  // store the length
-    L->next = NULL;
-    q = L;                        /* q as the end pointer */
-
-    for (int i=0; i<length; i++){
-        p = (LinkList) malloc(sizeof(Node));
-        r = rand() % 42;
-        p->data = r;
-        p->next = NULL;
-        q->next = p;
-        q = p;                      /* go to the end */
-        L->data++;
+/**
+ * @brief Pop up data 
+ *
+ * @param list, the list or NULL
+ * @param cons, hold the popped cons
+ * @return a new list
+ *   @retval new, new head pointer
+ */
+conscell* lpop(conscell* list, conscell** cons)
+{
+    if (list == NULL) {
+        return NULL;
     }
-    return L;
+    // seperate list -> (top, rest)
+    conscell* top = list;
+    list = list->next;
+
+    top->next = NULL;   // cut up connection between top and rest
+    *cons = top;    // return popped cons
+    return list;
 }
 
 
-void PrintList(LinkList L){
-    LinkList p = L->next;
-    int c = L->data;
-    printf("Linklist: ");
-    for (int i=0; i<c; i++){
-        printf("%d\t", p->data);
-        p = p->next;
+
+void lfree(conscell* list)
+{
+    while (list != NULL) {
+        conscell* p = list->next;
+        free(list);
+        list = p;
     }
-    puts("");
 }
 
-
-void DestroyList(LinkList L){
-    LinkList p; 
-    while (L->next){
-        p = L;
-        L = L->next;
-        free(p);
+conscell* lreverse(conscell* list)
+{
+    conscell* new = NULL;
+    while (list != NULL) {
+        // seperate list as (top, list)
+        conscell* top = list;
+        list = list->next;
+        // make top -> new
+        top->next = new;
+        new = top;
     }
-    free(L);
-}
-
-
-ElemType GetElem(LinkList L, int index){
-    LinkList p = L->next;
-    ElemType e;
-
-    if (index < 0 || L->data < index){
-        puts("index invalid");
-        return 0;
-    }
-
-    for (int i=0; i<index; i++){
-        p = p->next;
-    }
-    e = p->data;
-    return e;
-}
-
-
-void insertList(LinkList L, int index, ElemType e){
-    LinkList p, q;
-    p = L->next;
-    q = L;
-    
-    for (int i=0; i<index; i++){
-        q = p;
-        p = p->next;
-    }
-    LinkList new = (LinkList) malloc(sizeof(Node));
-    q->next = new;
-    new->data = e;
-    new->next = p;
-    L->data++;
-
-}
-
-void deleteNode(LinkList L, int index){
-    LinkList p, q;
-    p = L->next;
-    q = L;
-    
-    for(int i=0; i<index; i++){
-        q = p;
-        p = p->next;
-    }
-    q->next = p->next;
-    free(p);
-    L->data--;
+    return new;
 }

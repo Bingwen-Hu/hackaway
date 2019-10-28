@@ -61,3 +61,12 @@
     } while (0)
 
 #define print_matrix(fmt, a, m, n) fprint_matrix(stdout, fmt, a, m, n)
+
+#define matrix_transpose(a, m, n, b)        \
+    do {                                    \
+        for (int i = 0; i < m; i++) {       \
+            for (int j = 0; j < n; j++) {   \
+                b[j][i] = a[i][j];          \
+            }                               \
+        }                                   \
+    } while (0)

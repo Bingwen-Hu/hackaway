@@ -1,4 +1,7 @@
+#include <string.h>
 #include "fantest.h"
+
+
 // fan test
 
 //
@@ -17,6 +20,78 @@ void fgets_test(){
 }
 
 void test_random() {
-    int r = random();
+    // switch to the following code to see the result
+    // int r = random();
+    int r = rand();
     printf("exist random! %d\n", r);
+}
+
+void test_sizeof() {
+    int* r = malloc(sizeof(int));
+    int size_p = sizeof(*r);
+    printf("size of int is %ld\n", sizeof(int));
+    printf("size of *r is %d\n", size_p);
+}
+
+void test_local_scope() 
+{
+    int i = 999;
+    printf("outer i = %d\n", i);
+
+    do {
+        int i = 111;
+        printf("inner i = %d\n", i);
+    } while (0);
+    {
+        int i = 222;
+        printf("Never confuse! %d\n", i);
+    }
+    printf("outer i = %d\n", i);
+}
+
+void test_valgrind()
+{
+    int *r = malloc(sizeof(int));
+    *r = 12;
+    printf("value of r is %d\n", *r);
+
+    free(r);
+}
+
+void test_printf_str()
+{
+    printf("\033" "[31mhaha\n" "You never know");
+}
+
+void test_strcpy()
+{
+    char* s = "mory";
+    char* a = malloc(sizeof(strlen(s)+1));
+    char* c = strcpy(a, s);
+    printf("value of a is %s\n", c);
+    printf("len of s is %zu\n", strlen(s));
+}
+
+void test_calloc()
+{
+    int row = 4;
+    int column = 8;
+    double* a = calloc(row, column * sizeof(double));
+
+    for (int i = 0; i < row; i++) {
+        for (int j = 0; j < column; j++) {
+            a[i*column + j] = 1. / (1 + i + j);
+            printf("%7.3lf ", a[i*column + j]);
+        }
+        printf("\n");
+    }
+
+    printf("\n");
+
+    for (int i = 0; i < column; i++) {
+        for (int j = 0; j < row; j++) {
+            printf("%7.3f ", a[i * row + j]);
+        }
+        printf("\n");
+    }
 }

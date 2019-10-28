@@ -13,12 +13,21 @@ int main() {
     free_vector(v);
 
     int** M;
-    make_matrix(M, 10, 10);
-    for (int i = 0; i < 10; i++) {
-        for (int j = 0; j < 10; j++)
+    int row = 3;
+    int col = 6;
+    make_matrix(M, row, col);
+    for (int i = 0; i < row; i++) {
+        for (int j = 0; j < col; j++)
             M[i][j] = j + i;
     }
-    print_matrix("%3d ", M, 10, 10);
+    print_matrix("%3d ", M, row, col);
+
+    int** T;
+    make_matrix(T, col, row);
+    matrix_transpose(M, row, col, T);
+    print_matrix("%3d ", T, col, row);
+    
+    free_matrix(T);
     free_matrix(M);
 }
 
